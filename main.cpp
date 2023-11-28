@@ -1,6 +1,7 @@
 #include "./WebServer.hpp"
 
 int main(int argc, char *argv[]) {
-    http::WebServer server = http::WebServer(0, 8080);
+    http::WebServer server = http::WebServer();
+    server.startServer();
     return 0;
 }
