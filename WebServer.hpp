@@ -16,12 +16,12 @@
 
 class WebServer {
     private:
-        int _socket_fd, _new_socket_fd;
-        int _opt = 1;
-        std::string _server_message;
-        long _incoming_message;
+        int _socket_fd, _new_socket_fd; // File Descriptor dos Sockets 
+        int _opt; // Opçao para o setsockopt
+        char _buffer[4096];
+        ssize_t _valread;
         struct sockaddr_in _socket_address;
-        socklen_t _socket_address_len = sizeof(_socket_address);
+        socklen_t _socket_address_len;
     public:
     // Constructors
         WebServer();

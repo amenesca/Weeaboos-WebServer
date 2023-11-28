@@ -1,6 +1,9 @@
 #include "WebServer.hpp"
 
 WebServer::WebServer() {
+	_buffer[4096] = 0;
+	_opt = 1;
+	_socket_address_len = sizeof(_socket_address);
 }
 // ------------------------------------------------------------------- //
 WebServer::~WebServer() {
@@ -17,7 +20,9 @@ int WebServer::startServer () {
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
         exit(EXIT_FAILURE);
+	return (1);
     }
+    return (0);
 }
 // ------------------------------------------------------------------- //
 int WebServer::createSocket() {
@@ -81,7 +86,8 @@ int WebServer::serverAccept() {
 }
 // ------------------------------------------------------------------- //
 int WebServer::serverRead() {
-    // fazer
+    _valread = read(_new_socket_fd, _buffer , 1024 - 1);
+    return (1);
 }
 // ------------------------------------------------------------------- //
 void WebServer::closeServer()
