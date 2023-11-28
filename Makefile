@@ -1,22 +1,30 @@
 NAME = webserver
 
-SRC = main.cpp WebServer.cpp
-
-OBJ = $(SRC:.cpp=.o)
-
+CPP	= c++
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
+
+SRCS = main.cpp WebServer.cpp
+
+OBJS = $(SRCS:.cpp=.o)
+
+%.o: %.cpp
+	$(CPP) -c $< $(CPPFLAGS) -o $@
+
+$(NAME): $(OBJS)
+	$(CPP) $^ $(CPPFLAGS) -o $@
+	printf "COMPILATION SUCCESSFUL!\n"
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	g++ -o $(NAME) $(CPPFLAGS) $(OBJ)
-
 clean:
-	rm -f $(OBJ)
+	rm -f $(OBJS)
 
 fclean: clean
 	rm -f $(NAME)
+	printf "FULLY CLEANED!\n"
 
 re: fclean all
 
-phony: all clean fclean re
+.SILENT:
+
+.PHONY: all clean fclean re

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   WebServer.cpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
+/*   Updated: 2023/11/28 18:23:10 by femarque         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "WebServer.hpp"
 
 WebServer::WebServer() {
@@ -5,11 +17,11 @@ WebServer::WebServer() {
 	_opt = 1;
 	_socket_address_len = sizeof(_socket_address);
 }
-// ------------------------------------------------------------------- //
+
 WebServer::~WebServer() {
     closeServer();
 }
-// ------------------------------------------------------------------- //
+
 int WebServer::startServer () {
     try {
         createSocket();
@@ -24,7 +36,7 @@ int WebServer::startServer () {
     }
     return (0);
 }
-// ------------------------------------------------------------------- //
+
 int WebServer::createSocket() {
     _socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -35,7 +47,7 @@ int WebServer::createSocket() {
     }
     return 0;
 }
-// ------------------------------------------------------------------- //
+
 int WebServer::attachSocket() {
     int setsockopt_return = setsockopt(_socket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt));
     
@@ -46,7 +58,7 @@ int WebServer::attachSocket() {
     }
     return 0;
 }
-// ------------------------------------------------------------------- //
+
 int WebServer::bindSocket () {
     _socket_address.sin_family = AF_INET;
     _socket_address.sin_addr.s_addr = INADDR_ANY;
@@ -61,7 +73,7 @@ int WebServer::bindSocket () {
     }
     return 0;
 }
-// ------------------------------------------------------------------- //
+
 int WebServer::serverListen() {
     int listen_return = listen(_socket_fd, 3);
     
@@ -72,7 +84,7 @@ int WebServer::serverListen() {
     }
     return 0;
 }
-// ------------------------------------------------------------------- //
+
 int WebServer::serverAccept() {
     int accept_return = accept(_socket_fd, (struct sockaddr*)&_socket_address,
                 &_socket_address_len);
@@ -84,47 +96,44 @@ int WebServer::serverAccept() {
     }
     return 0;
 }
-// ------------------------------------------------------------------- //
+
 int WebServer::serverRead() {
     _valread = read(_new_socket_fd, _buffer , 1024 - 1);
     return (1);
 }
-// ------------------------------------------------------------------- //
+
 void WebServer::closeServer()
 {
     close(_socket_fd);
     close(_new_socket_fd);
     exit(0);
 }
-// ------------------------------------------------------------------- //
+
 const char *WebServer::socketError::what() const throw() {
     std::string errorReturn =  "Error: socket(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }
-// ------------------------------------------------------------------- //
+
 const char *WebServer::setsockoptError::what() const throw() {
     std::string errorReturn =  "Error: setsockopt(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }
-// ------------------------------------------------------------------- //
 
 const char *WebServer::bindError::what() const throw() {
     std::string errorReturn =  "Error: bind(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }
-// ------------------------------------------------------------------- //
 
 const char *WebServer::listenError::what() const throw() {
     std::string errorReturn =  "Error: listen(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }
-// ------------------------------------------------------------------- //
 
 const char *WebServer::acceptError::what() const throw() {
     std::string errorReturn =  "Error: accept(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }
-// ------------------------------------------------------------------- //
+
 const char *WebServer::readError::what() const throw() {
     std::string errorReturn =  "Error: read(): " + std::string(strerror(errno));
     return (errorReturn.c_str());

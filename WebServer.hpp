@@ -1,4 +1,16 @@
-#ifndef WEBSERVER_HPP
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   WebServer.hpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
+/*   Updated: 2023/11/28 18:27:50 by femarque         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+# ifndef WEBSERVER_HPP
 #define WEBSERVER_HPP
 
 #include <iostream>
@@ -68,6 +80,5 @@ class WebServer {
                 virtual const char* what() const throw();
         };
 };
-
 
 #endif
