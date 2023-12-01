@@ -1,2 +1,6 @@
 .vscode
 .nfs*
+main.o
+*.o
+webserver
+.gitignore

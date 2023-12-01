@@ -24,21 +24,24 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+
+
+#define MAX_BUFFER_SIZE 4096
 #define PORT 8080
 
 class WebServer {
     private:
         int _socket_fd, _new_socket_fd; // File Descriptor dos Sockets 
         int _opt; // Opçao para o setsockopt
-        char _buffer[4096];
+        char _buffer[MAX_BUFFER_SIZE];
         ssize_t _valread;
         struct sockaddr_in _socket_address;
         socklen_t _socket_address_len;
     public:
-    // Constructors
+    
         WebServer();
         ~WebServer();
-    // Methods
+    
         int startServer();
         int createSocket();
         int attachSocket();
@@ -47,37 +50,30 @@ class WebServer {
         int serverAccept();
         int serverRead();
         void closeServer();
-    // Exceptions
-        class socketError : public std::exception
-        {
-            public:
-                virtual const char* what() const throw();
+    
+        class socketError : public std::exception {
+        public:
+            virtual const char* what() const throw();
         };
-        class setsockoptError : public std::exception
-        {
-            public:
-                virtual const char* what() const throw();
+        class setsockoptError : public std::exception {
+        public:
+            virtual const char* what() const throw();
         };
-
-        class bindError : public std::exception
-        {
-            public:
-                virtual const char* what() const throw();
+        class bindError : public std::exception {
+        public:
+            virtual const char* what() const throw();
         };
-        class listenError : public std::exception
-        {
-            public:
-                virtual const char* what() const throw();
+        class listenError : public std::exception {
+        public:
+            virtual const char* what() const throw();
         };
-        class acceptError : public std::exception
-        {
-            public:
-                virtual const char* what() const throw();
+        class acceptError : public std::exception {
+        public:
+            virtual const char* what() const throw();
         };
-        class readError : public std::exception
-        {
-            public:
-                virtual const char* what() const throw();
+        class readError : public std::exception {
+        public:
+            virtual const char* what() const throw();
         };
 };
 

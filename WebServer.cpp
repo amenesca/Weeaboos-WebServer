@@ -13,9 +13,9 @@
 #include "WebServer.hpp"
 
 WebServer::WebServer() {
-	_buffer[4096] = 0;
-	_opt = 1;
-	_socket_address_len = sizeof(_socket_address);
+	this->_buffer[4096] = 0;
+	this->_opt = 1;
+	this->_socket_address_len = sizeof(_socket_address);
 }
 
 WebServer::~WebServer() {
@@ -98,9 +98,15 @@ int WebServer::serverAccept() {
 }
 
 int WebServer::serverRead() {
-    _valread = read(_new_socket_fd, _buffer , 1024 - 1);
-    return (1);
+    _valread = read(_new_socket_fd, (void*)_buffer, MAX_BUFFER_SIZE);
+    if (_valread < 0)
+    {
+        throw readError();
+        return 1;
+    }
+    return 0;
 }
+
 
 void WebServer::closeServer()
 {
