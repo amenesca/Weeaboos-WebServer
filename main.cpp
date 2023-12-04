@@ -6,11 +6,11 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:50 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/04 12:55:00 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/04 13:42:01 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./WebServer.hpp"
+#include "WebServer.hpp"
 
 int main(int argc, char **argv)
 {
