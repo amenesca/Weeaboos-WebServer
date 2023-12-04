@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/04 12:20:45 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/04 12:22:42 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 WebServer::WebServer() {
 	this->_buffer[4096] = 0;
 	this->_opt = 1;
-	this->_socket_address_len = sizeof(_socket_address);
+	bzero(&_socket_address, sizeof(_socket_address));
 }
 
 WebServer::~WebServer() {
@@ -55,7 +55,6 @@ int WebServer::bindSocket ()
 {
 	int bind_return;
 	
-    bzero(&_socket_address, sizeof(_socket_address));
     _socket_address.sin_family = AF_INET;
     _socket_address.sin_addr.s_addr = INADDR_ANY;
     _socket_address.sin_port = htons(PORT);
