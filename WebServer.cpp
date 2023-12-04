@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/04 12:22:42 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/04 12:23:10 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ int WebServer::translateAddr(const char *addr)
 {
 	if(inet_pton(AF_INET, addr, &_socket_address.sin_addr) <= 0)
 		throw std::runtime_error("Error on translation");
+	return (0);
 }
 
 int WebServer::serverListen()
