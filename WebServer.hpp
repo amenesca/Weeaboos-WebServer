@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/04 12:16:27 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/04 13:35:56 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,16 @@
 
 
 #define MAX_BUFFER_SIZE 4096
-#define PORT 8080
+#define PORT 80
 #define SA struct sockaddr
 
 class WebServer {
     private:
         int _socket_fd, _new_socket_fd; // File Descriptor dos Sockets 
         int _opt; // Opçao para o setsockopt
+        int _sendbyte, _n;
         char _buffer[MAX_BUFFER_SIZE];
+        char _recbuffer[MAX_BUFFER_SIZE];
         ssize_t _valread;
         struct sockaddr_in _socket_address;
         socklen_t _socket_address_len;
