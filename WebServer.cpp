@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/04 13:38:00 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/04 13:43:43 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ int WebServer::startServer(int argc, char **argv)
 {
 	(void)argc;
     createSocket();
-    //attachSocket();
+    attachSocket();
     bindSocket();
 	translateAddr(argv[1]);
-    //serverListen();
-    //serverAccept();
+    serverListen();
+    serverAccept();
 	closeServer();
 
     return (0);
@@ -55,15 +55,14 @@ int WebServer::attachSocket()
 
 int WebServer::bindSocket ()
 {
-	//int bind_return;
+	int bind_return;
 	
     _socket_address.sin_family = AF_INET;
     _socket_address.sin_addr.s_addr = INADDR_ANY;
     _socket_address.sin_port = htons(PORT);
 
-    /*if ((bind_return = bind(_socket_fd, (struct sockaddr*)&_socket_address, _socket_address_len)) < 0)
+    if ((bind_return = bind(_socket_fd, (struct sockaddr*)&_socket_address, _socket_address_len)) < 0)
 		throw bindError();
-	printf("Saiu aqui 2.5\n");*/
     return (0);
 }
 
