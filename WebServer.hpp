@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/04 13:35:56 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/04 13:48:47 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class WebServer {
         WebServer();
         ~WebServer();
     
-        int startServer(int argc, char **argv);
+        int startServer(char **argv);
         int createSocket();
         int attachSocket();
         int bindSocket();

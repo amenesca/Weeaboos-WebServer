@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/04 13:46:27 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/04 13:48:50 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,8 @@ WebServer::~WebServer() {
     closeServer();
 }
 
-int WebServer::startServer(int argc, char **argv)
+int WebServer::startServer(char **argv)
 {
-	(void)argc;
     createSocket();
     attachSocket();
     bindSocket();
