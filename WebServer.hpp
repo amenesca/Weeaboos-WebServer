@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/11/28 18:27:50 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/04 12:16:27 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,13 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <arpa/inet.h>
 
 
 #define MAX_BUFFER_SIZE 4096
 #define PORT 8080
+#define SA struct sockaddr
 
 class WebServer {
     private:
@@ -42,10 +44,11 @@ class WebServer {
         WebServer();
         ~WebServer();
     
-        int startServer();
+        int startServer(int argc, char **argv);
         int createSocket();
         int attachSocket();
         int bindSocket();
+        int translateAddr(const char *addr);
         int serverListen();
         int serverAccept();
         int serverRead();

@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/11/28 18:23:10 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/04 12:20:45 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,91 +22,79 @@ WebServer::~WebServer() {
     closeServer();
 }
 
-int WebServer::startServer () {
-    try {
-        createSocket();
-        attachSocket();
-        bindSocket();
-        serverListen();
-        serverAccept();
-    } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
-        exit(EXIT_FAILURE);
-	return (1);
-    }
+int WebServer::startServer(int argc, char **argv)
+{
+	(void)argc;
+    createSocket();
+    attachSocket();
+    bindSocket();
+	translateAddr(argv[1]);
+    serverListen();
+    serverAccept();
+
     return (0);
 }
 
-int WebServer::createSocket() {
-    _socket_fd = socket(AF_INET, SOCK_STREAM, 0);
-
-    if (_socket_fd < 0)
-    {
+int WebServer::createSocket()
+{
+    if((_socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         throw socketError();
-        return 1;
-    }
-    return 0;
+    return (0);
 }
 
-int WebServer::attachSocket() {
-    int setsockopt_return = setsockopt(_socket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt));
-    
-    if (setsockopt_return < 0)
-    {
+int WebServer::attachSocket()
+{
+    int	setsockopt_return;
+
+    if ((setsockopt_return = setsockopt(_socket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt))) < 0)
         throw setsockoptError();
-        return 1;
-    }
-    return 0;
+    return (0);
 }
 
-int WebServer::bindSocket () {
+int WebServer::bindSocket ()
+{
+	int bind_return;
+	
+    bzero(&_socket_address, sizeof(_socket_address));
     _socket_address.sin_family = AF_INET;
     _socket_address.sin_addr.s_addr = INADDR_ANY;
     _socket_address.sin_port = htons(PORT);
 
-    int bind_return = bind(_socket_fd, (struct sockaddr*)&_socket_address, _socket_address_len);
-
-    if (bind_return < 0)
-    {
-        throw bindError();
-        return 1;
-    }
-    return 0;
+    if ((bind_return = bind(_socket_fd, (struct sockaddr*)&_socket_address, _socket_address_len)) < 0)
+		throw bindError();
+    return (0);
 }
 
-int WebServer::serverListen() {
-    int listen_return = listen(_socket_fd, 3);
-    
-    if (listen_return < 0)
-    {
+int WebServer::translateAddr(const char *addr)
+{
+	if(inet_pton(AF_INET, addr, &_socket_address.sin_addr) <= 0)
+		throw std::runtime_error("Error on translation");
+}
+
+int WebServer::serverListen()
+{
+    int listen_return;
+	
+	if ((listen_return = listen(_socket_fd, 3)) < 0)
         throw listenError();
-        return 1;
-    }
-    return 0;
+    return (0);
 }
 
-int WebServer::serverAccept() {
-    int accept_return = accept(_socket_fd, (struct sockaddr*)&_socket_address,
-                &_socket_address_len);
-    
-    if (accept_return < 0)
-    {
+int WebServer::serverAccept()
+{
+    int accept_return;
+	
+	if ((accept_return = accept(_socket_fd, (struct sockaddr*)&_socket_address, &_socket_address_len)) < 0)
         throw acceptError();
-        return 1;
-    }
-    return 0;
+    return (0);
 }
 
-int WebServer::serverRead() {
-    _valread = read(_new_socket_fd, (void*)_buffer, MAX_BUFFER_SIZE);
-    if (_valread < 0)
-    {
+int WebServer::serverRead()
+{
+    if ((_valread = read(_new_socket_fd, (void*)_buffer, MAX_BUFFER_SIZE)) < 0)
         throw readError();
-        return 1;
-    }
-    return 0;
+    return (0);
 }
-
 
 void WebServer::closeServer()
 {
