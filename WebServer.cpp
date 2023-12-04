@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/04 13:43:43 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/04 13:46:27 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,29 +39,25 @@ int WebServer::startServer(int argc, char **argv)
 
 int WebServer::createSocket()
 {
-    if((_socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    if(_socket_fd = socket(AF_INET, SOCK_STREAM, 0) < 0)
         throw socketError();
     return (0);
 }
 
 int WebServer::attachSocket()
 {
-    int	setsockopt_return;
-
-    if ((setsockopt_return = setsockopt(_socket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt))) < 0)
+    if (setsockopt(_socket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt)) < 0)
         throw setsockoptError();
     return (0);
 }
 
 int WebServer::bindSocket ()
 {
-	int bind_return;
-	
     _socket_address.sin_family = AF_INET;
     _socket_address.sin_addr.s_addr = INADDR_ANY;
     _socket_address.sin_port = htons(PORT);
 
-    if ((bind_return = bind(_socket_fd, (struct sockaddr*)&_socket_address, _socket_address_len)) < 0)
+    if (bind(_socket_fd, (struct sockaddr*)&_socket_address, _socket_address_len) < 0)
 		throw bindError();
     return (0);
 }
@@ -88,18 +84,14 @@ int WebServer::translateAddr(const char *addr)
 
 int WebServer::serverListen()
 {
-    int listen_return;
-	
-	if ((listen_return = listen(_socket_fd, 3)) < 0)
+	if ((listen(_socket_fd, 3)) < 0)
         throw listenError();
     return (0);
 }
 
 int WebServer::serverAccept()
 {
-    int accept_return;
-	
-	if ((accept_return = accept(_socket_fd, (struct sockaddr*)&_socket_address, &_socket_address_len)) < 0)
+	if (accept(_socket_fd, (struct sockaddr*)&_socket_address, &_socket_address_len) < 0)
         throw acceptError();
     return (0);
 }
