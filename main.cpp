@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:50 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/04 13:48:57 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/06 11:41:21 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ int main(int argc, char **argv)
 	}
 	catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
-		exit(EXIT_FAILURE);
     }
     return (0);
 }
