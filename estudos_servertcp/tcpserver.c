@@ -22,15 +22,18 @@ int main(int argc, char **argv) {
         err_n_die("listen error.");
 
     for ( ; ; ) {
-        struct sockaddr_in addr;
+        struct sockaddr_in client_addr;
         socklen_t addr_len;
+        char client_address[MAXLINE + 1];
 
         //accept blocks until an incoming connection arrives
         //it returns a "file descriptor" to the connection
         printf("waiting for a connection on port %d\n", SERVER_PORT);
         fflush(stdout);
-        connfd = accept(listenfd, (SA *)NULL, NULL);
+        connfd = accept(listenfd, (SA *)&client_addr, &addr_len);
 
+        inet_ntop(AF_INET, &client_addr, client_address, MAXLINE);
+        printf("Client connection: %s\n", client_address);
         //zero out the receive buffer to make sure it ends up null terminated
         memset(recvline, 0, MAXLINE);
         //Now read the client's message.
