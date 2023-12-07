@@ -48,7 +48,7 @@ char* WebServer::bin2hex(const unsigned char *input, size_t len)
 int WebServer::startServer()
 {
     createSocket();
-    //attachSocket();
+    attachSocket();
     bindSocket();
 	//translateAddr(argv[1]);
     serverListen();
@@ -65,12 +65,12 @@ int WebServer::createSocket()
     return (0);
 }
 
-/*int WebServer::attachSocket()
+int WebServer::attachSocket()
 {
-    if (setsockopt(_listenfd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt)) < 0)
+    if (setsockopt(_socket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt)) < 0)
         throw setsockoptError();
     return (0);
-}*/
+}
 
 int WebServer::bindSocket ()
 {
