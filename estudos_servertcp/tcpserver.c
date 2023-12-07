@@ -35,6 +35,7 @@ int main(int argc, char **argv) {
 
         inet_ntop(AF_INET, &client_addr, client_address, MAXLINE);
         printf("Client connection: %s\n", client_address);
+	fflush(stdout);
         //zero out the receive buffer to make sure it ends up null terminated
         memset(recvline, 0, MAXLINE);
         //Now read the client's message.
