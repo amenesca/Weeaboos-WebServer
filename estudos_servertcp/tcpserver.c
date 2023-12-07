@@ -2,7 +2,8 @@
 
 int main(int argc, char **argv) {
     
-    int                 listenfd, connfd, n;
+    int                 listenfd, connfd, bytes_read;
+    int                 messagesize = 0;
     struct sockaddr_in  serveraddr;
     uint8_t             buff[MAXLINE+1];
     uint8_t             recvline[MAXLINE+1];
@@ -37,19 +38,20 @@ int main(int argc, char **argv) {
         //zero out the receive buffer to make sure it ends up null terminated
         memset(recvline, 0, MAXLINE);
         //Now read the client's message.
-        while((n = read(connfd, recvline, MAXLINE-1)) > 0)
+        while((bytes_read = read(connfd, recvline+messagesize, sizeof(recvline)-messagesize-1)) > 0)
         {
-            fprintf(stdout, "\n%s\n\n%s", bin2hex(recvline, n),recvline);
+            messagesize += bytes_read;
 
             //hacky way to detect the end of message.
-            if (recvline[n-1] == '\n') {
+            if (recvline[bytes_read-1] == '\n' || messagesize > MAXLINE-1) {
                 break;
             }
-            memset(recvline,0,MAXLINE);
         }
-        if (n<0)
+        if (bytes_read<0)
             err_n_die("read error");
-
+        recvline[messagesize-1] = 0;
+        printf("REQUEST: %s\n", recvline);
+        fflush(stdout);
         //now send a response
         snprintf((char*)buff, sizeof(buff), "HTTP/1.0 200 OK\r\n\r\nHELLO");
 
@@ -57,5 +59,8 @@ int main(int argc, char **argv) {
         // in case errors occur. For now. I'm ignoring them.
         write(connfd, (char*)buff, strlen((char*)buff));
         close(connfd);
-    }
+        memset(recvline,0,MAXLINE);
+        messagesize = 0;
+        bytes_read = 0;
+  }
 }
