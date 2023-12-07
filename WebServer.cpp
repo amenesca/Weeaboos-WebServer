@@ -16,7 +16,9 @@ WebServer::WebServer() {
 	this->_buffer[MAX_BUFFER_SIZE - 1] = 0;
 	this->_opt = 1;
 	_server_addr_len = sizeof(_server_addr);
+  _client_addr_len = sizeof(_client_addr);
 	memset(&_server_addr, 0, _server_addr_len);
+  memset(&_client_addr, 0, _client_addr_len);
 }
 
 WebServer::~WebServer() {
@@ -63,14 +65,14 @@ int WebServer::startServer()
 
 int WebServer::createSocket()
 {
-    if((_sockserver_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    if((_serversocket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         throw socketError();
     return (0);
 }
 
 int WebServer::setServerOptions()
 {
-    if (setsockopt(_sockserver_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt)) < 0)
+    if (setsockopt(_serversocket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt)) < 0)
         throw setsockoptError();
     return (0);
 }
@@ -81,14 +83,14 @@ int WebServer::bindSocket ()
     _server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     _server_addr.sin_port = htons(PORT);
 
-    if (bind(_sockserver_fd, (SA*)&_server_addr, _server_addr_len) < 0)
+    if (bind(_serversocket_fd, (SA*)&_server_addr, _server_addr_len) < 0)
 		throw bindError();
     return (0);
 }
 
 int WebServer::serverListen()
 {
-	if (listen(_sockserver_fd, 10) < 0)
+	if (listen(_serversocket_fd, 10) < 0)
         throw listenError();
     return (0);
 }
@@ -99,9 +101,15 @@ int WebServer::acceptConnection()
     {
         std::cout << "Waiting for connection on port " << PORT << std::endl;
         fflush(stdout);
-        _sockclient_fd = accept(_sockserver_fd, (SA*)&_client_addr, &_client_addr_len);
+        _clientsocket_fd = accept(_serversocket_fd, (SA*)&_client_addr, &_client_addr_len);
+
+        // Apenas um teste para pegar o endereço do cliente e printar
+        char client_address[MAX_BUFFER_SIZE+1];
+        inet_ntop(AF_INET, &_client_addr, client_address, MAX_BUFFER_SIZE);
+        printf("Client connection: %s\n", client_address);
+
         memset(_recbuffer, 0, MAX_BUFFER_SIZE);
-        while ((_valread = read(_sockclient_fd, _recbuffer, MAX_BUFFER_SIZE - 1)) > 0) {
+        while ((_valread = read(_clientsocket_fd, _recbuffer, MAX_BUFFER_SIZE - 1)) > 0) {
             //fprintf(stdout, "\n%s\n\n%s", bin2hex(_recbuffer, _valread), _recbuffer);
             std::cout << "\n" << bin2hex(_recbuffer, _valread) << "\n\n" << _recbuffer << std::endl;
             if (_recbuffer[_valread - 1] == '\n') {
@@ -113,8 +121,10 @@ int WebServer::acceptConnection()
             throw std::runtime_error("Read error");
         }
         snprintf((char*)_buffer, sizeof(_buffer), "HTTP/1.0 200 OK\r\n\r\nHello");
-        write(_sockclient_fd, (char*)_buffer, strlen((char*)_buffer));
-        close(_sockclient_fd);
+        write(_clientsocket_fd, (char*)_buffer, strlen((char*)_buffer));
+        close(_clientsocket_fd);
+        _client_addr_len = sizeof(_client_addr);
+        memset(&_client_addr, 0, _client_addr_len);
     }
     return(0);
 }
@@ -156,7 +166,7 @@ int WebServer::serverRead()
 
 void WebServer::closeServer()
 {
-    close(_sockserver_fd);
+    close(_serversocket_fd);
     free(_hexbin);
     //close(_new_socket_fd);
     exit(0);

@@ -35,7 +35,7 @@
 
 class WebServer {
     private:
-        int _sockserver_fd, _sockclient_fd;  // File Descriptor dos Sockets 
+        int _serversocket_fd, _clientsocket_fd;  // File Descriptor dos Sockets 
         int _opt; // Opçao para o setsockopt
         int _sendbyte;
         char *_hexbin; //bin2hex return value that will be freed in the end
