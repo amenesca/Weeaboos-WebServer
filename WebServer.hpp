@@ -35,15 +35,15 @@
 
 class WebServer {
     private:
-        int _socket_fd, _new_socket_fd;  // File Descriptor dos Sockets 
+        int _sockserver_fd, _sockclient_fd;  // File Descriptor dos Sockets 
         int _opt; // Opçao para o setsockopt
         int _sendbyte;
         char *_hexbin; //bin2hex return value that will be freed in the end
         u_int8_t _buffer[MAX_BUFFER_SIZE+1];
         u_int8_t _recbuffer[MAX_BUFFER_SIZE+1];
         ssize_t _valread;
-        struct sockaddr_in _socket_address;
-        socklen_t _socket_address_len;
+        struct sockaddr_in _server_addr, _client_addr;
+        socklen_t _server_addr_len, _client_addr_len;
     public:
     
         WebServer();
@@ -52,7 +52,7 @@ class WebServer {
         char *bin2hex(const unsigned char *input, size_t len);
         int startServer();
         int createSocket();
-        int attachSocket();
+        int setServerOptions();
         int bindSocket();
         //int translateAddr(const char *addr);
         int serverListen();
