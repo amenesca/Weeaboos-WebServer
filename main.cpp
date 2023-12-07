@@ -16,12 +16,8 @@ int main(int argc, char **argv)
 {
 	(void)argc;
 	(void)argv;
-	try {
-		WebServer server = WebServer();
-		server.startServer();
-	}
-	catch (const std::exception &e) {
-        std::cerr << e.what() << std::endl;
-    }
-    return (0);
+	WebServer server = WebServer();
+	server.startServer();
+
+  return (0);
 }

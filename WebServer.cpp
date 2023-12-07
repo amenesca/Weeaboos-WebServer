@@ -47,14 +47,17 @@ char* WebServer::bin2hex(const unsigned char *input, size_t len)
 
 int WebServer::startServer()
 {
+  try {
     createSocket();
     attachSocket();
     bindSocket();
 	//translateAddr(argv[1]);
     serverListen();
     acceptConnection();
-	closeServer();
-
+	  closeServer();
+  } catch (const std::exception &e) {
+    std::cerr << e.what() << std::endl;
+  }
     return (0);
 }
 
