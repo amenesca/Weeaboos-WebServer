@@ -120,7 +120,18 @@ int WebServer::acceptConnection()
         if (_valread < 0) {
             throw std::runtime_error("Read error");
         }
-        snprintf((char*)_buffer, sizeof(_buffer), "HTTP/1.0 200 OK\r\n\r\nHello");
+        snprintf((char*)_buffer, sizeof(_buffer), "HTTP/1.0 200 OK\r\n\r\n<!DOCTYPE html>\
+<html>\
+\
+<head>\
+        <meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />\
+        <title>Snowman Productions</title>\
+</head>\
+<body>\
+        <h1>&#9731;Snowman Productions<sup>&reg;</sup></h1>\
+</body>\
+\
+</html>");
         write(_clientsocket_fd, (char*)_buffer, strlen((char*)_buffer));
         close(_clientsocket_fd);
         _client_addr_len = sizeof(_client_addr);

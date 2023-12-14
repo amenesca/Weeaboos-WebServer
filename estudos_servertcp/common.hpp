@@ -15,6 +15,10 @@
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <netdb.h>
+#include <string>
+#include <iostream>
+#include <cctype>
+#include <fstream>
 
 #define SERVER_PORT 18000
 
@@ -23,5 +27,6 @@
 
 void err_n_die(const char *fmt, ...);
 char *bin2hex(const unsigned char *input, size_t len);
+std::string trim(const std::string& str);
 
 #endif
