@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WebServer.hpp"
+#include "Socket.hpp"
 
 WebServer::WebServer() {
 	this->_buffer[MAX_BUFFER_SIZE - 1] = 0;

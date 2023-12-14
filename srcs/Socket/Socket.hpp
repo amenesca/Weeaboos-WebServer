@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef WEBSERVER_HPP
-#define WEBSERVER_HPP
+# ifndef SOCKET_HPP
+#define SOCKET_HPP
 
 #include <iostream>
 #include <exception>
