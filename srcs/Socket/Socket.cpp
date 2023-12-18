@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/18 13:32:46 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/18 13:49:01 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,12 +103,12 @@ int WebServer::acceptConnection() {
         if ((_clientsocket_fd = accept(_serversocket_fd, (SA*)&_client_addr, &_client_addr_len)) < 0) {
 			throw acceptError();
 		}
-		pid_t pid = fork();
-		if (pid < 0) {
+		_pid = fork();
+		if (_pid < 0) {
 			std::cerr << "Error on forking process" << std::endl;
 			close(_clientsocket_fd);
 			continue ;
-		} else if (pid == 0) {
+		} else if (_pid == 0) {
 			char client_address[MAX_BUFFER_SIZE + 1];
 			inet_ntop(AF_INET, &_client_addr, client_address, MAX_BUFFER_SIZE);
 			printf("Client connection: %s\n", client_address);
@@ -144,8 +144,7 @@ int WebServer::acceptConnection() {
 			close(_serversocket_fd);
 		} else {
 			close(_clientsocket_fd);
-			int status;
-			if (waitpid(pid, &status, 0) == -1) {
+			if (waitpid(_pid, &_waitpid_status, 0) == -1) {
                 std::cerr << "Error waiting for child process" << std::endl;
 			}
 		}

@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/18 13:28:51 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/18 13:48:50 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,9 @@ class WebServer {
         int _serversocket_fd, _clientsocket_fd;  // File Descriptor dos Sockets 
         int _opt; // Opçao para o setsockopt
         int _sendbyte;
+        int _waitpid_status;
         char *_hexbin; //bin2hex return value that will be freed in the end
+        pid_t _pid;
         u_int8_t _buffer[MAX_BUFFER_SIZE+1];
         u_int8_t _recbuffer[MAX_BUFFER_SIZE+1];
         ssize_t _valread;
