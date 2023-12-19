@@ -1,7 +1,7 @@
 #include "./RequestParser.hpp"
 
 int main() {
-	HttpParser request;
+	RequestParser request;
 	
 	std::string line = "GET / HTTP/1.1\r\n\
 Host: localhost:18000\r\n\

@@ -5,19 +5,24 @@
 # include <string>
 # include <map>
 # include <sstream>
+# include <exception>
+#include <cerrno>
+#include <cstring>
 
-class HttpParser {
+class RequestParser {
 	private:
 		std::string _requestMethod;
 		std::string _uri;
 		std::string _httpVersion;
 		std::map<std::string, std::string> _requestHeaders;
 
+		// Private Methods
+		void _validateUri();
 	public:
 	// Constructors
-		HttpParser();
-		~HttpParser();
-		HttpParser(std::string request);
+		RequestParser();
+		~RequestParser();
+		RequestParser(std::string request);
 
 	// Class Methods
 		void	parse(std::string request);
@@ -29,6 +34,17 @@ class HttpParser {
 		std::string getUri();
 		std::string getHttpVersion();
 		std::map<std::string, std::string> getHeaders();
+
+	// Exceptions
+		class invalidMethod : public std::exception {
+        public:
+            virtual const char* what() const throw();
+        };
+
+		class invalidHttpVersion : public std::exception {
+        public:
+            virtual const char* what() const throw();
+        };
 };
 
 #endif
