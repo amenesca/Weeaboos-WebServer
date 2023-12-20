@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/18 13:49:01 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/20 16:28:58 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,12 +96,43 @@ int WebServer::serverListen() {
     return (0);
 }
 
-int WebServer::acceptConnection() {
+/*int WebServer::acceptConnection() {
+	struct pollfd fds[1];
+	int pollReturn;
+    fds[0].fd = _serversocket_fd;
+    fds[0].events = POLLIN;
+	
     while (1) {
         std::cout << "Waiting for connection on port " << PORT << std::endl;
         fflush(stdout);
-        if ((_clientsocket_fd = accept(_serversocket_fd, (SA*)&_client_addr, &_client_addr_len)) < 0) {
-			throw acceptError();
+		if ((pollReturn = poll(fds, 1, -1)) == -1) {
+			std::cerr << "Error in poll" << std::endl;
+            continue;
+		}
+		std::cout << "Poll: " << pollReturn << std::endl;
+		if (fds[0].revents & POLLIN) {
+			if ((_clientsocket_fd = accept(_serversocket_fd, (SA*)&_client_addr, &_client_addr_len)) < 0) {
+				throw acceptError();
+			}
+		}*/
+
+int WebServer::acceptConnection() {
+	struct pollfd fds[1];
+	int pollReturn;
+    fds[0].fd = _serversocket_fd;
+    fds[0].events = POLLIN;
+	
+    while (1) {
+        std::cout << "Waiting for connection on port " << PORT << std::endl;
+        fflush(stdout);
+		if ((pollReturn = poll(fds, 1, -1)) == -1) {
+			std::cerr << "Error in poll" << std::endl;
+            continue;
+		}
+        if (fds[0].revents & POLLIN) {
+			if ((_clientsocket_fd = accept(_serversocket_fd, (SA*)&_client_addr, &_client_addr_len)) < 0) {
+				throw acceptError();
+			}
 		}
 		_pid = fork();
 		if (_pid < 0) {
@@ -141,7 +172,7 @@ int WebServer::acceptConnection() {
 			close(_clientsocket_fd);
 			_client_addr_len = sizeof(_client_addr);
 			memset(&_client_addr, 0, _client_addr_len);
-			close(_serversocket_fd);
+			//close(_serversocket_fd);
 		} else {
 			close(_clientsocket_fd);
 			if (waitpid(_pid, &_waitpid_status, 0) == -1) {
@@ -149,6 +180,7 @@ int WebServer::acceptConnection() {
 			}
 		}
 	}
+	close(_serversocket_fd);
     return(0);
 }
 

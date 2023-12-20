@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/18 13:48:50 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/20 15:51:23 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <cstdlib>
 #include <fcntl.h>
 #include <unistd.h>
+#include <poll.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
