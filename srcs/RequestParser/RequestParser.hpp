@@ -16,8 +16,8 @@ class RequestParser {
 		std::string _httpVersion;
 		std::map<std::string, std::string> _requestHeaders;
 
-		// Private Methods
-		void _validateUri();
+	// Private Methods
+		int _validateUri();
 	public:
 	// Constructors
 		RequestParser();

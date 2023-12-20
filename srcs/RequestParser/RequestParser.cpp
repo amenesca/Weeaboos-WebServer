@@ -31,8 +31,22 @@ void	RequestParser::parse(std::string request) {
 	return ;
 }
 
-void RequestParser::_validateUri () {
-	
+int RequestParser::_validateUri () {
+	// Verificar se a URI começa com uma barra "/"
+	if (_uri.empty() || _uri[0] != '/') {
+		return -1; // Deu merda
+	}
+
+	// Verificar se os caracteres da URI são válidos
+	for (std::size_t i = 1; i < _uri.length(); ++i) {
+		char ch = _uri[i];
+
+		if (!std::isalnum(ch) && ch != '/' && ch != '_' && ch != '-') {
+			return -1; // Deu merda	
+		}
+	}
+
+	return 0; // Deu Bom
 }
 
 void RequestParser::validateRequestLine() {
@@ -64,11 +78,9 @@ std::map<std::string, std::string> RequestParser::getHeaders() {
 }
 
 const char *RequestParser::invalidMethod::what() const throw() {
-    std::string errorReturn =  "Error: invalid method in request";
-    return (errorReturn.c_str());
+    return "Error: invalid method in request";
 }
 
 const char *RequestParser::invalidHttpVersion::what() const throw() {
-    std::string errorReturn =  "Error: invalid http version";
-    return (errorReturn.c_str());
+    return "Error: invalid http version";
 }
