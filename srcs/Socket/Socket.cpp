@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/20 16:28:58 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/20 19:33:36 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,19 +117,20 @@ int WebServer::serverListen() {
 		}*/
 
 int WebServer::acceptConnection() {
-	struct pollfd fds[1];
+	struct pollfd mypoll;
+	memset(&mypoll, 0, sizeof(mypoll));
 	int pollReturn;
-    fds[0].fd = _serversocket_fd;
-    fds[0].events = POLLIN;
+    mypoll.fd = _serversocket_fd;
+    mypoll.events = POLLIN;
 	
     while (1) {
         std::cout << "Waiting for connection on port " << PORT << std::endl;
         fflush(stdout);
-		if ((pollReturn = poll(fds, 1, -1)) == -1) {
+		if ((pollReturn = poll(&mypoll, 1, -1)) == -1) {
 			std::cerr << "Error in poll" << std::endl;
             continue;
 		}
-        if (fds[0].revents & POLLIN) {
+        if (mypoll.revents & POLLIN) {
 			if ((_clientsocket_fd = accept(_serversocket_fd, (SA*)&_client_addr, &_client_addr_len)) < 0) {
 				throw acceptError();
 			}
@@ -146,7 +147,6 @@ int WebServer::acceptConnection() {
 			
 			memset(_recbuffer, 0, MAX_BUFFER_SIZE);
 			while ((_valread = read(_clientsocket_fd, _recbuffer, MAX_BUFFER_SIZE - 1)) > 0) {
-				//fprintf(stdout, "\n%s\n\n%s", bin2hex(_recbuffer, _valread), _recbuffer);
 				std::cout << "\n" << bin2hex(_recbuffer, _valread) << "\n\n" << _recbuffer << std::endl;
 				if (_recbuffer[_valread - 1] == '\n') {
 					break ;
