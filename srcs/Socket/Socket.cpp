@@ -107,43 +107,82 @@ void Socket::sendResponse() {
 }
 
 int Socket::acceptConnection() {
-	struct pollfd mypoll;
-	memset(&mypoll, 0, sizeof(mypoll));
-	int pollReturn;
-    mypoll.fd = _serversocket_fd;
-    mypoll.events = POLLIN;
-	
-    while (1) {
-        std::cout << "Waiting for connection on port " << PORT << std::endl;
-        fflush(stdout);
-		if ((pollReturn = poll(&mypoll, 1, -1)) == -1) {
-			std::cerr << "Error in poll" << std::endl;
-            continue;
-		}
-        if (mypoll.revents & POLLIN) {
-			if ((_clientsocket_fd = accept(_serversocket_fd, (SA*)&_client_addr, &_client_addr_len)) < 0) {
-				throw acceptError();
-			}
-		}
-		_pid = fork();
-		if (_pid < 0) {
-			std::cerr << "Error on forking process" << std::endl;
-			close(_clientsocket_fd);
-			continue ;
-		} else if (_pid == 0) {
+   std::cout << "Servidor aguardando conexões na porta " << PORT << std::endl;
 
-			readRequest();
-			sendResponse();
-		
-		} else {
-			close(_clientsocket_fd);
-			if (waitpid(_pid, &_waitpid_status, 0) == -1) {
-                std::cerr << "Error waiting for child process" << std::endl;
-			}
-		}
-	}
-	close(_serversocket_fd);
-    return(0);
+    std::vector<pollfd> fds(MAX_CLIENTS + 1);  // +1 para o socket do servidor
+    fds[0].fd = _serversocket_fd;
+    fds[0].events = POLLIN;
+
+    int nextClientId = 1;
+    std::vector<int> clientSockets;
+
+    while (true) {
+        int pollResult = poll(fds.data(), nextClientId, -1);
+
+        if (pollResult == -1) {
+            perror("Erro em poll");
+            break;
+        }
+
+        // Verifica se há uma nova conexão
+        if (fds[0].revents & POLLIN) {
+            int newClientSocket = accept(_serversocket_fd, NULL, NULL);
+            if (newClientSocket == -1) {
+                perror("Erro ao aceitar nova conexão");
+            } else {
+                std::cout << "Nova conexão aceita, socket: " << newClientSocket << std::endl;
+
+                if (nextClientId < MAX_CLIENTS + 1) {
+                    fds[nextClientId].fd = newClientSocket;
+                    fds[nextClientId].events = POLLIN;
+                    clientSockets.push_back(newClientSocket);
+                    ++nextClientId;
+                } else {
+                    std::cerr << "Limite máximo de clientes atingido." << std::endl;
+                    close(newClientSocket);
+                }
+            }
+        }
+
+        // Verifica se há dados para ler em clientes existentes
+        for (int i = 1; i < nextClientId; ++i) {
+            if (fds[i].revents & POLLIN) {
+                char buffer[MAX_BUFFER_SIZE];
+                ssize_t bytesRead = recv(fds[i].fd, buffer, sizeof(buffer), 0);
+
+                if (bytesRead <= 0) {
+                    // Cliente desconectado ou erro de leitura
+                    std::cout << "Cliente desconectado, socket: " << fds[i].fd << std::endl;
+                    close(fds[i].fd);
+
+                    // Remove o cliente dos descritores monitorados
+                    std::swap(fds[i], fds[nextClientId - 1]);
+                    --nextClientId;
+                    --i;  // Revisita a posição movida para verificar eventos novamente
+                } else {
+                    // Processa os dados lidos, aqui você implementaria a lógica específica
+                 buffer[bytesRead] = '\0';
+                std::cout << "Dados recebidos do cliente " << fds[i].fd << ": " << buffer << std::endl;
+
+                // Envia uma mensagem de "Hello, World!" de volta ao cliente
+                const char* helloWorldMsg = "HTTP/1.0 200 OK\r\n\r\nHello, World!\r\n";
+                ssize_t bytesSent = send(fds[i].fd, helloWorldMsg, strlen(helloWorldMsg), 0);
+				close(fds[i].fd);
+				--nextClientId;
+                if (bytesSent == -1) {
+                    perror("Erro ao enviar mensagem para o cliente");
+                }
+            }
+        }
+    }
+}
+
+    // Fecha os sockets antes de encerrar o programa
+    close(_serversocket_fd);
+    for (int i = 1; i < nextClientId; ++i) {
+        close(fds[i].fd);
+    }
+	return (0);
 }
 
 void Socket::closeServer()

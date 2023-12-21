@@ -29,9 +29,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <arpa/inet.h>
-
+#include <vector>
 
 #define MAX_BUFFER_SIZE 4096
+#define MAX_CLIENTS 1024
 #define PORT 18000
 #define SA struct sockaddr
 
