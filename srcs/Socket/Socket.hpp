@@ -35,7 +35,7 @@
 #define PORT 18000
 #define SA struct sockaddr
 
-class WebServer {
+class Socket {
     private:
         int _serversocket_fd, _clientsocket_fd;  // File Descriptor dos Sockets 
         int _opt; // Opçao para o setsockopt
@@ -50,10 +50,9 @@ class WebServer {
         socklen_t _server_addr_len, _client_addr_len;
     public:
     
-        WebServer();
-        ~WebServer();
+        Socket();
+        ~Socket();
 
-        char *bin2hex(const unsigned char *input, size_t len);
         int startServer();
         int createSocket();
         int setServerOptions();
@@ -64,6 +63,9 @@ class WebServer {
         int serverRead();*/
         int acceptConnection();
         void closeServer();
+
+        void readRequest();
+        void sendResponse();
     
         class socketError : public std::exception {
         public:
