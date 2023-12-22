@@ -29,15 +29,20 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <arpa/inet.h>
+#include <vector>
 
 
 #define MAX_BUFFER_SIZE 4096
 #define PORT 18000
 #define SA struct sockaddr
+#define MAX_CLIENTS 92
 
 class WebServer {
     private:
-        int _serversocket_fd, _clientsocket_fd;  // File Descriptor dos Sockets 
+        int _serversocket_fd; // File Descriptor dos Sockets
+		int _newclientsocket_fd;
+		std::vector<int> _clientsockets_fd; // File Descriptor de varios clientes
+		std::vector<pollfd> _mypollfds; // Vector de poll para observar 
         int _opt; // Opçao para o setsockopt
         int _sendbyte;
         int _waitpid_status;
