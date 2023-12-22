@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/20 19:33:36 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/21 22:53:45 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,37 +116,32 @@ int WebServer::serverListen() {
 			}
 		}*/
 
-int WebServer::acceptConnection() {
+int WebServer::acceptConnection()
+{
 	struct pollfd mypoll;
 	memset(&mypoll, 0, sizeof(mypoll));
 	int pollReturn;
     mypoll.fd = _serversocket_fd;
-    mypoll.events = POLLIN;
+    mypoll.events = POLLIN; //Seta o evento pra POLLIN
 	
-    while (1) {
+    while (true)
+	{
         std::cout << "Waiting for connection on port " << PORT << std::endl;
         fflush(stdout);
 		if ((pollReturn = poll(&mypoll, 1, -1)) == -1) {
 			std::cerr << "Error in poll" << std::endl;
             continue;
 		}
-        if (mypoll.revents & POLLIN) {
+		if (mypoll.revents & POLLIN) {
 			if ((_clientsocket_fd = accept(_serversocket_fd, (SA*)&_client_addr, &_client_addr_len)) < 0) {
 				throw acceptError();
 			}
-		}
-		_pid = fork();
-		if (_pid < 0) {
-			std::cerr << "Error on forking process" << std::endl;
-			close(_clientsocket_fd);
-			continue ;
-		} else if (_pid == 0) {
 			char client_address[MAX_BUFFER_SIZE + 1];
 			inet_ntop(AF_INET, &_client_addr, client_address, MAX_BUFFER_SIZE);
 			printf("Client connection: %s\n", client_address);
-			
 			memset(_recbuffer, 0, MAX_BUFFER_SIZE);
-			while ((_valread = read(_clientsocket_fd, _recbuffer, MAX_BUFFER_SIZE - 1)) > 0) {
+			while ((_valread = read(_clientsocket_fd, _recbuffer, MAX_BUFFER_SIZE - 1)) > 0)
+			{
 				std::cout << "\n" << bin2hex(_recbuffer, _valread) << "\n\n" << _recbuffer << std::endl;
 				if (_recbuffer[_valread - 1] == '\n') {
 					break ;
@@ -156,6 +151,11 @@ int WebServer::acceptConnection() {
 			if (_valread < 0) {
 				throw std::runtime_error("Read error");
 			}
+			mypoll.fd = _clientsocket_fd;
+            mypoll.events = POLLOUT; //Seta o evento pra POLLOUT
+		}
+		if (mypoll.revents & POLLOUT)
+		{
 			snprintf((char*)_buffer, sizeof(_buffer), "HTTP/1.0 200 OK\r\n\r\n<!DOCTYPE html>\
 			<html>\
 			\
@@ -170,14 +170,7 @@ int WebServer::acceptConnection() {
 			</html>");
 			write(_clientsocket_fd, (char*)_buffer, strlen((char*)_buffer));
 			close(_clientsocket_fd);
-			_client_addr_len = sizeof(_client_addr);
-			memset(&_client_addr, 0, _client_addr_len);
-			//close(_serversocket_fd);
-		} else {
-			close(_clientsocket_fd);
-			if (waitpid(_pid, &_waitpid_status, 0) == -1) {
-                std::cerr << "Error waiting for child process" << std::endl;
-			}
+			mypoll.events = POLLIN; //Volta a setar pra POLLIN pro loop voltar
 		}
 	}
 	close(_serversocket_fd);
