@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/21 22:53:45 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/22 14:57:07 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,11 +122,11 @@ int WebServer::acceptConnection()
 	memset(&mypoll, 0, sizeof(mypoll));
 	int pollReturn;
     mypoll.fd = _serversocket_fd;
-    mypoll.events = POLLIN; //Seta o evento pra POLLIN
+    mypoll.events = POLLIN;
 	
     while (true)
 	{
-        std::cout << "Waiting for connection on port " << PORT << std::endl;
+        //std::cout << "Waiting for connection on port " << PORT << std::endl;
         fflush(stdout);
 		if ((pollReturn = poll(&mypoll, 1, -1)) == -1) {
 			std::cerr << "Error in poll" << std::endl;
@@ -136,23 +136,30 @@ int WebServer::acceptConnection()
 			if ((_clientsocket_fd = accept(_serversocket_fd, (SA*)&_client_addr, &_client_addr_len)) < 0) {
 				throw acceptError();
 			}
-			char client_address[MAX_BUFFER_SIZE + 1];
-			inet_ntop(AF_INET, &_client_addr, client_address, MAX_BUFFER_SIZE);
-			printf("Client connection: %s\n", client_address);
+			//char client_address[MAX_BUFFER_SIZE + 1];
+			//inet_ntop(AF_INET, &_client_addr, client_address, MAX_BUFFER_SIZE);
+			//std::cout << "Client connection: " << client_address << std::endl;
 			memset(_recbuffer, 0, MAX_BUFFER_SIZE);
-			while ((_valread = read(_clientsocket_fd, _recbuffer, MAX_BUFFER_SIZE - 1)) > 0)
-			{
-				std::cout << "\n" << bin2hex(_recbuffer, _valread) << "\n\n" << _recbuffer << std::endl;
-				if (_recbuffer[_valread - 1] == '\n') {
-					break ;
-				}
-				memset(_recbuffer, 0, MAX_BUFFER_SIZE);
-			}
+			int flags = fcntl(_clientsocket_fd, F_GETFL, 0);
+    		fcntl(_clientsocket_fd, F_SETFL, flags | O_NONBLOCK);
+			_valread = read(_clientsocket_fd, _recbuffer, MAX_BUFFER_SIZE - 1);
 			if (_valread < 0) {
-				throw std::runtime_error("Read error");
+				if (errno == EAGAIN || errno == EWOULDBLOCK) {
+					//é pra ficar vazio mesmo, pra nao fazer nada, caso o contrário nao funciona
+				}
+				else {
+					std::cerr << "Read error: " << strerror(errno) << std::endl;
+					throw std::runtime_error("Read error");
+				}
+			} else if (_valread == 0) {
+				close(_clientsocket_fd);
+        		return (0);
+    		} else {
+				std::cout << "\n" << bin2hex(_recbuffer, _valread) << "\n\n" << _recbuffer << std::endl;
 			}
+			memset(_recbuffer, 0, MAX_BUFFER_SIZE);
 			mypoll.fd = _clientsocket_fd;
-            mypoll.events = POLLOUT; //Seta o evento pra POLLOUT
+            mypoll.events = POLLOUT;
 		}
 		if (mypoll.revents & POLLOUT)
 		{
@@ -170,7 +177,7 @@ int WebServer::acceptConnection()
 			</html>");
 			write(_clientsocket_fd, (char*)_buffer, strlen((char*)_buffer));
 			close(_clientsocket_fd);
-			mypoll.events = POLLIN; //Volta a setar pra POLLIN pro loop voltar
+			mypoll.events = POLLIN;
 		}
 	}
 	close(_serversocket_fd);
