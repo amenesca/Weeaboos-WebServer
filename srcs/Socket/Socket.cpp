@@ -126,7 +126,6 @@ int WebServer::acceptConnection()
 	_mypollfds.resize(MAX_CLIENTS + 1);
 	_mypollfds[0].fd = _serversocket_fd; // A posição 0 vai ser sempre do servidor.
 	_mypollfds[0].events = POLLIN;
-	
     while (true)
 	{
         std::cout << "Waiting for connection on port " << PORT << std::endl;
@@ -137,7 +136,8 @@ int WebServer::acceptConnection()
 			std::cerr << "Error in poll" << std::endl;
             break;
 		}
-
+		int flags2 = fcntl(_mypollfds[0].fd, F_GETFL, 0);
+		fcntl(_mypollfds[0].fd, F_SETFL, flags2 | O_NONBLOCK);
 		// Verificar se há uma nova conexão
 		if (_mypollfds[0].revents & POLLIN) {
 
@@ -155,13 +155,42 @@ int WebServer::acceptConnection()
 
 					_mypollfds[nextClientId].fd = _newclientsocket_fd;
 					// Evento para monitorar é o POLLOUT nos clientes
-					_mypollfds[nextClientId].events = POLLIN;
+					_mypollfds[nextClientId].events = POLLOUT;
 					_clientsockets_fd.push_back(_newclientsocket_fd);
-					++nextClientId;
 
 					// Configurar para modo não bloqueante
 					int flags = fcntl(_newclientsocket_fd, F_GETFL, 0);
 					fcntl(_newclientsocket_fd, F_SETFL, flags | O_NONBLOCK);
+					
+					memset(_recbuffer, 0, MAX_BUFFER_SIZE);
+					
+					_valread = recv(_mypollfds[nextClientId].fd, _recbuffer, MAX_BUFFER_SIZE - 1, 0);
+
+					if (_valread < 0) {
+						if (errno == EAGAIN || errno == EWOULDBLOCK) {
+							std::cout << "Erro não bloqueante" << std::endl;
+						// é pra ficar vazio mesmo, pra nao fazer nada, caso o contrário nao funciona
+							++nextClientId;
+						} 
+						else {
+							std::cerr << "Read error: " << strerror(errno) << std::endl;
+							std::cout << "Cliente desconectado, socket: " << _mypollfds[nextClientId].fd << std::endl;
+							close(_mypollfds[nextClientId].fd);
+							_mypollfds.erase(_mypollfds.begin() + nextClientId);
+							_clientsockets_fd.erase(_clientsockets_fd.begin() + (nextClientId - 1));
+						}
+					} else if (_valread == 0) {
+						std::cout << "Cliente desconectado, socket: " << _mypollfds[nextClientId].fd << std::endl;
+						close(_mypollfds[nextClientId].fd);
+						_mypollfds.erase(_mypollfds.begin() + nextClientId);
+						_clientsockets_fd.erase(_clientsockets_fd.begin() + (nextClientId - 1));
+					} else {
+						_recbuffer[_valread] = '\0';
+						std::cout << "\n" << "Dados recebidos do cliente: " << _mypollfds[nextClientId].fd << "\n"\
+						<< _recbuffer << std::endl;
+						memset(_recbuffer, 0, MAX_BUFFER_SIZE);
+						++nextClientId;
+					}
 				} 
 				else {
 					std::cerr << "Limite máximo de clientes atingido." << std::endl;
@@ -172,62 +201,26 @@ int WebServer::acceptConnection()
 		
 		// Não estou dando loop no read ou write, estou dando loop na estrutura para verificar
 		// se tem coisa para ler ou escrever nos sockets
-		for (int i = 1; i < nextClientId; ++i) {
-
-			_valread = read(_mypollfds[i].fd, _recbuffer, MAX_BUFFER_SIZE - 1);
-
-			if (_valread < 0) {
-				if (errno == EAGAIN || errno == EWOULDBLOCK) {
-					std::cout << "Erro não bloqueante" << std::endl;
-				// é pra ficar vazio mesmo, pra nao fazer nada, caso o contrário nao funciona
-				} 
-				else {
-					std::cerr << "Read error: " << strerror(errno) << std::endl;
-					std::cout << "Cliente desconectado, socket: " << _mypollfds[i].fd << std::endl;
-					close(_mypollfds[i].fd);
-					std::swap(_mypollfds[i], _mypollfds[nextClientId - 1]);
-					--nextClientId;
-					--i; // Revisita a posição movida para verificar eventos novamente
-				}
-			} else if (_valread == 0) {
-				std::cout << "Cliente desconectado, socket: " << _mypollfds[i].fd << std::endl;
-				close(_mypollfds[i].fd);
-        		std::swap(_mypollfds[i], _mypollfds[nextClientId - 1]);
-				--nextClientId;
-				--i; // Revisita a posição movida para verificar eventos novamente
-
-    		} else {
-				_recbuffer[_valread] = '\0';
-				std::cout << "\n" << "Dados recebidos do cliente: " << _mypollfds[i].fd << "\n"\
-				 << _recbuffer << std::endl;
-			}
-		
-			memset(_recbuffer, 0, MAX_BUFFER_SIZE);
-		
-			// Configurar modo não bloqueio
-			int flags_write = fcntl(_mypollfds[i].fd, F_GETFL, 0);
-			fcntl(_mypollfds[i].fd, F_SETFL, flags_write | O_NONBLOCK);
-
+		for (int i = 1; i < nextClientId; ++i) {		
 //			Configurar para POLLOUT
-			_mypollfds[i].events = POLLOUT;	
 			if (_mypollfds[i].revents & POLLOUT)
 			{
 				snprintf((char*)_buffer, sizeof(_buffer), "HTTP/1.0 200 OK\r\n\r\nHello, World!\r\n");
-				int bytes_writen = write(_mypollfds[i].fd, (char*)_buffer, strlen((char*)_buffer));
+				int bytes_writen = send(_mypollfds[i].fd, (char*)_buffer, strlen((char*)_buffer), 0);
 				if(bytes_writen <= 0)
 				{
 					std::cerr << "Erro de escrita: " << strerror(errno) << std::endl;
-				
 					close(_mypollfds[i].fd);
-					std::swap(_mypollfds[i], _mypollfds[nextClientId - 1]);
+					_mypollfds.erase(_mypollfds.begin() + i);
+					_clientsockets_fd.erase(_clientsockets_fd.begin() + (i - 1));
 					--nextClientId;
 				}
 				else {
 					std::cout << "Os dados foram escritos" << std::endl;
-					close(_mypollfds[i].fd);
-					std::swap(_mypollfds[i], _mypollfds[nextClientId - 1]);
-					--nextClientId;
-					_mypollfds[i].events = POLLIN;
+//						close(_mypollfds[i].fd);
+//						_mypollfds.erase(_mypollfds.begin() + i);
+//						_clientsockets_fd.erase(_clientsockets_fd.begin() + (i - 1));
+//						--nextClientId;
 				}
 			}
 		}
