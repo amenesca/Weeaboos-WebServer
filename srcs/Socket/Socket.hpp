@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/27 16:02:41 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/27 19:09:47 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <sys/wait.h>
 #include <arpa/inet.h>
 #include <vector>
 #include <sys/select.h>
@@ -40,32 +39,30 @@
 
 class WebServer {
     private:
-		char*				_hexbin; //bin2hex return value that will be freed in the end
-        int					_serversocket_fd; // File Descriptor dos Sockets
-		int					_newclientsocket_fd;
+        int					_serverSocket; // File Descriptor dos Sockets
+		int					_newClientSocket;
 		int					_opt; // Opçao para o setsockopt
         int					_sendbyte;
-        int					_waitpid_status;
         u_int8_t			_buffer[MAX_BUFFER_SIZE+1];
         u_int8_t			_recbuffer[MAX_BUFFER_SIZE+1];
         ssize_t				_bytesRead;
 		ssize_t				_bytesSent;
-		pid_t				_pid;
         socklen_t			_server_addr_len, _client_addr_len;
-		std::vector<int>	_clientsockets_fd; // File Descriptor de varios clientes
-		std::vector<pollfd>	_mypollfds; // Vector de poll para observar 
+		std::vector<int>	_clientSockets; // File Descriptor de varios clientes
+		std::vector<struct pollfd>	_pollFds; // Vector de poll para observar 
 		struct sockaddr_in	_server_addr, _client_addr;
     public:
         WebServer();
         ~WebServer();
 
-        char*	bin2hex(const unsigned char *input, size_t len);
         int		startServer();
         int		createSocket();
         int		setServerOptions();
         int		bindSocket();
         int		serverListen();
         int		acceptConnection();
+        void    configAddress();
+        void    handleRequest(int i, int clientSocket);
     
         class socketError : public std::exception {
         public:
