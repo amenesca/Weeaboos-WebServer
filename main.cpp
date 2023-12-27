@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:50 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/06 12:21:24 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/27 15:51:30 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,14 @@
 
 int main(int argc, char **argv)
 {
-	(void)argc;
-	(void)argv;
-	WebServer server = WebServer();
-	server.startServer();
+	try {
+		(void)argc;
+		(void)argv;
+		WebServer server = WebServer();
+		server.startServer();
+	} catch (const std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	}
 
   return (0);
 }
