@@ -6,28 +6,28 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/22 14:57:07 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/27 16:30:33 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
-#include <fcntl.h>
 
 WebServer::WebServer() {
 	memset(_buffer, 0, MAX_BUFFER_SIZE);
 	memset(_recbuffer, 0, MAX_BUFFER_SIZE);
+	memset(&_server_addr, 0, _server_addr_len);
+	memset(&_client_addr, 0, _client_addr_len);
 	this->_opt = 1;
 	_server_addr_len = sizeof(_server_addr);
 	_client_addr_len = sizeof(_client_addr);
-	memset(&_server_addr, 0, _server_addr_len);
-	memset(&_client_addr, 0, _client_addr_len);
 }
 
 WebServer::~WebServer() {
-    closeServer();
+    close(_serversocket_fd);
+    //free(_hexbin);
 }
 
-char *WebServer::bin2hex(const unsigned char *input, size_t len)
+/*char *WebServer::bin2hex(const unsigned char *input, size_t len)
 {
     size_t resultlen;
     const char *hexits = "0123456789ABCDEF";
@@ -48,21 +48,14 @@ char *WebServer::bin2hex(const unsigned char *input, size_t len)
 		_hexbin[(i * 3) + 2] = ' ';
 	}
 	return (_hexbin);
-}
+}*/
 
 int WebServer::startServer() {
-  try {
     createSocket();
     setServerOptions();
     bindSocket();
-	//translateAddr(argv[1]);
     serverListen();
     acceptConnection();
-	closeServer();
-	} catch (const std::exception &e) {
-		std::cerr << e.what() << std::endl;
-		closeServer();
-	}
 	return (0);
 }
 
@@ -97,26 +90,6 @@ int WebServer::serverListen() {
 	}
     return (0);
 }
-
-/*int WebServer::acceptConnection() {
-	struct pollfd fds[1];
-	int pollReturn;
-    fds[0].fd = _serversocket_fd;
-    fds[0].events = POLLIN;
-	
-    while (1) {
-        std::cout << "Waiting for connection on port " << PORT << std::endl;
-        fflush(stdout);
-		if ((pollReturn = poll(fds, 1, -1)) == -1) {
-			std::cerr << "Error in poll" << std::endl;
-            continue;
-		}
-		std::cout << "Poll: " << pollReturn << std::endl;
-		if (fds[0].revents & POLLIN) {
-			if ((_clientsocket_fd = accept(_serversocket_fd, (SA*)&_client_addr, &_client_addr_len)) < 0) {
-				throw acceptError();
-			}
-		}*/
 
 int WebServer::acceptConnection()
 {
@@ -174,57 +147,46 @@ int WebServer::acceptConnection()
 		// se tem coisa para ler ou escrever nos sockets
 		for (int i = 1; i < nextClientId; ++i) {
 
-			_valread = read(_mypollfds[i].fd, _recbuffer, MAX_BUFFER_SIZE - 1);
+			_bytesRead = recv(_mypollfds[i].fd, _recbuffer, MAX_BUFFER_SIZE - 1, 0);
 
-			if (_valread < 0) {
-				if (errno == EAGAIN || errno == EWOULDBLOCK) {
-					std::cout << "Erro não bloqueante" << std::endl;
-				// é pra ficar vazio mesmo, pra nao fazer nada, caso o contrário nao funciona
-				} 
-				else {
-					std::cerr << "Read error: " << strerror(errno) << std::endl;
+			if (_bytesRead <= 0) {
+					std::cerr << "Erro ao receber a solicitação HTTP\n";
 					std::cout << "Cliente desconectado, socket: " << _mypollfds[i].fd << std::endl;
 					close(_mypollfds[i].fd);
+					_mypollfds[i].fd = -1;
 					std::swap(_mypollfds[i], _mypollfds[nextClientId - 1]);
 					--nextClientId;
 					--i; // Revisita a posição movida para verificar eventos novamente
-				}
-			} else if (_valread == 0) {
-				std::cout << "Cliente desconectado, socket: " << _mypollfds[i].fd << std::endl;
-				close(_mypollfds[i].fd);
-        		std::swap(_mypollfds[i], _mypollfds[nextClientId - 1]);
-				--nextClientId;
-				--i; // Revisita a posição movida para verificar eventos novamente
-
-    		} else {
-				_recbuffer[_valread] = '\0';
+			} else {
+				_recbuffer[_bytesRead] = '\0';
 				std::cout << "\n" << "Dados recebidos do cliente: " << _mypollfds[i].fd << "\n"\
 				 << _recbuffer << std::endl;
 			}
 		
-			memset(_recbuffer, 0, MAX_BUFFER_SIZE);
-		
-			// Configurar modo não bloqueio
-			int flags_write = fcntl(_mypollfds[i].fd, F_GETFL, 0);
-			fcntl(_mypollfds[i].fd, F_SETFL, flags_write | O_NONBLOCK);
+			//memset(_recbuffer, 0, MAX_BUFFER_SIZE);
 
-//			Configurar para POLLOUT
+			/*int flags_write = fcntl(_mypollfds[i].fd, F_GETFL, 0);
+			fcntl(_mypollfds[i].fd, F_SETFL, flags_write | O_NONBLOCK);*/
+
+			//Configurar para POLLOUT
 			_mypollfds[i].events = POLLOUT;	
 			if (_mypollfds[i].revents & POLLOUT)
 			{
-				snprintf((char*)_buffer, sizeof(_buffer), "HTTP/1.0 200 OK\r\n\r\nHello, World!\r\n");
-				int bytes_writen = write(_mypollfds[i].fd, (char*)_buffer, strlen((char*)_buffer));
-				if(bytes_writen <= 0)
+				//snprintf((char*)_buffer, sizeof(_buffer), "HTTP/1.0 200 OK\r\n\r\nHello, World!\r\n");
+				std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World\n";
+				_bytesSent = send(_mypollfds[i].fd, response.c_str(), response.length(), 0);
+				if(_bytesSent <= 0)
 				{
 					std::cerr << "Erro de escrita: " << strerror(errno) << std::endl;
 				
 					close(_mypollfds[i].fd);
+					_mypollfds[i].fd = -1;
 					std::swap(_mypollfds[i], _mypollfds[nextClientId - 1]);
 					--nextClientId;
 				}
 				else {
 					std::cout << "Os dados foram escritos" << std::endl;
-					close(_mypollfds[i].fd);
+					//close(_mypollfds[i].fd);
 					std::swap(_mypollfds[i], _mypollfds[nextClientId - 1]);
 					--nextClientId;
 					_mypollfds[i].events = POLLIN;
@@ -234,49 +196,6 @@ int WebServer::acceptConnection()
 	}
 	close(_serversocket_fd);
     return(0);
-}
-
-//exercício de sockets
-/*int WebServer::translateAddr(const char *addr)
-{
-	if (inet_pton(AF_INET, addr, &_socket_address.sin_addr) <= 0)
-    	throw std::runtime_error("Error on translation");
-	if (connect(_socket_fd, (struct sockaddr*)&_socket_address, _socket_address_len) < 0)
-    	throw std::runtime_error("Error on connection");
-	std::sprintf(_buffer, "GET / HTTP/1.1\r\n\r\n");
-	_sendbyte = strlen(_buffer);
-	if (write(_socket_fd, _buffer, _sendbyte) != _sendbyte)
-		throw std::runtime_error("Write error");
-	memset(_recbuffer, 0, MAX_BUFFER_SIZE);
-	while ((_valread = read(_socket_fd, _recbuffer, MAX_BUFFER_SIZE - 1)) > 0)
-	{
-		std::cout << _recbuffer;
-	}
-	if (_valread < 0)
-		throw std::runtime_error("Read error");
-	return (0);
-}*/
-
-/*int WebServer::serverAccept()
-{
-	if (accept(_socket_fd, (struct sockaddr*)&_socket_address, &_socket_address_len) < 0)
-        throw acceptError();
-    return (0);
-}
-
-int WebServer::serverRead()
-{
-    if ((_valread = read(_new_socket_fd, (void*)_buffer, MAX_BUFFER_SIZE)) < 0)
-        throw readError();
-    return (0);
-}*/
-
-void WebServer::closeServer()
-{
-    close(_serversocket_fd);
-    free(_hexbin);
-    //close(_new_socket_fd);
-    exit(0);
 }
 
 const char *WebServer::socketError::what() const throw() {
