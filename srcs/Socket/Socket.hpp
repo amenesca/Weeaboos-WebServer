@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/27 19:46:11 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/27 20:18:41 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,14 @@ class WebServer {
         WebServer();
         ~WebServer();
 
-        int		startServer();
         int		createSocket();
         int		setServerOptions();
         int		bindSocket();
         int		serverListen();
         int		acceptConnection();
+        void	startServer();
         void    configAddress();
-        void    handleRequest(int i, int clientSocket, int nextClientId);
+        void    handleRequest(int& i, int& clientSocket, int& nextClientId);
     
         class socketError : public std::exception {
         public:

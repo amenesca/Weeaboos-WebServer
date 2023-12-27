@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/27 19:46:26 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/27 20:17:21 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,13 @@ WebServer::~WebServer() {
     close(_serverSocket);
 }
 
-int WebServer::startServer() {
+void WebServer::startServer() {
     createSocket();
     setServerOptions();
 	configAddress();
     bindSocket();
     serverListen();
     acceptConnection();
-	return (0);
 }
 
 int WebServer::createSocket() {
@@ -70,7 +69,7 @@ int WebServer::serverListen() {
     return (0);
 }
 
-void WebServer::handleRequest(int i, int clientSocket, int nextClientId) {
+void WebServer::handleRequest(int& i, int& clientSocket, int& nextClientId) {
 	 if (clientSocket < 0) {
         std::cerr << "Erro no socket do cliente\n";
         close(clientSocket);
