@@ -6,22 +6,17 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/27 19:40:57 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/27 20:48:36 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
 
-WebServer::WebServer() {
-	memset(_buffer, 0, MAX_BUFFER_SIZE);
-	//memset(_recbuffer, 0, MAX_BUFFER_SIZE);
-	memset(&_server_addr, 0, _server_addr_len);
-	memset(&_client_addr, 0, _client_addr_len);
+WebServer::WebServer() : _buffer(), _server_addr(), _client_addr() {
 	this->_opt = 1;
 	_server_addr_len = sizeof(_server_addr);
 	_client_addr_len = sizeof(_client_addr);
 }
-
 WebServer::~WebServer() {
     close(_serversocket_fd);
 }
