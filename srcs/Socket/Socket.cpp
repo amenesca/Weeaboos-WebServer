@@ -11,9 +11,8 @@
 /* ************************************************************************** */
 
 #include "Socket.hpp"
-#include <fcntl.h>
 
-WebServer::WebServer() {
+Socket::Socket() {
 	memset(_buffer, 0, MAX_BUFFER_SIZE);
 	memset(_recbuffer, 0, MAX_BUFFER_SIZE);
 	this->_opt = 1;
@@ -23,11 +22,11 @@ WebServer::WebServer() {
 	memset(&_client_addr, 0, _client_addr_len);
 }
 
-WebServer::~WebServer() {
+Socket::~Socket() {
     closeServer();
 }
 
-char *WebServer::bin2hex(const unsigned char *input, size_t len)
+char *Socket::bin2hex(const unsigned char *input, size_t len)
 {
     size_t resultlen;
     const char *hexits = "0123456789ABCDEF";
@@ -50,7 +49,7 @@ char *WebServer::bin2hex(const unsigned char *input, size_t len)
 	return (_hexbin);
 }
 
-int WebServer::startServer() {
+int Socket::startServer() {
   try {
     createSocket();
     setServerOptions();
@@ -66,21 +65,21 @@ int WebServer::startServer() {
 	return (0);
 }
 
-int WebServer::createSocket() {
+int Socket::createSocket() {
     if((_serversocket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         throw socketError();
 	}
     return (0);
 }
 
-int WebServer::setServerOptions() {
+int Socket::setServerOptions() {
     if (setsockopt(_serversocket_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt)) < 0) {
         throw setsockoptError();
 	}
     return (0);
 }
 
-int WebServer::bindSocket () {
+int Socket::bindSocket () {
 	_server_addr.sin_family = AF_INET;
 	_server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	_server_addr.sin_port = htons(PORT);
@@ -91,14 +90,14 @@ int WebServer::bindSocket () {
     return (0);
 }
 
-int WebServer::serverListen() {
+int Socket::serverListen() {
 	if (listen(_serversocket_fd, 10) < 0) {
         throw listenError();
 	}
     return (0);
 }
 
-/*int WebServer::acceptConnection() {
+/*int Socket::acceptConnection() {
 	struct pollfd fds[1];
 	int pollReturn;
     fds[0].fd = _serversocket_fd;
@@ -118,7 +117,7 @@ int WebServer::serverListen() {
 			}
 		}*/
 
-int WebServer::acceptConnection()
+int Socket::acceptConnection()
 {
 	int pollReturn;
 	int nextClientId = 1;
@@ -237,7 +236,7 @@ int WebServer::acceptConnection()
 }
 
 //exercício de sockets
-/*int WebServer::translateAddr(const char *addr)
+/*int Socket::translateAddr(const char *addr)
 {
 	if (inet_pton(AF_INET, addr, &_socket_address.sin_addr) <= 0)
     	throw std::runtime_error("Error on translation");
@@ -257,21 +256,21 @@ int WebServer::acceptConnection()
 	return (0);
 }*/
 
-/*int WebServer::serverAccept()
+/*int Socket::serverAccept()
 {
 	if (accept(_socket_fd, (struct sockaddr*)&_socket_address, &_socket_address_len) < 0)
         throw acceptError();
     return (0);
 }
 
-int WebServer::serverRead()
+int Socket::serverRead()
 {
     if ((_valread = read(_new_socket_fd, (void*)_buffer, MAX_BUFFER_SIZE)) < 0)
         throw readError();
     return (0);
 }*/
 
-void WebServer::closeServer()
+void Socket::closeServer()
 {
     close(_serversocket_fd);
     free(_hexbin);
@@ -279,32 +278,32 @@ void WebServer::closeServer()
     exit(0);
 }
 
-const char *WebServer::socketError::what() const throw() {
+const char *Socket::socketError::what() const throw() {
     std::string errorReturn =  "Error: socket(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }
 
-const char *WebServer::setsockoptError::what() const throw() {
+const char *Socket::setsockoptError::what() const throw() {
     std::string errorReturn =  "Error: setsockopt(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }
 
-const char *WebServer::bindError::what() const throw() {
+const char *Socket::bindError::what() const throw() {
     std::string errorReturn =  "Error: bind(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }
 
-const char *WebServer::listenError::what() const throw() {
+const char *Socket::listenError::what() const throw() {
     std::string errorReturn =  "Error: listen(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }
 
-const char *WebServer::acceptError::what() const throw() {
+const char *Socket::acceptError::what() const throw() {
     std::string errorReturn =  "Error: accept(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }
 
-const char *WebServer::readError::what() const throw() {
+const char *Socket::readError::what() const throw() {
     std::string errorReturn =  "Error: read(): " + std::string(strerror(errno));
     return (errorReturn.c_str());
 }

@@ -37,7 +37,7 @@
 #define SA struct sockaddr
 #define MAX_CLIENTS 92
 
-class WebServer {
+class Socket {
     private:
         int _serversocket_fd; // File Descriptor dos Sockets
 		int _newclientsocket_fd;
@@ -55,8 +55,8 @@ class WebServer {
         socklen_t _server_addr_len, _client_addr_len;
     public:
     
-        WebServer();
-        ~WebServer();
+        Socket();
+        ~Socket();
 
         char *bin2hex(const unsigned char *input, size_t len);
         int startServer();

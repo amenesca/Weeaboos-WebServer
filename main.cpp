@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 {
 	(void)argc;
 	(void)argv;
-	WebServer server = WebServer();
+	Socket server = Socket();
 	server.startServer();
 
   return (0);
