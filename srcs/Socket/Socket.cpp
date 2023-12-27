@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/27 19:19:52 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/27 19:46:26 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 WebServer::WebServer() {
 	memset(_buffer, 0, MAX_BUFFER_SIZE);
-	memset(_recbuffer, 0, MAX_BUFFER_SIZE);
 	memset(&_server_addr, 0, _server_addr_len);
 	memset(&_client_addr, 0, _client_addr_len);
 	this->_opt = 1;
@@ -71,7 +70,7 @@ int WebServer::serverListen() {
     return (0);
 }
 
-void WebServer::handleRequest(int i, int clientSocket) {
+void WebServer::handleRequest(int i, int clientSocket, int nextClientId) {
 	 if (clientSocket < 0) {
         std::cerr << "Erro no socket do cliente\n";
         close(clientSocket);
@@ -88,9 +87,9 @@ void WebServer::handleRequest(int i, int clientSocket) {
     	} else {
         	std::cerr << "Erro ao receber a solicitação HTTP. Erro: " << errno << "\n";
     	}
-		/*std::swap(_pollFds[i], _pollFds[nextClientId - 1]);
+		std::swap(_pollFds[i], _pollFds[nextClientId - 1]);
 		--nextClientId;
-		--i;*/
+		--i;
 		close(clientSocket);
 		return ;
 	} else if (_bytesRead == 0) {
@@ -140,17 +139,17 @@ int WebServer::acceptConnection()
 							_pollFds[nextClientId].events = POLLIN;
 							_clientSockets.push_back(_newClientSocket);
 							++nextClientId;
-						} 
-						else {
+						} else {
 							std::cerr << "Limite máximo de clientes atingido." << std::endl;
 							close(_newClientSocket);
 						}
 					}
-				} else {
-					handleRequest(i, _pollFds[i].fd);
-					_pollFds.erase(_pollFds.begin() + i);
 				}
 			}
+		}
+		for (int i = 1; i < nextClientId; ++i) {
+			handleRequest(i, _pollFds[i].fd, nextClientId);
+			_pollFds.erase(_pollFds.begin() + i);
 		}
 	}
 	close(_serverSocket);

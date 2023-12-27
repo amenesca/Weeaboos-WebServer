@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/27 19:09:47 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/27 19:46:11 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,7 @@ class WebServer {
 		int					_newClientSocket;
 		int					_opt; // Opçao para o setsockopt
         int					_sendbyte;
-        u_int8_t			_buffer[MAX_BUFFER_SIZE+1];
-        u_int8_t			_recbuffer[MAX_BUFFER_SIZE+1];
+        u_int8_t			_buffer[MAX_BUFFER_SIZE + 1];
         ssize_t				_bytesRead;
 		ssize_t				_bytesSent;
         socklen_t			_server_addr_len, _client_addr_len;
@@ -62,7 +61,7 @@ class WebServer {
         int		serverListen();
         int		acceptConnection();
         void    configAddress();
-        void    handleRequest(int i, int clientSocket);
+        void    handleRequest(int i, int clientSocket, int nextClientId);
     
         class socketError : public std::exception {
         public:
