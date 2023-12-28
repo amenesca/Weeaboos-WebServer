@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/27 19:41:11 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/28 16:18:28 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,28 +40,26 @@
 
 class WebServer {
     private:
-        int					_serversocket_fd; // File Descriptor dos Sockets
-		int					_newclientsocket_fd;
-		int					_opt; // Opçao para o setsockopt
-        int					_sendbyte;
-        u_int8_t			_buffer[MAX_BUFFER_SIZE+1];
-        //u_int8_t			_recbuffer[MAX_BUFFER_SIZE+1];
-        ssize_t				_bytesRead;
-		ssize_t				_bytesSent;
-        socklen_t			_server_addr_len, _client_addr_len;
-		std::vector<int>	_clientsockets_fd; // File Descriptor de varios clientes
-		std::vector<pollfd>	_mypollfds; // Vector de poll para observar 
-		struct sockaddr_in	_server_addr, _client_addr;
+        int							_serverSocket;
+		int							_newClientSocket;
+		int							_opt;
+        u_int8_t					_buffer[MAX_BUFFER_SIZE + 1];
+        ssize_t						_bytesRead;
+		ssize_t						_bytesSent;
+        socklen_t					_server_addr_len, _client_addr_len;
+		std::vector<struct pollfd>	_pollFds;
+		struct sockaddr_in			_server_addr, _client_addr;
     public:
         WebServer();
         ~WebServer();
 
-        int		startServer();
         int		createSocket();
         int		setServerOptions();
         int		bindSocket();
         int		serverListen();
         int		acceptConnection();
+        void	configAddress();
+        void	startServer();
     
         class socketError : public std::exception {
         public:
