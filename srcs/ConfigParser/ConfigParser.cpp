@@ -19,13 +19,18 @@ int ConfigParser::openConfig() {
 }
 
 int ConfigParser::openReadEvaluate() {
+//	int vserver_quantity;
 	size_t pos_http;
-	bool inside_http;
-	bool inside_server;
+//	bool inside_http;
+//	bool inside_server;
+	bool found_http;
+//	bool found_server;
 
+//	vserver_quantity = 0;
 	pos_http = std::string::npos;
-	inside_http = false;
-	inside_server = false;
+	found_http = false;
+//	inside_http = false;
+//	inside_server = false;
 
 	openConfig();
 
@@ -37,6 +42,11 @@ int ConfigParser::openReadEvaluate() {
         }
 
 		pos_http = _configLineRead.find_first_of("http", 4);
+		if (pos_http != std::string::npos) {
+			found_http = true;
+		}
+		if (found_http == true)
+			std::cout << "Found http" << std::endl;
 
 
 	}

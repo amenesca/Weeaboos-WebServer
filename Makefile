@@ -3,7 +3,9 @@ NAME = webserver
 CPP	= c++
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
-CLASSES = srcs/WebServer/WebServer.cpp srcs/ConfigParser/ConfigParser.cpp
+CLASSES =	srcs/WebServer/WebServer.cpp\
+			srcs/ConfigParser/ConfigParser.cpp\
+			srcs/Utils/Utils.cpp
 
 SRCS = srcs/main.cpp $(CLASSES)
 
