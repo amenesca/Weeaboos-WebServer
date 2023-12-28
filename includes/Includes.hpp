@@ -20,5 +20,6 @@
 # include <arpa/inet.h>
 # include <vector>
 # include <map>
+# include <csignal>
 
 #endif
