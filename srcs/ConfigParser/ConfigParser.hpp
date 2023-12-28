@@ -2,12 +2,14 @@
 #define CONFIGPARSER_CPP
 
 #include "../../includes/Includes.hpp"
+#include "../Utils/Utils.hpp"
 
 class ConfigParser {
     public:
 		ConfigParser();
 		~ConfigParser();
 
+		int openConfig();
 		int openReadEvaluate();
 
 		void setConfigFilePath(std::string configFilePath);
@@ -22,6 +24,7 @@ class ConfigParser {
 		std::string		_configFilePath;
 		std::string		_configLineRead;
 		std::ifstream	_configFileFstream;
+		std::map<std::string, std::map<std::string, std::string>> vservers;
 };
 
 #endif

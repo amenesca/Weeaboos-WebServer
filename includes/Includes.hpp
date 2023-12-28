@@ -19,5 +19,6 @@
 # include <sys/wait.h>
 # include <arpa/inet.h>
 # include <vector>
+# include <map>
 
 #endif
