@@ -14,15 +14,18 @@
 
 int main(int argc, char **argv)
 {
+	try {
 	WebServer server;
-	if (argc == 2)
-	{
-		server.configServer(argv[1]);
-	} else if (argc == 1) {
-		server.configServer("../conf/default.conf");
-	} else {
-		std::cerr << "WebServer: error: Invalid arguments." << std::endl;
+		if (argc == 2)
+		{
+			server.configServer(argv[1]);
+		} else if (argc == 1) {
+			server.configServer("./conf/default.conf");
+		} else {
+			std::cerr << "WebServer: error: Invalid arguments." << std::endl;
+		}
+	} catch (const std::exception &e) {
+		std::cerr << e.what() << std::endl;
 	}
-
   return (0);
 }

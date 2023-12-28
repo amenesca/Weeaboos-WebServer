@@ -41,7 +41,7 @@ int ConfigParser::openReadEvaluate() {
             continue;
         }
 
-		pos_http = _configLineRead.find_first_of("http", 4);
+		pos_http = _configLineRead.find("http");
 		if (pos_http != std::string::npos) {
 			found_http = true;
 		}

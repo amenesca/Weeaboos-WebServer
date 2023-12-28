@@ -3,9 +3,12 @@ NAME = webserver
 CPP	= c++
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
-CLASSES =	srcs/Socket/Socket.cpp
+CLASSES =	srcs/Socket/Socket.cpp\
+			srcs/WebServer/WebServer.cpp\
+			srcs/ConfigParser/ConfigParser.cpp\
+			srcs/Utils/Utils.cpp
 
-SRCS = srcs/main_femarque.cpp $(CLASSES)
+SRCS = srcs/main.cpp $(CLASSES)
 
 OBJS = $(SRCS:.cpp=.o)
 
