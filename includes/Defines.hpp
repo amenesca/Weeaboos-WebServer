@@ -1,5 +1,5 @@
-#ifndef DEFINE_HPP
-# define DEFINE_HPP
+#ifndef DEFINES_HPP
+# define DEFINES_HPP
 
 # define MAX_BUFFER_SIZE 4096
 # define PORT 18000
