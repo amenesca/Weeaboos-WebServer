@@ -9,7 +9,7 @@ WebServer::~WebServer() {
 }
 
 int WebServer::configServer(std::string configFilePath) {
-    this->configs.setConfig(configFilePath);
+    this->configs.setConfigFilePath(configFilePath);
 
     return 0;
 }

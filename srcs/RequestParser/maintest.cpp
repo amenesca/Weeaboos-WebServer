@@ -2,7 +2,7 @@
 
 int main() {
 	RequestParser request;
-	
+
 	std::string line = "GET / HTTP/1.1\r\n\
 Host: localhost:18000\r\n\
 Connection: keep-alive\r\n\

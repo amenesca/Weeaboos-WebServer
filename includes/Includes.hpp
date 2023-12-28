@@ -2,6 +2,7 @@
 # define INCLUDES_HPP
 
 # include <iostream>
+# include <fstream>
 # include <exception>
 # include <sstream>
 # include <iomanip>

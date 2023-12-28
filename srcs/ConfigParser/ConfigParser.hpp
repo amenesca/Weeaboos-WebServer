@@ -5,14 +5,23 @@
 
 class ConfigParser {
     public:
-        ConfigParser();
-        ~ConfigParser();
+		ConfigParser();
+		~ConfigParser();
 
-        int setConfigFilePath(std::string configFilePath);
-        
-        std::string getConfigFilePath() const;
-    private:
-        std::string configFilePath;
+		int openReadEvaluate();
+
+		void setConfigFilePath(std::string configFilePath);
+		std::string getConfigFilePath() const;
+
+		class OpenError : public std::exception {
+			public:
+				virtual const char* what() const throw();
+		};
+
+	private:
+		std::string		_configFilePath;
+		std::string		_configLineRead;
+		std::ifstream	_configFileFstream;
 };
 
 #endif

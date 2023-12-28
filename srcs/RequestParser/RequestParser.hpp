@@ -37,13 +37,13 @@ class RequestParser {
 
 	// Exceptions
 		class invalidMethod : public std::exception {
-        public:
-            virtual const char* what() const throw();
-        };
+		public:
+			virtual const char* what() const throw();
+		};
 
 		class invalidHttpVersion : public std::exception {
-        public:
-            virtual const char* what() const throw();
+		public:
+			virtual const char* what() const throw();
         };
 };
 
