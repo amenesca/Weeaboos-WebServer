@@ -10,14 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "includes.hpp"
+#include "WebServer/WebServer.hpp"
 
 int main(int argc, char **argv)
 {
-	(void)argc;
-	(void)argv;
-	WebServer server = WebServer();
-	server.startServer();
-
+	try {
+	WebServer server;
+		if (argc == 2)
+		{
+			server.configServer(argv[1]);
+		} else if (argc == 1) {
+			server.configServer("./conf/default.conf");
+		} else {
+			std::cerr << "WebServer: error: Invalid arguments." << std::endl;
+		}
+	} catch (const std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	}
   return (0);
 }

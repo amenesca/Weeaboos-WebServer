@@ -78,9 +78,9 @@ std::map<std::string, std::string> RequestParser::getHeaders() {
 }
 
 const char *RequestParser::invalidMethod::what() const throw() {
-    return "Error: invalid method in request";
+	return "Error: invalid method in request";
 }
 
 const char *RequestParser::invalidHttpVersion::what() const throw() {
-    return "Error: invalid http version";
+	return "Error: invalid http version";
 }

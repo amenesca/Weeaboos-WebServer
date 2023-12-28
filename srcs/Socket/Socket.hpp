@@ -6,69 +6,42 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/20 15:51:23 by femarque         ###   ########.fr       */
+/*   Updated: 2023/12/28 16:18:28 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # ifndef SOCKET_HPP
 #define SOCKET_HPP
 
-#include <iostream>
-#include <exception>
-#include <sstream>
-#include <iomanip>
-#include <cerrno>
-#include <cstring>
-#include <cstdio>
-#include <cstdlib>
-#include <fcntl.h>
-#include <unistd.h>
-#include <poll.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <arpa/inet.h>
-#include <vector>
-
+#include "../../includes/Includes.hpp"
 
 #define MAX_BUFFER_SIZE 4096
 #define PORT 18000
 #define SA struct sockaddr
 #define MAX_CLIENTS 92
 
-class WebServer {
+class Socket {
     private:
-        int _serversocket_fd; // File Descriptor dos Sockets
-		int _newclientsocket_fd;
-		std::vector<int> _clientsockets_fd; // File Descriptor de varios clientes
-		std::vector<pollfd> _mypollfds; // Vector de poll para observar 
-        int _opt; // Opçao para o setsockopt
-        int _sendbyte;
-        int _waitpid_status;
-        char *_hexbin; //bin2hex return value that will be freed in the end
-        pid_t _pid;
-        u_int8_t _buffer[MAX_BUFFER_SIZE+1];
-        u_int8_t _recbuffer[MAX_BUFFER_SIZE+1];
-        ssize_t _valread;
-        struct sockaddr_in _server_addr, _client_addr;
-        socklen_t _server_addr_len, _client_addr_len;
+        int							_serverSocket;
+		int							_newClientSocket;
+		int							_opt;
+        u_int8_t					_buffer[MAX_BUFFER_SIZE + 1];
+        ssize_t						_bytesRead;
+		ssize_t						_bytesSent;
+        socklen_t					_server_addr_len, _client_addr_len;
+		std::vector<struct pollfd>	_pollFds;
+		struct sockaddr_in			_server_addr, _client_addr;
     public:
-    
-        WebServer();
-        ~WebServer();
+        Socket();
+        ~Socket();
 
-        char *bin2hex(const unsigned char *input, size_t len);
-        int startServer();
-        int createSocket();
-        int setServerOptions();
-        int bindSocket();
-        //int translateAddr(const char *addr);
-        int serverListen();
-        /*int serverAccept();
-        int serverRead();*/
-        int acceptConnection();
-        void closeServer();
+        int		createSocket();
+        int		setServerOptions();
+        int		bindSocket();
+        int		serverListen();
+        int		acceptConnection();
+        void	configAddress();
+        void	startServer();
     
         class socketError : public std::exception {
         public:
