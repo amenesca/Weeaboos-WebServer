@@ -3,7 +3,9 @@
 
 #include "../../includes/Includes.hpp"
 #include "../Utils/Utils.hpp"
+#include "../../includes/Classes.hpp"
 
+class VirtualServer;
 class ConfigParser {
     public:
 		ConfigParser();
@@ -11,6 +13,9 @@ class ConfigParser {
 
 		int openConfig();
 		int initConfig();
+		void setVServers();
+		void configServer(int vserver);
+		std::vector<VirtualServer> getVServers(void) const;
 
 		void setConfigFilePath(std::string configFilePath);
 		std::string getConfigFilePath() const;
@@ -26,13 +31,12 @@ class ConfigParser {
 		};
 
 	private:
+		
 		std::string		_configFilePath;
-		std::string		_configLineRead;
-		std::vector<std::string> _configFileRead;
 		std::ifstream	_configFileFstream;
-		std::map<std::string, std::map<std::string, std::string> > vservers;
-
-		int insideHttp(int currentLine, int currentPos);
+		std::vector<VirtualServer> _vServers;
 };
+
+std::vector<std::string> split(const std::string& input);
 
 #endif
