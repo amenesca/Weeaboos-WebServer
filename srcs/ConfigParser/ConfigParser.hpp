@@ -14,7 +14,7 @@ class ConfigParser {
 		int openConfig();
 		int initConfig();
 		void setVServers();
-		void configServer(int vserver);
+		void configServer(VirtualServer* currentServer);
 		std::vector<VirtualServer> getVServers(void) const;
 
 		void setConfigFilePath(std::string configFilePath);

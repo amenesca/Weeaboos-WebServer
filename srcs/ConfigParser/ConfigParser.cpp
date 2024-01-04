@@ -1,7 +1,6 @@
 #include "ConfigParser.hpp"
 
 ConfigParser::ConfigParser() {
-
 }
 
 ConfigParser::~ConfigParser() {
@@ -31,31 +30,26 @@ int ConfigParser::openConfig() {
 	return (0);
 }
 
-void ConfigParser::configServer(int currentServer) {
+void ConfigParser::configServer(VirtualServer* currentServer) {
 	std::string buff;
 	while (std::getline(this->_configFileFstream, buff)) {
 		if (buff.find("listen", 0) != std::string::npos) {
-			std::cout << strtod(split(buff)[1].c_str(), NULL) << std::endl;
-			_vServers[currentServer].setPort(strtod(split(buff)[1].c_str(), NULL));
+			currentServer->setPort(strtod(split(buff)[1].c_str(), NULL));
 		}
 		if (buff.find("server_name", 0) != std::string::npos) {
-			std::cout << split(buff)[1] << std::endl;
-			std::cout << buff << std::endl;
-			_vServers[currentServer].setServerName(split(buff)[1]);
+			currentServer->setServerName(split(buff)[1]);
 		}
 		if (buff.find("body_size", 0) != std::string::npos) {
-			std::cout << split(buff)[1] << std::endl;
-			_vServers[currentServer].setBodySize(split(buff)[1]);
+			currentServer->setBodySize(split(buff)[1]);
 		}
 		if (buff.find("location", 0) != std::string::npos) {
-			std::cout << split(buff)[1] << std::endl;
-			_vServers[currentServer].setLocation(split(buff)[1]);
+			currentServer->setLocation(split(buff)[1]);
 		}
 		if (buff.find("root", 0) != std::string::npos) {
-			_vServers[currentServer].setRoot(split(buff)[1]);
+			currentServer->setRoot(split(buff)[1]);
 		}
 		if (buff.find("index", 0) != std::string::npos) {
-			_vServers[currentServer].setIndex(split(buff));
+			currentServer->setIndex(split(buff));
 		}
 	}
 }
@@ -63,14 +57,12 @@ void ConfigParser::configServer(int currentServer) {
 void ConfigParser::setVServers() {
 	
 	std::string buff;
-	int currentServer = 0;
 
 	while(std::getline(this->_configFileFstream >> std::ws, buff)) {
 		if (buff == "server {") {
 			VirtualServer serverInstance;
+			configServer(&serverInstance);
 			this->_vServers.push_back(serverInstance);
-			currentServer++;
-			configServer(currentServer);
 			std::cout << "Virtual Server Adicionado" << std::endl;
 		}
 	}
