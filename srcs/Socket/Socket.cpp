@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/28 16:18:34 by femarque         ###   ########.fr       */
+/*   Updated: 2024/01/05 16:38:00 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ int Socket::acceptConnection()
 	_pollFds.resize(MAX_CLIENTS + 1);
 	_pollFds[0].fd = _serverSocket;
 	_pollFds[0].events = POLLIN;
+    cgiHandler cgi;
 	
     while (true)
 	{
@@ -100,7 +101,8 @@ int Socket::acceptConnection()
 				std::cout << "Nova conexão aceita, socket: " << _newClientSocket << std::endl;
 				int flags = fcntl(_newClientSocket, F_GETFL, 0);
 				fcntl(_newClientSocket, F_SETFL, flags | O_NONBLOCK);
-				_pollFds.push_back(pollfd());
+				cgi.configCgi(_newClientSocket);
+                _pollFds.push_back(pollfd());
        	 		_pollFds.back().fd = _newClientSocket;
         		_pollFds.back().events = POLLIN;
 			}
@@ -126,7 +128,7 @@ int Socket::acceptConnection()
             }
 			if (_pollFds[i].revents & POLLOUT)
 			{
-    			std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World\n";
+    			std::string response = cgi.configCgi(_newClientSocket);
     			_bytesSent = send(_pollFds[i].fd, response.c_str(), response.length(), 0);
 				if (_bytesSent == -1) {
     				std::cerr << "Erro ao enviar a resposta para o cliente, socket: " << _pollFds[i].fd << std::endl;
@@ -139,6 +141,10 @@ int Socket::acceptConnection()
 	}
 	close(_serverSocket);
     return(0);
+}
+
+int const &Socket::getClientSocket() {
+    return (_newClientSocket);
 }
 
 const char *Socket::socketError::what() const throw() {
