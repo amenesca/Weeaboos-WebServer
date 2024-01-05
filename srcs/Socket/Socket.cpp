@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2024/01/05 16:38:00 by femarque         ###   ########.fr       */
+/*   Updated: 2024/01/05 18:09:26 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ int Socket::acceptConnection()
             }
 			if (_pollFds[i].revents & POLLOUT)
 			{
-    			std::string response = cgi.configCgi(_newClientSocket);
+    			std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World\n";
     			_bytesSent = send(_pollFds[i].fd, response.c_str(), response.length(), 0);
 				if (_bytesSent == -1) {
     				std::cerr << "Erro ao enviar a resposta para o cliente, socket: " << _pollFds[i].fd << std::endl;

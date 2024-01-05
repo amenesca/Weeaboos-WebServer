@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:37:17 by femarque          #+#    #+#             */
-/*   Updated: 2024/01/05 16:37:27 by femarque         ###   ########.fr       */
+/*   Updated: 2024/01/05 18:12:04 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,26 +52,28 @@ void cgiHandler::getMethods()
 	//OUTROS METODOS
 }
 
-
-void cgiHandler::initEnv()
-{
-
-}
-
-void cgiHandler::configCgi(int clientSocket)
+std::string cgiHandler::configCgi(int clientSocket)
 {
 	std::vector<const char*> envp;
-	//const char **argv;
+	std::vector<const char*>argv;
+	argv.push_back("../cgi-bin/");
+	argv.push_back("../cgi-bin/index.py");
+	argv.push_back(NULL);
 	int status;
-	const char *scriptPath = "../../cgi-bin/index.py";
-	envp[0] = "CONTENT_TYPE=text/html",
-    envp[1] = "CONTENT_LENGTH=1024",
-    envp[2] = "QUERY_STRING=nao_faço_a_menor_ideia",
-    envp[3] = "REQUEST_METHOD=GET",
-    envp[4] = "SCRIPT_NAME=/cgi-bin/index.py",
-    envp[5] = "SERVER_NAME=seila",
-    envp[6] = "SERVER_PORT=18000",
-    envp[7] = NULL;
+	int pipe_fd[2];
+	if (pipe(pipe_fd) == -1)
+    {
+        std::cerr << "Error creating pipe" << std::endl;
+        return "";
+    }
+	envp.push_back("CONTENT_TYPE=text/html");
+    envp.push_back("CONTENT_LENGTH=1024");
+    envp.push_back("QUERY_STRING=nao_faço_a_menor_ideia");
+    envp.push_back("REQUEST_METHOD=GET");
+    envp.push_back("SCRIPT_NAME=/cgi-bin/index.py");
+    envp.push_back("SERVER_NAME=seila");
+    envp.push_back("SERVER_PORT=18000");
+    envp.push_back(NULL);
 	_pid = fork();
 	if (_pid == -1)
 	{
@@ -79,19 +81,14 @@ void cgiHandler::configCgi(int clientSocket)
 	}
 	else if (_pid == 0)
 	{
-		dup2(clientSocket, STDOUT_FILENO);
-        close(clientSocket);
-		//const char *scriptPath = "../../cgi-bin/index.py";
-		/*argv = new const char*[2];
-        argv[0] = scriptPath;
-        argv[1] = NULL;*/
-		 std::vector<const char*> envpArray = envp;
-		execve(scriptPath, const_cast<char* const*>(envpArray.data()), NULL);
-		exit(EXIT_FAILURE);
+		dup2(pipe_fd[0], STDIN_FILENO);
+		dup2(pipe_fd[0], STDOUT_FILENO);
+		execve(argv[0], const_cast<char* const*>(argv.data()), const_cast<char* const*>(envp.data()));
 	}
 	else
 	{
     	waitpid(_pid, &status, 0);
 		close(clientSocket);
 	}
+	return "";
 }

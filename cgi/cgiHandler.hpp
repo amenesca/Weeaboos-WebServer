@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:35:28 by femarque          #+#    #+#             */
-/*   Updated: 2024/01/05 16:37:20 by femarque         ###   ########.fr       */
+/*   Updated: 2024/01/05 18:08:30 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ class cgiHandler {
     private:
         /*std::map<std::string, std::string>	_env;
         std::map<std::string, std::string>	_headers;*/
-		std::string							_body;
+		//std::string							_body;
         pid_t                               _pid;
-        std::string							_method;
+        //std::string							_method;
     public:
         cgiHandler();
         //cgiHandler(std::map<std::string, std::string> env, std::string	body);
@@ -32,8 +32,7 @@ class cgiHandler {
         cgiHandler &operator=(cgiHandler const &rhs);*/
         ~cgiHandler();
 
-        void configCgi(int clientSocket);
-        void initEnv();
+        std::string configCgi(int clientSocket);
         void getMethods();
 };
 
