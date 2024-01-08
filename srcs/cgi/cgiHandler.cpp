@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "cgiHandler.hpp"
-#include "../srcs/Socket/Socket.hpp"
+#include "../Socket/Socket.hpp"
 
 cgiHandler::cgiHandler() {}
 

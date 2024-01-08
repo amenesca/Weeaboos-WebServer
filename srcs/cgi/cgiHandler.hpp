@@ -13,9 +13,9 @@
 #ifndef CGI_HANDLER_HPP
 # define CGI_HANDLER_HPP
 
-#include "../includes/Includes.hpp"
-#include "../includes/Defines.hpp"
-#include "../includes/Classes.hpp"
+#include "../../includes/Includes.hpp"
+#include "../../includes/Defines.hpp"
+#include "../../includes/Classes.hpp"
 
 class Socket;
 class cgiHandler {

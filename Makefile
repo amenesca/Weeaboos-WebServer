@@ -7,7 +7,7 @@ CLASSES =	srcs/Socket/Socket.cpp\
 			srcs/WebServer/WebServer.cpp\
 			srcs/ConfigParser/ConfigParser.cpp\
 			srcs/Utils/Utils.cpp\
-			cgi/cgiHandler.cpp
+			srcs/cgi/cgiHandler.cpp
 
 SRCS = srcs/main.cpp $(CLASSES)
 
