@@ -29,7 +29,6 @@ class Socket {
 		int							_opt;
         u_int8_t					_buffer[MAX_BUFFER_SIZE + 1];
         ssize_t						_bytesRead;
-		ssize_t						_bytesSent;
         socklen_t					_server_addr_len, _client_addr_len;
 		std::vector<struct pollfd>	_pollFds;
 		struct sockaddr_in			_server_addr, _client_addr;
@@ -41,9 +40,9 @@ class Socket {
         int		setServerOptions();
         int		bindSocket();
         int		serverListen();
-        int		acceptConnection();
+        int		acceptConnection(char **envp);
         void	configAddress();
-        void	startServer();
+        void	startServer(char **envp);
         int const &getClientSocket();
     
         class socketError : public std::exception {

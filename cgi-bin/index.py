@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 import cgi
-print("Content-Type: text/html\n")
-print("<html><body>")
+print("HTTP/1.1 200 OK\r\n")
+print("<!DOCTYPE html>")
+print("<html>")
+print("<body>")
 print("<h1>Hello, world!</h1>")
-print("</body></html>")
+print("</body>")
+print("</html>")

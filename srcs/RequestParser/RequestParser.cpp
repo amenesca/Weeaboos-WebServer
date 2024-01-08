@@ -31,26 +31,26 @@ void	RequestParser::parse(std::string request) {
 	return ;
 }
 
-int RequestParser::_validateUri () {
-	// Verificar se a URI começa com uma barra "/"
-	if (_uri.empty() || _uri[0] != '/') {
-		return -1; // Deu merda
-	}
+int RequestParser::_validateUri() {
+    // Verificar se a URI começa com uma barra "/"
+    if (_uri.empty() || _uri[0] != '/') {
+        return -1; // Deu merda
+    }
 
-	// Verificar se os caracteres da URI são válidos
-	for (std::size_t i = 1; i < _uri.length(); ++i) {
-		char ch = _uri[i];
+    // Verificar se os caracteres da URI são válidos
+    for (std::size_t i = 1; i < _uri.length(); ++i) {
+        char ch = _uri[i];
 
-		if (!std::isalnum(ch) && ch != '/' && ch != '_' && ch != '-') {
-			return -1; // Deu merda	
-		}
-	}
+        if (!std::isalnum(ch) && ch != '/' && ch != '_' && ch != '-') {
+            return -1; // Deu merda    
+        }
+    }
 
-	return 0; // Deu Bom
+    return 0;
 }
 
 void RequestParser::validateRequestLine() {
-	if (_requestMethod != "GET" || _requestMethod != "POST" || _requestMethod != "DELETE") {
+	if (_requestMethod != "GET" && _requestMethod != "POST" && _requestMethod != "DELETE") {
 		throw invalidMethod();
 	}
 

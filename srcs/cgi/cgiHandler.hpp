@@ -32,8 +32,8 @@ class cgiHandler {
         cgiHandler &operator=(cgiHandler const &rhs);*/
         ~cgiHandler();
 
-        std::string configCgi(int clientSocket);
-        void getMethods();
+        std::string configCgi(int clientSocket, char **envp);
+        //void getMethods();
 };
 
 #endif
