@@ -15,6 +15,7 @@ class WebServer {
     private:
         ConfigParser configs;
 		std::vector<VirtualServer> _vservers;
+		Socket connection;
 
 };
 
