@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/28 16:18:28 by femarque         ###   ########.fr       */
+/*   Updated: 2024/01/05 16:30:26 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #define SOCKET_HPP
 
 #include "../../includes/Includes.hpp"
+#include "../../includes/Defines.hpp"
+#include "../../includes/Classes.hpp"
 
 #define MAX_BUFFER_SIZE 4096
 #define PORT 18000
@@ -42,6 +44,7 @@ class Socket {
         int		acceptConnection();
         void	configAddress();
         void	startServer();
+        int const &getClientSocket();
     
         class socketError : public std::exception {
         public:

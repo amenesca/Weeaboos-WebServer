@@ -6,7 +6,8 @@ CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 CLASSES =	srcs/Socket/Socket.cpp\
 			srcs/WebServer/WebServer.cpp\
 			srcs/ConfigParser/ConfigParser.cpp\
-			srcs/Utils/Utils.cpp
+			srcs/Utils/Utils.cpp\
+			srcs/cgi/cgiHandler.cpp
 
 SRCS = srcs/main.cpp $(CLASSES)
 

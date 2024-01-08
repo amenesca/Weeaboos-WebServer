@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/28 16:18:34 by femarque         ###   ########.fr       */
+/*   Updated: 2024/01/05 18:09:26 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ int Socket::acceptConnection()
 	_pollFds.resize(MAX_CLIENTS + 1);
 	_pollFds[0].fd = _serverSocket;
 	_pollFds[0].events = POLLIN;
+    cgiHandler cgi;
 	
     while (true)
 	{
@@ -100,7 +101,8 @@ int Socket::acceptConnection()
 				std::cout << "Nova conexão aceita, socket: " << _newClientSocket << std::endl;
 				int flags = fcntl(_newClientSocket, F_GETFL, 0);
 				fcntl(_newClientSocket, F_SETFL, flags | O_NONBLOCK);
-				_pollFds.push_back(pollfd());
+				cgi.configCgi(_newClientSocket);
+                _pollFds.push_back(pollfd());
        	 		_pollFds.back().fd = _newClientSocket;
         		_pollFds.back().events = POLLIN;
 			}
@@ -139,6 +141,10 @@ int Socket::acceptConnection()
 	}
 	close(_serverSocket);
     return(0);
+}
+
+int const &Socket::getClientSocket() {
+    return (_newClientSocket);
 }
 
 const char *Socket::socketError::what() const throw() {
