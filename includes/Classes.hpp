@@ -4,6 +4,7 @@
 # include "../srcs/Socket/Socket.hpp"
 # include "../srcs/ConfigParser/ConfigParser.hpp"
 # include "../srcs/RequestParser/RequestParser.hpp"
+# include "../srcs/VirtualServer/VirtualServer.hpp"
 # include "../srcs/cgi/cgiHandler.hpp"
 
 #endif
