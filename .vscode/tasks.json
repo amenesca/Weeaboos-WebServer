@@ -11,6 +11,7 @@
                 "./WebServer/WebServer.cpp",
                 "./ConfigParser/ConfigParser.cpp",
                 "./Utils/Utils.cpp",
+				"./VirtualServer/VirtualServer.cpp",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],

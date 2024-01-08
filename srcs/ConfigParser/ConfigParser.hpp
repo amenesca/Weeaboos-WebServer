@@ -3,14 +3,19 @@
 
 #include "../../includes/Includes.hpp"
 #include "../Utils/Utils.hpp"
+#include "../../includes/Classes.hpp"
 
+class VirtualServer;
 class ConfigParser {
     public:
 		ConfigParser();
 		~ConfigParser();
 
 		int openConfig();
-		int openReadEvaluate();
+		int initConfig();
+		void setVServers();
+		void configServer(VirtualServer* currentServer);
+		std::vector<VirtualServer> getVServers(void) const;
 
 		void setConfigFilePath(std::string configFilePath);
 		std::string getConfigFilePath() const;
@@ -20,11 +25,18 @@ class ConfigParser {
 				virtual const char* what() const throw();
 		};
 
+		class InvalidSyntax : public std::exception {
+			public:
+				virtual const char* what() const throw();
+		};
+
 	private:
+		
 		std::string		_configFilePath;
-		std::string		_configLineRead;
 		std::ifstream	_configFileFstream;
-		std::map<std::string, std::map<std::string, std::string> > vservers;
+		std::vector<VirtualServer> _vServers;
 };
+
+std::vector<std::string> split(const std::string& input);
 
 #endif

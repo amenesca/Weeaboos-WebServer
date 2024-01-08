@@ -5,6 +5,7 @@
 # include "../../includes/Defines.hpp"
 # include "../../includes/Includes.hpp"
 
+class VirtualServer;
 class WebServer {
     public:
         WebServer();
@@ -13,6 +14,7 @@ class WebServer {
         int configServer(std::string configFilePath);
     private:
         ConfigParser configs;
+		std::vector<VirtualServer> _vservers;
 
 };
 
