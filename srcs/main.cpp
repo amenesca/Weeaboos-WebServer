@@ -16,14 +16,14 @@ void signalHandler(int signum) {
     exit(signum);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char **argv, char **envp)
 {
 	signal(SIGINT, signalHandler);
 	try {
 		(void)argc;
 		(void)argv;
 		Socket server = Socket();
-		server.startServer();
+		server.startServer(envp);
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
 	}

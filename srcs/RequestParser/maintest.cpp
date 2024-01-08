@@ -22,4 +22,6 @@ Accept-Encoding: gzip, deflate, br\r\n\
 Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7\r\n";
 
 	request.parse(line);
+
+	return (0);
 }
