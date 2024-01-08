@@ -11,7 +11,8 @@ class WebServer {
         WebServer();
         ~WebServer();
 
-        int configServer(std::string configFilePath);
+        int configVServers(std::string configFilePath);
+		int initConnection();
     private:
         ConfigParser configs;
 		std::vector<VirtualServer> _vservers;
