@@ -10,7 +10,7 @@ CLASSES =	srcs/Socket/Socket.cpp\
 			srcs/VirtualServer/VirtualServer.cpp\
 			srcs/cgi/cgiHandler.cpp
 
-SRCS = srcs/main.cpp $(CLASSES)
+SRCS = srcs/main_alan.cpp $(CLASSES)
 
 OBJS = $(SRCS:.cpp=.o)
 

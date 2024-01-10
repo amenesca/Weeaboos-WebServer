@@ -22,8 +22,10 @@
 #define SA struct sockaddr
 #define MAX_CLIENTS 92
 
+class VirtualServer;
 class Socket {
     private:
+		std::vector<VirtualServer>	_vServers;
         int							_serverSocket;
 		int							_newClientSocket;
 		int							_opt;
@@ -35,6 +37,8 @@ class Socket {
     public:
         Socket();
         ~Socket();
+
+		void setVServers(std::vector<VirtualServer> vServers);
 
         int		createSocket();
         int		setServerOptions();

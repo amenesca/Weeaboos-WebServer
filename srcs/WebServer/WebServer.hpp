@@ -12,10 +12,10 @@ class WebServer {
         ~WebServer();
 
         int configVServers(std::string configFilePath);
-		int initConnection();
+		int initConnection(char **envp);
     private:
         ConfigParser configs;
-		std::vector<VirtualServer> _vservers;
+		std::vector<VirtualServer> _vServers;
 		Socket connection;
 
 };

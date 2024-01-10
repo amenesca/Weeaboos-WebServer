@@ -12,15 +12,17 @@
 
 #include "WebServer/WebServer.hpp"
 
-int main(int argc, char **argv)
+int main(int argc, char **argv, char **envp)
 {
 	try {
 	WebServer server;
 		if (argc == 2)
 		{
 			server.configVServers(argv[1]);
+			server.initConnection(envp);
 		} else if (argc == 1) {
 			server.configVServers("./conf/default.conf");
+			server.initConnection(envp);
 		} else {
 			std::cerr << "WebServer: error: Invalid arguments." << std::endl;
 		}

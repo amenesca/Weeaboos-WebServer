@@ -32,6 +32,10 @@ Socket::~Socket() {
     close(_serverSocket);
 }
 
+void Socket::setVServers(std::vector<VirtualServer> vServers) {
+	_vServers = vServers;
+}
+
 void Socket::startServer(char **envp) {
     createSocket();
     setServerOptions();
@@ -58,7 +62,7 @@ int Socket::setServerOptions() {
 
 void Socket::configAddress() {
 	_server_addr.sin_family = AF_INET;
-	_server_addr.sin_port = htons(PORT);
+	_server_addr.sin_port = htons(_vServers[0].getPort());
 	_server_addr.sin_addr.s_addr = INADDR_ANY;
 }
 
