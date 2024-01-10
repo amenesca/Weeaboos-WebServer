@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   main_alan.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
+/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:50 by femarque          #+#    #+#             */
-/*   Updated: 2023/12/28 16:10:10 by femarque         ###   ########.fr       */
+/*   Updated: 2024/01/08 14:48:45 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./Socket/Socket.hpp"
+#include "WebServer/WebServer.hpp"
 
 void signalHandler(int signum) {
     exit(signum);
@@ -20,13 +20,19 @@ int main(int argc, char **argv, char **envp)
 {
 	signal(SIGINT, signalHandler);
 	try {
-		(void)argc;
-		(void)argv;
-		Socket server = Socket();
-		server.startServer(envp);
+	WebServer server;
+		if (argc == 2)
+		{
+			server.configVServers(argv[1]);
+			server.initConnection(envp);
+		} else if (argc == 1) {
+			server.configVServers("./conf/default.conf");
+			server.initConnection(envp);
+		} else {
+			std::cerr << "WebServer: error: Invalid arguments." << std::endl;
+		}
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
 	}
-
   return (0);
 }
