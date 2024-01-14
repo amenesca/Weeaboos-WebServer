@@ -30,9 +30,27 @@ int ConfigParser::openConfig() {
 	return (0);
 }
 
+void ConfigParser::treatLocation(VirtualServer* currentServer, std::string locationPath) {
+	std::string buff;
+	Location location;
+	location._locationPath = locationPath;
+	while (std::getline(this->_configFileFstream >> std::ws, buff)) {
+		if (buff.find("root", 0) != std::string::npos) {
+			location._root = split(buff)[1];
+		}
+		if (buff.find("index", 0) != std::string::npos) {
+			location._index = split(buff);
+		}
+		if (buff.find("}", 0) != std::string::npos) {
+			break;
+		}
+	}
+	currentServer->getLocationAddress()->push_back(location);
+} 
+
 void ConfigParser::configServer(VirtualServer* currentServer) {
 	std::string buff;
-	while (std::getline(this->_configFileFstream, buff)) {
+	while (std::getline(this->_configFileFstream >> std::ws, buff)) {
 		if (buff.find("listen", 0) != std::string::npos) {
 			currentServer->setPort(strtod(split(buff)[1].c_str(), NULL));
 		}
@@ -43,14 +61,9 @@ void ConfigParser::configServer(VirtualServer* currentServer) {
 			currentServer->setBodySize(split(buff)[1]);
 		}
 		if (buff.find("location", 0) != std::string::npos) {
-			currentServer->setLocation(split(buff)[1]);
+			treatLocation(currentServer, split(buff)[1]);
 		}
-		if (buff.find("root", 0) != std::string::npos) {
-			currentServer->setRoot(split(buff)[1]);
-		}
-		if (buff.find("index", 0) != std::string::npos) {
-			currentServer->setIndex(split(buff));
-		}
+
 	}
 }
 

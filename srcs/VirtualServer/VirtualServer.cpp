@@ -16,18 +16,6 @@ void VirtualServer::setBodySize(std::string bodySize) {
 	this->_bodySize = bodySize;
 }
 
-void VirtualServer::setLocation(std::string location) {
-	this->_location = location;
-}
-
-void VirtualServer::setRoot(std::string root) {
-	this->_root = root;
-}
-
-void VirtualServer::setIndex(std::vector<std::string> index) {
-	this->_index = index;
-}
-
 int VirtualServer::getPort(void) const {
 	return(_port);
 }
@@ -40,14 +28,10 @@ std::string VirtualServer::getBodySize(void) const {
 	return(_bodySize);
 }
 
-std::string VirtualServer::getLocation(void) const {
+std::vector<Location> VirtualServer::getLocation(void) const {
 	return(_location);
 }
 
-std::string VirtualServer::getRoot(void) const {
-	return(_root);
-}
-
-std::vector<std::string> VirtualServer::getIndex(void) const {
-	return(_index);
+std::vector<Location>* VirtualServer::getLocationAddress(void) {
+	return(&_location);
 }

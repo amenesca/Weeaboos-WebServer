@@ -12,7 +12,7 @@ int WebServer::configVServers(std::string configFilePath) {
     this->configs.setConfigFilePath(configFilePath);
 	this->configs.initConfig();
 	_vServers = this->configs.getVServers();
-//	std::cout << _vservers[0].getIndex()[1] << std::endl;
+	std::cout << _vServers[0].getLocation()[0]._root << std::endl;
     return 0;
 }
 
