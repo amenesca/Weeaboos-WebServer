@@ -8,6 +8,11 @@
 struct Location {
 	std::string _locationPath;
 	std::string _root;
+	std::string _cgi_extension;
+	std::string _upload;
+	std::string _autoindex;
+	std::vector<std::string> _methods;
+	std::string _return;
 	std::vector<std::string> _index;
 };
 
@@ -19,6 +24,7 @@ class VirtualServer {
 		void setPort(int port);
 		void setServerName(std::string serverName);
 		void setBodySize(std::string bodySize);
+		void setErrorPage(std::vector<std::string>);
 
 		int getPort(void) const;
 		std::string getServerName(void) const;
@@ -31,6 +37,7 @@ class VirtualServer {
 		int _port;
 		std::string _serverName;
 		std::string _bodySize;
+		std::vector<std::string> _errorPage;
 		std::vector<Location> _location;
 };
 

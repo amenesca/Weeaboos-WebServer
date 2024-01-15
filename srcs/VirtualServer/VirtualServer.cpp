@@ -16,6 +16,10 @@ void VirtualServer::setBodySize(std::string bodySize) {
 	this->_bodySize = bodySize;
 }
 
+void VirtualServer::setErrorPage(std::vector<std::string> errorPage) {
+	this->_errorPage = errorPage;
+}
+
 int VirtualServer::getPort(void) const {
 	return(_port);
 }

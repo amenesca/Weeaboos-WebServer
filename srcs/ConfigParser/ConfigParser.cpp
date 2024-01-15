@@ -38,8 +38,23 @@ void ConfigParser::treatLocation(VirtualServer* currentServer, std::string locat
 		if (buff.find("root", 0) != std::string::npos) {
 			location._root = split(buff)[1];
 		}
+		if (buff.find("cgi_extension", 0) != std::string::npos) {
+			location._cgi_extension = split(buff)[1];
+		}
+		if (buff.find("upload", 0) != std::string::npos) {
+			location._upload = split(buff)[1];
+		}
 		if (buff.find("index", 0) != std::string::npos) {
 			location._index = split(buff);
+		}
+		if (buff.find("autoindex", 0) != std::string::npos) {
+			location._autoindex = split(buff)[1];
+		}
+		if (buff.find("methods", 0) != std::string::npos) {
+			location._methods = split(buff);
+		}
+		if (buff.find("return", 0) != std::string::npos) {
+			location._return = split(buff)[1];
 		}
 		if (buff.find("}", 0) != std::string::npos) {
 			break;
@@ -51,7 +66,10 @@ void ConfigParser::treatLocation(VirtualServer* currentServer, std::string locat
 void ConfigParser::configServer(VirtualServer* currentServer) {
 	std::string buff;
 	while (std::getline(this->_configFileFstream >> std::ws, buff)) {
-		if (buff.find("listen", 0) != std::string::npos) {
+		if (buff.find("error_page", 0) != std::string::npos) {
+			currentServer->setErrorPage(split(buff));
+		}
+		if (buff.find("listen", 0) != std::string::npos || buff.find("port", 0) != std::string::npos) {
 			currentServer->setPort(strtod(split(buff)[1].c_str(), NULL));
 		}
 		if (buff.find("server_name", 0) != std::string::npos) {
