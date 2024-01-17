@@ -44,7 +44,10 @@ class Socket {
         int		setServerOptions();
         int		bindSocket();
         int		serverListen();
-        int		acceptConnection(char **envp);
+        int		Connection(char **envp);
+        int     acceptConnection();
+        int     receiveRequest(size_t i);
+        int     sendResponse(size_t *i, char **envp);
         void	configAddress();
         void	startServer(char **envp);
         int const &getClientSocket();
