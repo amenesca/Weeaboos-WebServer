@@ -6,5 +6,6 @@
 # include "../srcs/RequestParser/RequestParser.hpp"
 # include "../srcs/VirtualServer/VirtualServer.hpp"
 # include "../srcs/cgi/cgiHandler.hpp"
+# include "../srcs/Client/Client.hpp"
 
 #endif

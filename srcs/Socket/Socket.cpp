@@ -107,7 +107,7 @@ int Socket::receiveRequest(size_t *i) {
         _pollFds.erase(_pollFds.begin() + *i);
         --*i;
     } else {
-        _buffer[_bytesRead] = '\0';
+       _buffer[_bytesRead] = '\0';
         std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << _buffer << std::endl;
         _pollFds[*i].events = POLLOUT;
     }
@@ -133,7 +133,7 @@ int Socket::Connection(char **envp)
 	
     while (true)
 	{
-        std::cout << "Waiting for connection on port " << PORT << std::endl;
+        std::cout << "Waiting for connection on port " << _vServers[0].getPort() << std::endl;
 	
 		int pollReturn = poll(&_pollFds[0], _pollFds.size(), -1);
 		if ( pollReturn == -1) {

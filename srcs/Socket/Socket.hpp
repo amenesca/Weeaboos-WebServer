@@ -17,15 +17,12 @@
 #include "../../includes/Defines.hpp"
 #include "../../includes/Classes.hpp"
 
-#define MAX_BUFFER_SIZE 4096
-#define PORT 18000
-#define SA struct sockaddr
-#define MAX_CLIENTS 92
-
 class VirtualServer;
+class Client;
 class Socket {
     private:
 		std::vector<VirtualServer>	_vServers;
+        std::vector<Client>         _clients;
         int							_serverSocket;
 		int							_newClientSocket;
 		int							_opt;
