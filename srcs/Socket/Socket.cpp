@@ -95,21 +95,21 @@ int Socket::acceptConnection() {
     return (0);
 }
 
-int Socket::receiveRequest(size_t i) {
-    _bytesRead = recv(_pollFds[i].fd, _buffer, sizeof(_buffer) - 1, 0);
+int Socket::receiveRequest(size_t *i) {
+    _bytesRead = recv(_pollFds[*i].fd, _buffer, sizeof(_buffer) - 1, 0);
     if (_bytesRead <= 0) {
         if (_bytesRead < 0) {
-            std::cerr << "Erro ao receber dados do cliente, socket: " << _pollFds[i].fd << std::endl;
+            std::cerr << "Erro ao receber dados do cliente, socket: " << _pollFds[*i].fd << std::endl;
         } else {
-            std::cerr << "Cliente desconectado, socket: " << _pollFds[i].fd << std::endl;
+            std::cerr << "Cliente desconectado, socket: " << _pollFds[*i].fd << std::endl;
         }
-        close(_pollFds[i].fd);
-        _pollFds.erase(_pollFds.begin() + i);
-        --i;
+        close(_pollFds[*i].fd);
+        _pollFds.erase(_pollFds.begin() + *i);
+        --*i;
     } else {
         _buffer[_bytesRead] = '\0';
-        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[i].fd << "\n" << _buffer << std::endl;
-        _pollFds[i].events = POLLOUT;
+        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << _buffer << std::endl;
+        _pollFds[*i].events = POLLOUT;
     }
     return (0);
 }
@@ -146,7 +146,7 @@ int Socket::Connection(char **envp)
 		for (size_t i = 1; i < _pollFds.size(); ++i) {
 			if (_pollFds[i].revents & POLLIN)
 			{
-				receiveRequest(i);
+				receiveRequest(&i);
             }
 			if (_pollFds[i].revents & POLLOUT)
 			{
