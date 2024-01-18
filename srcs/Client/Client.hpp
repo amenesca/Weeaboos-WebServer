@@ -15,7 +15,7 @@ class Client {
         Client();
         ~Client();
 
-        u_int8_t    **getBufferAddress(void);
+        std::string *getBufferAddress(void);
         SA          *getClientAddrPointer(void);
         socklen_t   *getClientAddrLenPointer(void);
         int         getClientSocket(void) const;
@@ -28,7 +28,7 @@ class Client {
         int			_clientSocket;
         socklen_t   _client_addr_len;
         SA          _client_addr;
-        u_int8_t	*_requestBuffer;
+        std::string _requestBuffer;
         ssize_t     _bytesRead;
 };
 

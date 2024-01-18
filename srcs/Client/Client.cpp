@@ -1,18 +1,13 @@
 #include "./Client.hpp"
 
 Client::Client() {
-    _requestBuffer = new u_int8_t[MAX_BUFFER_SIZE + 1];
     _client_addr_len = sizeof(_client_addr);
 }
 
 Client::~Client() {
-    if (_requestBuffer != NULL) {
-        delete _requestBuffer;
-        _requestBuffer = NULL;
-    }
 }
 
-u_int8_t **Client::getBufferAddress(void) {
+std::string *Client::getBufferAddress(void) {
     return (&_requestBuffer);
 }
 
