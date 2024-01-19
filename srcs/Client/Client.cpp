@@ -7,8 +7,8 @@ Client::Client() {
 Client::~Client() {
 }
 
-std::string *Client::getBufferAddress(void) {
-    return (&_requestBuffer);
+std::string* Client::getBuffer(void) {
+    return (_requestBuffer1);
 }
 
 SA *Client::getClientAddrPointer(void) {
@@ -25,6 +25,11 @@ int Client::getClientSocket(void) const {
 
 ssize_t Client::getBytesRead(void) const {
     return _bytesRead;
+}
+
+void Client::setRequestBuffer(std::string requestBuffer) {
+    //tive que usa o new o negocio estava muito doido, dando segfault sem motivo
+    _requestBuffer1 = new std::string(requestBuffer);
 }
 
 void Client::setClientSocket(int clientSocket) {

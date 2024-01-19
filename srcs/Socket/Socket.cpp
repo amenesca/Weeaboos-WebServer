@@ -116,7 +116,11 @@ int Socket::receiveRequest(size_t *i) {
         --*i;
     } else {
        _buffer[_clients[j].getBytesRead()] = '\0';
-        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << _buffer << std::endl;
+        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << std::endl;
+        _requestBuffer += std::string(_buffer);
+        _clients[j].setRequestBuffer(_requestBuffer);
+        _requestBuffer.clear();
+        memset(_buffer, '\0', MAX_BUFFER_SIZE + 1);
         _pollFds[*i].events = POLLOUT;
     }
     return (0);
@@ -127,9 +131,12 @@ int Socket::sendResponse(size_t *i, char **envp) {
 //    std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World\n";
     cgi.configCgi(_pollFds[*i].fd, envp);
     close(_pollFds[*i].fd);
+    std::cout << "Dentro do send response\n\n" << *_clients[*i - 1].getBuffer() << std::endl;
+    delete _clients[*i - 1].getBuffer();
     _pollFds.erase(_pollFds.begin() + *i);
     _clients.erase(_clients.begin() + (*i - 1));
     --*i;
+
     return (0);
 }
 

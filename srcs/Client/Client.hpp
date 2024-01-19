@@ -15,7 +15,7 @@ class Client {
         Client();
         ~Client();
 
-        std::string *getBufferAddress(void);
+        std::string* getBuffer(void);
         SA          *getClientAddrPointer(void);
         socklen_t   *getClientAddrLenPointer(void);
         int         getClientSocket(void) const;
@@ -24,11 +24,12 @@ class Client {
         void        setClientSocket(int clientSocket);
         void        setClientAddrLen(socklen_t _client_addr_len);
         void        setBytesRead(ssize_t bytesRead);
+        void        setRequestBuffer(std::string _requestBuffer);
     private:
         int			_clientSocket;
         socklen_t   _client_addr_len;
         SA          _client_addr;
-        std::string _requestBuffer;
+        std::string *_requestBuffer1;
         ssize_t     _bytesRead;
 };
 

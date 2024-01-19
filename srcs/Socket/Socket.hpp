@@ -26,7 +26,8 @@ class Socket {
         int							_serverSocket;
 		int							_newClientSocket;
 		int							_opt;
-        u_int8_t					_buffer[MAX_BUFFER_SIZE + 1];
+        char				        _buffer[MAX_BUFFER_SIZE + 1];
+        std::string                 _requestBuffer;
         ssize_t						_bytesRead;
         socklen_t					_server_addr_len, _client_addr_len;
 		std::vector<struct pollfd>	_pollFds;
