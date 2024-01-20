@@ -8,7 +8,8 @@ CLASSES =	srcs/Socket/Socket.cpp\
 			srcs/ConfigParser/ConfigParser.cpp\
 			srcs/Utils/Utils.cpp\
 			srcs/VirtualServer/VirtualServer.cpp\
-			srcs/cgi/cgiHandler.cpp
+			srcs/cgi/cgiHandler.cpp\
+			srcs/Client/Client.cpp
 
 SRCS = srcs/main.cpp $(CLASSES)
 

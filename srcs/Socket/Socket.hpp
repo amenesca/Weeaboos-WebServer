@@ -17,19 +17,17 @@
 #include "../../includes/Defines.hpp"
 #include "../../includes/Classes.hpp"
 
-#define MAX_BUFFER_SIZE 4096
-#define PORT 18000
-#define SA struct sockaddr
-#define MAX_CLIENTS 92
-
 class VirtualServer;
+class Client;
 class Socket {
     private:
 		std::vector<VirtualServer>	_vServers;
+        std::vector<Client>         _clients;
         int							_serverSocket;
 		int							_newClientSocket;
 		int							_opt;
-        u_int8_t					_buffer[MAX_BUFFER_SIZE + 1];
+        char				        _buffer[MAX_BUFFER_SIZE + 1];
+        std::string                 _requestBuffer;
         ssize_t						_bytesRead;
         socklen_t					_server_addr_len, _client_addr_len;
 		std::vector<struct pollfd>	_pollFds;
