@@ -139,7 +139,7 @@ int Socket::sendResponse(size_t *i, char **envp) {
     cgi.configCgi(_pollFds[*i].fd, envp);
     close(_pollFds[*i].fd);
     std::cout << "Dentro do send response\n\n" << *_clients[j].getBuffer() << std::endl;
-    delete _clients[*i - 1].getBuffer();
+    delete _clients[j].getBuffer();
     _pollFds.erase(_pollFds.begin() + *i);
     _clients.erase(_clients.begin() + (j));
     --*i;
@@ -167,6 +167,7 @@ int Socket::Connection(char **envp)
             acceptConnection();
 		}
 		for (size_t i = 1; i < _pollFds.size(); ++i) {
+			// o pollfds usamos sempre a partir do i , o clients usamos a partir do j que é i - 1
 			if (_pollFds[i].revents & POLLIN)
 			{
 				receiveRequest(&i);
