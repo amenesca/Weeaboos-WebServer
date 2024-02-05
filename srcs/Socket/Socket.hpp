@@ -19,6 +19,7 @@
 
 class VirtualServer;
 class Client;
+class RequestParser;
 class Socket {
     private:
 		std::vector<VirtualServer>	_vServers;

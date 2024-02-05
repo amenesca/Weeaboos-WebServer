@@ -128,13 +128,20 @@ int Socket::receiveRequest(size_t *i) {
 
 int Socket::sendResponse(size_t *i, char **envp) {
      cgiHandler cgi;
+	 RequestParser requestParser;
+	 int j = *i - 1;
 //    std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World\n";
+	requestParser.parse(*_clients[j].getBuffer());
+	if (requestParser.getMethod() == "GET") {
+		std::cout << requestParser.getMethod() << std::endl;
+	}
+
     cgi.configCgi(_pollFds[*i].fd, envp);
     close(_pollFds[*i].fd);
-    std::cout << "Dentro do send response\n\n" << *_clients[*i - 1].getBuffer() << std::endl;
-    delete _clients[*i - 1].getBuffer();
+    std::cout << "Dentro do send response\n\n" << *_clients[j].getBuffer() << std::endl;
+    delete _clients[j].getBuffer();
     _pollFds.erase(_pollFds.begin() + *i);
-    _clients.erase(_clients.begin() + (*i - 1));
+    _clients.erase(_clients.begin() + (j));
     --*i;
 
     return (0);
@@ -160,6 +167,7 @@ int Socket::Connection(char **envp)
             acceptConnection();
 		}
 		for (size_t i = 1; i < _pollFds.size(); ++i) {
+			// o pollfds usamos sempre a partir do i , o clients usamos a partir do j que é i - 1
 			if (_pollFds[i].revents & POLLIN)
 			{
 				receiveRequest(&i);
