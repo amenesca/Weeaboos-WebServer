@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Responde.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:30:46 by femarque          #+#    #+#             */
-/*   Updated: 2024/01/22 17:27:48 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:35:33 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ Response::Response()
     _body(""),
     _header(""), 
     _path(""), 
-    _method(""), 
     _cgiHandler() {}
 
 Response::Response(int status, std::string response, std::string body, std::string header, std::string path, std::string method, cgiHandler cgiHandler) 
@@ -27,7 +26,6 @@ Response::Response(int status, std::string response, std::string body, std::stri
     _body(body),
     _header(header),
     _path(path),
-    _method(method),
     _cgiHandler(cgiHandler) {}
 
 Response::Response(Response const &src) {
@@ -68,10 +66,6 @@ std::string Response::getPath() const {
     return (_path);
 }
 
-std::string Response::getMethod() const {
-    return (_method);
-}
-
 void    Response::setStatus(int status) {
     _status = status;
 }
@@ -84,8 +78,8 @@ void    Response::setPath(std::string path) {
     _path = path;
 }
 
-void    Response::setMethod(std::string method) {
-    _method = method;
+void Response::setBody(std::string body) {
+    _body = _request.
 }
 
 std::string    Responde::setHeader(std::string status, std::string contentType) {
@@ -97,6 +91,7 @@ std::string    Responde::setHeader(std::string status, std::string contentType) 
     header.append("\r\n").append("\r\n");
 
     _header = header;
+    return(header);
 }
 
 void Response::send() {

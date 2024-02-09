@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by femarque          #+#    #+#             */
-/*   Updated: 2024/01/05 18:09:26 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:32:57 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,10 +127,10 @@ int Socket::receiveRequest(size_t *i) {
 }
 
 int Socket::sendResponse(size_t *i, char **envp) {
-     cgiHandler cgi;
-	 RequestParser requestParser;
-	 int j = *i - 1;
-//    std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World\n";
+	cgiHandler cgi;
+	RequestParser requestParser;
+	int j = *i - 1;
+	//std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World\n";
 	requestParser.parse(*_clients[j].getBuffer());
 	if (requestParser.getMethod() == "GET") {
 		std::cout << requestParser.getMethod() << std::endl;

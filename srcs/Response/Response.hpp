@@ -16,6 +16,7 @@ class Response {
         std::string _path;
         std::string _method;
         cgiHandler  _cgiHandler;
+        RequestParser _request;
 
     public:
         Response();
