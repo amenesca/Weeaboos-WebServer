@@ -14,6 +14,7 @@ class RequestParser {
 		std::string _requestMethod;
 		std::string _uri;
 		std::string _httpVersion;
+		std::string _requestBody;
 		std::map<std::string, std::string> _requestHeaders;
 
 	// Private Methods
@@ -30,10 +31,11 @@ class RequestParser {
 		void	validateHeader();
 	
 	// Getters
-		std::string getMethod();
-		std::string getUri();
-		std::string getHttpVersion();
-		std::map<std::string, std::string> getHeaders();
+		std::string getMethod() const ;
+		std::string getUri() const;
+		std::string getHttpVersion() const;
+		std::string getBody() const
+		std::map<std::string, std::string> getHeaders() const;
 
 	// Exceptions
 		class invalidMethod : public std::exception {

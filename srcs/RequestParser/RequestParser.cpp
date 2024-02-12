@@ -10,25 +10,28 @@ RequestParser::RequestParser(std::string request) {
 }
 
 void	RequestParser::parse(std::string request) {
-	// Declaring variables
-	std::string requestLine, headerLine;
-	std::istringstream requestStream(request);
+    // Declaring variables
+    std::string requestLine, headerLine;
+    std::istringstream requestStream(request);
 
-	// Solicitation Line parsing
-	std::getline(requestStream, requestLine);
-	std::istringstream requestLineStream(requestLine);
-	requestLineStream >> this->_requestMethod >> this->_uri >> this->_httpVersion;
+    // Solicitation Line parsing
+    std::getline(requestStream, requestLine);
+    std::istringstream requestLineStream(requestLine);
+    requestLineStream >> this->_requestMethod >> this->_uri >> this->_httpVersion;
 
-	// Header parsing
-	while(std::getline(requestStream, headerLine) && headerLine != "\r") {
-		size_t separator = headerLine.find(":");
-		if (separator != std::string::npos) {
-			std::string key = headerLine.substr(0, separator);
-			std::string value = headerLine.substr(separator + 2); // + 2 para ignorar ": " 
-			this->_requestHeaders[key] = value;
-		}
-	}
-	return ;
+    // Header parsing
+    while(std::getline(requestStream, headerLine) && headerLine != "\r") {
+        size_t separator = headerLine.find(":");
+        if (separator != std::string::npos) {
+            std::string key = headerLine.substr(0, separator);
+            std::string value = headerLine.substr(separator + 2); // + 2 para ignorar ": " 
+            this->_requestHeaders[key] = value;
+        }
+    }
+    // Body parsing
+    std::getline(requestStream, this->_requestBody, '\0');
+
+    return ;
 }
 
 int RequestParser::_validateUri() {
@@ -61,19 +64,23 @@ void RequestParser::validateRequestLine() {
 	_validateUri();
 }
 
-std::string RequestParser::getMethod() {
+std::string RequestParser::getMethod() const {
 	return _requestMethod;
 }
 
-std::string RequestParser::getUri() {
+std::string RequestParser::getUri() const {
 	return _uri;
 }
 
-std::string RequestParser::getHttpVersion() {
+std::string RequestParser::getHttpVersion() const {
 	return _httpVersion;
 }
 
-std::map<std::string, std::string> RequestParser::getHeaders() {
+std::string RequestParser::getRequestBody() const {
+	return _requestBody;
+}
+
+std::map<std::string, std::string> RequestParser::getHeaders() const {
 	return _requestHeaders;
 }
 
