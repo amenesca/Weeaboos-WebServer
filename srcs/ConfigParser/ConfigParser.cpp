@@ -107,6 +107,8 @@ void ConfigParser::setVServers() {
 			configServer(&serverInstance);
 			this->_vServers.push_back(serverInstance);
 			std::cout << "Virtual Server Adicionado" << std::endl;
+		} else {
+			throw InvalidSyntax();
 		}
 	}
 }
@@ -140,5 +142,5 @@ const char *ConfigParser::OpenError::what() const throw() {
 
 const char *ConfigParser::InvalidSyntax::what() const throw() {
     
-	return ("WebServer: error: invalid syntax .");
+	return ("WebServer: error: invalid syntax.");
 }

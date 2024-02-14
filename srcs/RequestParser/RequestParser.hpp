@@ -46,7 +46,7 @@ class RequestParser {
 		std::string getMethod() const ;
 		std::string getUri() const;
 		std::string getHttpVersion() const;
-		std::string getBody() const
+		std::string getBody() const;
 		std::map<std::string, std::string> getHeaders() const;
 
 	// Exceptions

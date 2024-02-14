@@ -88,7 +88,7 @@ std::string RequestParser::getHttpVersion() const {
 	return _httpVersion;
 }
 
-std::string RequestParser::getRequestBody() const {
+std::string RequestParser::getBody() const {
 	return _requestBody;
 }
 
