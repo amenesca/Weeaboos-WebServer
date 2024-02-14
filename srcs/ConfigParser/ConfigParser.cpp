@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConfigParser.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
+/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/07 11:24:57 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/07 11:24:59 by femarque         ###   ########.fr       */
+/*   Created: 2024/02/07 11:24:57 by amenesca          #+#    #+#             */
+/*   Updated: 2024/02/14 13:24:46 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
