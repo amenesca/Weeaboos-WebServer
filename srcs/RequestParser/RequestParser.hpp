@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   RequestParser.hpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/14 13:24:05 by amenesca          #+#    #+#             */
+/*   Updated: 2024/02/14 13:24:06 by amenesca         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef REQUESTPARSER_HPP
 # define REQUESTPARSER_HPP
 
@@ -34,7 +46,7 @@ class RequestParser {
 		std::string getMethod() const ;
 		std::string getUri() const;
 		std::string getHttpVersion() const;
-		std::string getBody() const
+		std::string getBody() const;
 		std::map<std::string, std::string> getHeaders() const;
 
 	// Exceptions

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   RequestParser.cpp                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/14 13:24:07 by amenesca          #+#    #+#             */
+/*   Updated: 2024/02/14 13:24:08 by amenesca         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "./RequestParser.hpp"
 #include <sstream>
 
@@ -76,7 +88,7 @@ std::string RequestParser::getHttpVersion() const {
 	return _httpVersion;
 }
 
-std::string RequestParser::getRequestBody() const {
+std::string RequestParser::getBody() const {
 	return _requestBody;
 }
 
