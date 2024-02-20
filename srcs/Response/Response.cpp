@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:30:46 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/14 13:23:55 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/20 20:18:58 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,47 @@ void Response::processFileForHTTPResponse(std::stringstream &file, std::string s
 
     _body = content;
    setHeader(statusCode, "text/html");
+}
+
+std::string Response::readData(const std::string& path)
+{
+    std::ifstream file(path);
+    if (!file.is_open())
+        return ("");
+
+    std::string data;
+    std::string line;
+    while (std::getline(file, line))
+    {
+        data += line;
+        data += "\n";
+    }
+
+    file.close();
+
+    return (data);
+}
+
+void Response::handleGET(RequestParser request)
+{
+    if (request.getMethod() != "GET") {
+        setStatus(405); // 405 = Method Not Allowed
+        setHeader("405 Method Not Allowed", "text/plain");
+        _body = "405 Method Not Allowed";
+        return ;
+    }
+    std::string uri = request.getUri();
+    std::string data = readData(uri);
+     if (!data.empty())
+     {
+        setStatus(200);
+        setHeader("200 OK", "text/html");
+        _body = data;
+    }
+    else
+    {
+        setStatus(404);
+        setHeader("404 Not Found", "text/html");
+        _body = "404 Not Found";
+    }
 }
