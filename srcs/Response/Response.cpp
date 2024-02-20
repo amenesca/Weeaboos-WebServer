@@ -10,23 +10,21 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Responde.hpp"
+#include "Response.hpp"
 
 Response::Response()
 :   _status(0),
     _response(""),
     _body(""),
-    _header(""), 
-    _path(""), 
-    _cgiHandler() {}
+    _header("")
+	{}
 
-Response::Response(int status, std::string response, std::string body, std::string header, std::string path, std::string method, cgiHandler cgiHandler) 
+Response::Response(int status, std::string response, std::string body, std::string header) 
 :   _status(status),
     _response(response),
     _body(body),
-    _header(header),
-    _path(path),
-    _cgiHandler(cgiHandler) {}
+    _header(header)
+    {}
 
 Response::Response(Response const &src) {
     *this = src;
@@ -38,10 +36,7 @@ Response &Response::operator=(Response const &src) {
     if (this != &src) {
         this->_status = src._status;
         this->_response = src._response;
-        this->_body = src._body;
         this->_header = src._header;
-        this->_path = src._path;
-        this->_method = src._method;
     }
     return (*this);
 }
@@ -54,16 +49,8 @@ std::string Response::getResponse() const {
     return (_response);
 }
 
-std::string Response::getBody() const {
-    return (_body);
-}
-
 std::string Response::getHeader() const {
     return (_header);
-}
-
-std::string Response::getPath() const {
-    return (_path);
 }
 
 void    Response::setStatus(int status) {
@@ -74,15 +61,14 @@ void    Response::setResponse(std::string response) {
     _response = response;
 }
 
-void    Response::setPath(std::string path) {
-    _path = path;
+std::string Response::toString(int number) {
+    std::stringstream ss;
+    ss << number;
+    std::string str = ss.str();
+    return str;
 }
 
-void Response::setBody(std::string body) {
-    _body = _request.
-}
-
-std::string    Responde::setHeader(std::string status, std::string contentType) {
+std::string    Response::setHeader(std::string status, std::string contentType) {
     std::string header;
 
     header.append("HTTP/1.1 ").append(status).append("\r\n");
@@ -103,5 +89,5 @@ void Response::processFileForHTTPResponse(std::stringstream &file, std::string s
     std::string content = file.str();
 
     _body = content;
-    createHTTPHeader(statusCode, "text/html");
+   setHeader(statusCode, "text/html");
 }

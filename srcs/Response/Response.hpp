@@ -1,11 +1,11 @@
 #ifndef RESPONSE_HPP
 # define RESPONSE_HPP
 
-# include <iostream>
 # include "../../includes/Classes.hpp"
-# include "../../includes/Includes.hpp"
 # include "../../includes/Defines.hpp"
+# include "../../includes/Includes.hpp"
 
+class cgiHandler;
 
 class Response {
     private:
@@ -13,14 +13,13 @@ class Response {
         std::string _response;
         std::string _body;
         std::string _header;
-        std::string _path;
-        std::string _method;
-        cgiHandler  _cgiHandler;
         RequestParser _request;
+		std::string httpMessage;
+		cgiHandler cgihandler;
 
     public:
         Response();
-        Response(int status, std::string response, std::string body, std::string header, std::string path, std::string method, cgiHandler cgiHandler);
+       	Response(int status, std::string response, std::string body, std::string header);
         Response(Response const &src);
         ~Response();
 
@@ -28,19 +27,15 @@ class Response {
 
         int         getStatus() const;
         std::string getResponse() const;
-        std::string getBody() const;
         std::string getHeader() const;
-        std::string getPath() const;
-        std::string getMethod() const;
 
         void        setStatus(int status);
         void        setResponse(std::string response);
-        void        setPath(std::string path);
-        void        setMethod(std::string method);
+		std::string	setHeader(std::string status, std::string contentType);
+		std::string	toString(int number);
 
-        std::string setHeader(std::string status, std::string contentType);
         void    send();
-        void processFileForHTTPResponse(std::stringstream &file, std::string statusCode)
+        void processFileForHTTPResponse(std::stringstream &file, std::string statusCode);
 };
 
 #endif
