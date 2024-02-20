@@ -132,9 +132,15 @@ int Socket::sendResponse(size_t *i, char **envp) {
 	int j = *i - 1;
 	//std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World\n";
 	requestParser.parse(*_clients[j].getBuffer());
-	if (requestParser.getMethod() == "GET") {
-		std::cout << requestParser.getMethod() << std::endl;
-	}
+
+	// Incompleto terminando de fazer
+// 	for (size_t v = 0; v < _vServers.size(); v++) {
+// 	std::cout << requestParser.getHeaders()["Host"] << std::endl;
+// 	std::cout << _vServers[v].getServerName() << std::endl;
+// 	if (requestParser.getHeaders()["Host"] == _vServers[v].getServerName()) {
+// 		std::cout << "DEU BOM!!" << std::endl;
+// 	}
+// }
 
     cgi.configCgi(_pollFds[*i].fd, envp);
     close(_pollFds[*i].fd);

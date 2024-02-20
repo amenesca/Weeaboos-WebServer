@@ -23,5 +23,10 @@ Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7\r\n";
 
 	request.parse(line);
 
+    for (const auto& pair : request.getHeaders()) {
+        std::cout << pair.first << " : " << pair.second << std::endl;
+    }
+
+
 	return (0);
 }
