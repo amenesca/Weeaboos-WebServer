@@ -14,51 +14,36 @@
 
 Response::Response()
 :   _status(0),
-    _response(""),
     _body(""),
-    _header("")
+    _header(""),
+	_httpMessage("")
 	{}
 
-Response::Response(int status, std::string response, std::string body, std::string header) 
-:   _status(status),
-    _response(response),
-    _body(body),
-    _header(header)
+Response::Response(RequestParser request, VirtualServer virtualServerConfigs) 
+:   _status(0),
+    _body(""),
+    _header(""),
+	_httpMessage(""),
+	_request(request),
+	_virtualServerConfigs(virtualServerConfigs)
     {}
-
-Response::Response(Response const &src) {
-    *this = src;
-}
 
 Response::~Response() {}
 
-Response &Response::operator=(Response const &src) {
-    if (this != &src) {
-        this->_status = src._status;
-        this->_response = src._response;
-        this->_header = src._header;
-    }
-    return (*this);
-}
-
 int         Response::getStatus() const {
     return (_status);
-}
-
-std::string Response::getResponse() const {
-    return (_response);
 }
 
 std::string Response::getHeader() const {
     return (_header);
 }
 
-void    Response::setStatus(int status) {
-    _status = status;
+std::string Response::getHttpMessage() const {
+	return (_httpMessage);
 }
 
-void    Response::setResponse(std::string response) {
-    _response = response;
+void    Response::setStatus(int status) {
+    _status = status;
 }
 
 std::string Response::toString(int number) {
@@ -81,8 +66,8 @@ std::string    Response::setHeader(std::string status, std::string contentType) 
 }
 
 void Response::send() {
-   httpMessage = _header;
-   httpMessage.append(_body);
+   _httpMessage = _header;
+   _httpMessage.append(_body);
 }
 
 void Response::processFileForHTTPResponse(std::stringstream &file, std::string statusCode) {

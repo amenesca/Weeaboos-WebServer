@@ -10,27 +10,23 @@ class cgiHandler;
 class Response {
     private:
         int         _status;
-        std::string _response;
         std::string _body;
         std::string _header;
+		std::string _httpMessage;
         RequestParser _request;
-		std::string httpMessage;
+		VirtualServer _virtualServerConfigs;
 		cgiHandler cgihandler;
 
     public:
         Response();
-       	Response(int status, std::string response, std::string body, std::string header);
-        Response(Response const &src);
+       	Response(RequestParser request, VirtualServer virtualServerConfigs);
         ~Response();
 
-        Response &operator=(Response const &src);
-
         int         getStatus() const;
-        std::string getResponse() const;
         std::string getHeader() const;
+		std::string getHttpMessage() const;
 
         void        setStatus(int status);
-        void        setResponse(std::string response);
 		std::string	setHeader(std::string status, std::string contentType);
 		std::string	toString(int number);
 
