@@ -11,21 +11,8 @@
 /* ************************************************************************** */
 
 #include "cgiHandler.hpp"
-#include "../Socket/Socket.hpp"
 
 cgiHandler::cgiHandler() {}
-
-//cgiHandler::cgiHandler(std::string	body) : _body(body), _pid() {}
-
-/*cgiHandler::cgiHandler(const cgiHandler& obj) : _env(obj._env), _body(obj._body) {}
-
-cgiHandler &cgiHandler::operator=(cgiHandler const &rhs) {
-    if (this != &rhs) {
-		this->_body = rhs._body;
-		this->_env = rhs._env;
-	}
-	return (*this);
-}*/
 
 cgiHandler::~cgiHandler() {}
 

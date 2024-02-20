@@ -7,5 +7,6 @@
 # include "../srcs/VirtualServer/VirtualServer.hpp"
 # include "../srcs/cgi/cgiHandler.hpp"
 # include "../srcs/Client/Client.hpp"
+# include "../srcs/Response/Response.hpp"
 
 #endif
