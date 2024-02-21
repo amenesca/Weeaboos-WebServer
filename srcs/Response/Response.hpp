@@ -29,8 +29,11 @@ class Response {
 		std::string	readData(const std::string& path);
 
         void    send();
+        void    httpMethods(RequestParser& request);
         void processFileForHTTPResponse(std::stringstream &file, std::string statusCode);
-		void handleGET(RequestParser request)
+		
+		void handleGET(RequestParser request);
+		void handlePOST(RequestParser request);
 };
 
 #endif
