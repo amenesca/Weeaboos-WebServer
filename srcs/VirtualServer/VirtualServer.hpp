@@ -42,6 +42,7 @@ class VirtualServer {
 		std::string getBodySize(void) const;
 		std::vector<Location> getLocation(void) const;
 		std::vector<Location>* getLocationAddress(void);
+		std::vector<std::string> getErrorPage(void) const;
 	private:
 		int _port;
 		std::string _serverName;

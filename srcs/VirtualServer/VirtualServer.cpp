@@ -51,3 +51,7 @@ std::vector<Location> VirtualServer::getLocation(void) const {
 std::vector<Location>* VirtualServer::getLocationAddress(void) {
 	return(&_location);
 }
+
+std::vector<std::string> VirtualServer::getErrorPage(void) const {
+	return(_errorPage);
+}
