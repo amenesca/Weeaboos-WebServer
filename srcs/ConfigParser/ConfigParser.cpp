@@ -78,6 +78,9 @@ void ConfigParser::treatLocation(VirtualServer* currentServer, std::string locat
 void ConfigParser::configServer(VirtualServer* currentServer) {
 	std::string buff;
 	while (std::getline(this->_configFileFstream >> std::ws, buff)) {
+		if (buff == "}") {
+			break ;
+		}
 		if (buff.find("error_page", 0) != std::string::npos) {
 			currentServer->setErrorPage(split(buff));
 		}
@@ -100,13 +103,19 @@ void ConfigParser::configServer(VirtualServer* currentServer) {
 void ConfigParser::setVServers() {
 	
 	std::string buff;
+	size_t i = 0;
 
 	while(std::getline(this->_configFileFstream >> std::ws, buff)) {
-		if (buff == "server {") {
+		std::istringstream iss(buff);
+		std::string token;
+		iss >> token;
+
+		if (token == "server") {
 			VirtualServer serverInstance;
-			configServer(&serverInstance);
 			this->_vServers.push_back(serverInstance);
+			configServer(&_vServers[i]);
 			std::cout << "Virtual Server Adicionado" << std::endl;
+			i++;
 		} else {
 			throw InvalidSyntax();
 		}
@@ -117,7 +126,6 @@ int ConfigParser::initConfig() {
 
 	openConfig();
 	setVServers();
-
 	return (0);
 }
 
