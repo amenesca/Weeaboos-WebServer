@@ -42,72 +42,108 @@ int ConfigParser::openConfig() {
 	return (0);
 }
 
-void ConfigParser::treatLocation(VirtualServer* currentServer, std::string locationPath) {
+void ConfigParser::treatLocation(VirtualServer* currentServer, std::string locationPath)
+{
 	std::string buff;
 	Location location;
 	location._locationPath = locationPath;
+	bool rightBrace = false;
+
 	while (std::getline(this->_configFileFstream >> std::ws, buff)) {
 		if (buff.find("root", 0) != std::string::npos) {
 			location._root = split(buff)[1];
 		}
-		if (buff.find("cgi_extension", 0) != std::string::npos) {
+		else if (buff.find("cgi_extension", 0) != std::string::npos) {
 			location._cgi_extension = split(buff)[1];
 		}
-		if (buff.find("upload", 0) != std::string::npos) {
+		else if (buff.find("upload", 0) != std::string::npos) {
 			location._upload = split(buff)[1];
 		}
-		if (buff.find("index", 0) != std::string::npos) {
+		else if (buff.find("index", 0) != std::string::npos) {
 			location._index = split(buff);
 		}
-		if (buff.find("autoindex", 0) != std::string::npos) {
+		else if (buff.find("autoindex", 0) != std::string::npos) {
 			location._autoindex = split(buff)[1];
 		}
-		if (buff.find("methods", 0) != std::string::npos) {
+		else if (buff.find("methods", 0) != std::string::npos) {
 			location._methods = split(buff);
 		}
-		if (buff.find("return", 0) != std::string::npos) {
+		else if (buff.find("return", 0) != std::string::npos) {
 			location._return = split(buff)[1];
 		}
-		if (buff.find("}", 0) != std::string::npos) {
+		else if (buff.find("}", 0) != std::string::npos) {
+			rightBrace = true;
 			break;
 		}
+		else {
+			throw InvalidSyntax();
+		}
+	}
+	if (rightBrace == false) {
+			throw InvalidSyntax();
 	}
 	currentServer->getLocationAddress()->push_back(location);
 } 
 
-void ConfigParser::configServer(VirtualServer* currentServer) {
+void ConfigParser::configServer(VirtualServer* currentServer)
+{
 	std::string buff;
+	bool rightBrace = false;
+
 	while (std::getline(this->_configFileFstream >> std::ws, buff)) {
-		if (buff.find("error_page", 0) != std::string::npos) {
+		if (buff == "}") {
+			rightBrace = true;
+			break ;
+		}
+		else if (buff.find("error_page", 0) != std::string::npos) {
 			currentServer->setErrorPage(split(buff));
 		}
-		if (buff.find("listen", 0) != std::string::npos || buff.find("port", 0) != std::string::npos) {
+		else if (buff.find("listen", 0) != std::string::npos || buff.find("port", 0) != std::string::npos) {
 			currentServer->setPort(strtod(split(buff)[1].c_str(), NULL));
 		}
-		if (buff.find("server_name", 0) != std::string::npos) {
+		else if (buff.find("server_name", 0) != std::string::npos) {
 			currentServer->setServerName(split(buff)[1]);
 		}
-		if (buff.find("body_size", 0) != std::string::npos) {
+		else if (buff.find("body_size", 0) != std::string::npos) {
 			currentServer->setBodySize(split(buff)[1]);
 		}
-		if (buff.find("location", 0) != std::string::npos) {
+		else if (buff.find("location", 0) != std::string::npos) 
+		{
+			if (buff.find("{", buff.size() - 1) == std::string::npos || split(buff).size() != 3)
+			{
+				throw InvalidSyntax();
+			}
 			treatLocation(currentServer, split(buff)[1]);
 		}
-
+		else {
+			throw InvalidSyntax();
+		}
+	}
+	if (rightBrace == false) {
+			throw InvalidSyntax();
 	}
 }
 
-void ConfigParser::setVServers() {
-	
+void ConfigParser::setVServers()
+{	
 	std::string buff;
+	size_t i = 0;
 
 	while(std::getline(this->_configFileFstream >> std::ws, buff)) {
-		if (buff == "server {") {
+		std::istringstream iss(buff);
+		std::string token;
+		iss >> token;
+
+		if (token == "server" && buff.find("{", buff.size() - 1) != std::string::npos && split(buff).size() == 2)
+		{
 			VirtualServer serverInstance;
-			configServer(&serverInstance);
 			this->_vServers.push_back(serverInstance);
+			configServer(&_vServers[i]);
 			std::cout << "Virtual Server Adicionado" << std::endl;
-		} else {
+			i++;
+		}
+		else
+		{
 			throw InvalidSyntax();
 		}
 	}
@@ -117,7 +153,6 @@ int ConfigParser::initConfig() {
 
 	openConfig();
 	setVServers();
-
 	return (0);
 }
 

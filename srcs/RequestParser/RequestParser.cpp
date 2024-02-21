@@ -21,7 +21,7 @@ RequestParser::RequestParser(std::string request) {
 	this->parse(request);
 }
 
-void	RequestParser::parse(std::string request) {
+void RequestParser::parse(std::string request) {
     // Declaring variables
     std::string requestLine, headerLine;
     std::istringstream requestStream(request);
@@ -33,17 +33,26 @@ void	RequestParser::parse(std::string request) {
 
     // Header parsing
     while(std::getline(requestStream, headerLine) && headerLine != "\r") {
-        size_t separator = headerLine.find(":");
+        size_t separator = headerLine.find(": ");
         if (separator != std::string::npos) {
             std::string key = headerLine.substr(0, separator);
-            std::string value = headerLine.substr(separator + 2); // + 2 para ignorar ": " 
+            std::string value = headerLine.substr(separator + 2); // + 2 para ignorar ": "
+
+            // Se a chave for "Host", extrair apenas o conteúdo antes do ":"
+            if (key == "Host") {
+                size_t portSeparator = value.find(":");
+                if (portSeparator != std::string::npos) {
+                    value = value.substr(0, portSeparator);
+                }
+            }
+
             this->_requestHeaders[key] = value;
         }
     }
     // Body parsing
     std::getline(requestStream, this->_requestBody, '\0');
 
-    return ;
+    return;
 }
 
 int RequestParser::_validateUri() {
