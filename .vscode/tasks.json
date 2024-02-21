@@ -14,7 +14,8 @@
                 "./VirtualServer/VirtualServer.cpp",
                 "./Socket/Socket.cpp",
                 "./Client/Client.cpp",
-                "./cgi/cgiHandler.cpp",
+                "./RequestParser/RequestParser.cpp",
+                "./Response/Response.cpp",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],

@@ -77,44 +77,62 @@ void Response::processFileForHTTPResponse(std::stringstream &file, std::string s
    setHeader(statusCode, "text/html");
 }
 
-std::string Response::readData(const std::string& path)
+std::string Response::readData(const std::string& uri)
 {
-    std::ifstream file(path);
-    if (!file.is_open())
-        return ("");
+	std::string path;
+	std::cout << "AQUI3" << std::endl;
+	if (_virtualServerConfigs.getLocation()[0]._locationPath == uri) {
+		path = _virtualServerConfigs.getLocation()[0]._root + _virtualServerConfigs.getLocation()[0]._index[0];
+		std::cout << path << std::endl;
+	}
+	std::cout << "AQUI4" << std::endl;
+	
+    // std::ifstream file(path.c_str());
+    // if (!file.is_open())
+    //     return ("");
 
-    std::string data;
-    std::string line;
-    while (std::getline(file, line))
-    {
-        data += line;
-        data += "\n";
-    }
+    // std::string data;
+    // std::string line;
+    // while (std::getline(file, line))
+    // {
+    //     data += line;
+    //     data += "\n";
+    // }
 
-    file.close();
+    // file.close();
 
-    return (data);
+     return ("");
 }
 
-void Response::httpMethods(RequestParser& request)
+void Response::httpMethods()
 {
-    if (request.getMethod() == "GET")
-        handleGET(request);
-    else if (request.getMethod() == "POST")
-        handlePOST(request);
-    /*else if (request.getMethod() == "DELETE")
-        handleDELETE(request);*/
-    else
-        setStatus(405); // 405 = Method Not Allowed
-        setHeader("405 Method Not Allowed", "text/plain");
-        _body = "405 Method Not Allowed";
-        return ;
+    if (_request.getMethod() == "GET") {
+        
+		std::cout << "AQUI1" << std::endl;
+		
+		handleGET();
+
+		std::cout << "AQUI6" << std::endl;
+
+	}
+    // else if (_request.getMethod() == "POST")
+    //     handlePOST();
+    // /*else if (_request.getMethod() == "DELETE")
+    //     handleDELETE(request);*/
+    // else {
+    //     setStatus(405); // 405 = Method Not Allowed
+    //     setHeader("405 Method Not Allowed", "text/plain");
+    //     _body = "405 Method Not Allowed";
+	// }
+    return ;
 }
 
-void Response::handleGET(RequestParser request)
+void Response::handleGET()
 {
-    std::string	uri = request.getUri();
+    std::string	uri = _request.getUri();
+	std::cout << "AQUI2" << std::endl;
     std::string	data = readData(uri);
+	std::cout << "AQUI5" << std::endl;
      if (!data.empty())
      {
         setStatus(200);
@@ -129,10 +147,10 @@ void Response::handleGET(RequestParser request)
     }
 }
 
-void Response::handlePOST(RequestParser request)
+void Response::handlePOST()
 {
-    std::string uri = request.getUri();
-    if (request.getBody().empty())
+    std::string uri = _request.getUri();
+    if (_request.getBody().empty())
 	{
         setStatus(400);
         setHeader("400 Bad Request", "text/plain");
@@ -140,7 +158,7 @@ void Response::handlePOST(RequestParser request)
         return ;
     }
 
-    std::string bodyData = request.getBody();
+    std::string bodyData = _request.getBody();
 
     setStatus(200);
     setHeader("200 OK", "text/plain");
