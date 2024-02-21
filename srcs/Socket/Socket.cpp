@@ -126,21 +126,27 @@ int Socket::receiveRequest(size_t *i) {
     return (0);
 }
 
-int Socket::sendResponse(size_t *i, char **envp) {
-	cgiHandler cgi;
-	RequestParser requestParser;
-	int j = *i - 1;
-	//std::string response = "HTTP/1.1 200 OK\r\nContent-Length: 12\r\n\r\nHello World\n";
-	requestParser.parse(*_clients[j].getBuffer());
+int Socket::sendResponse(size_t *i, char **envp)
+{
+	cgiHandler		cgi;
+	RequestParser	requestParser;
+	size_t			virtualServerPosition;
+	int				j;
+	
+	j = *i - 1;
+	virtualServerPosition = -1;
 
-	size_t virtualServerPosition = -1;
+	requestParser.parse(*_clients[j].getBuffer());
+	
 	for (size_t v = 0; v < _vServers.size(); v++) {
 		if (requestParser.getHeaders()["Host"] == _vServers[v].getServerName()) {
 			std::cout << "DEU BOM!!" << std::endl;
 			virtualServerPosition = v;
 		}
 	}
-	(void)virtualServerPosition; // apenas para evitar erro de comp, ainda vamos usar
+
+	Response	makeResponse(requestParser, _vServers[virtualServerPosition]);
+
     cgi.configCgi(_pollFds[*i].fd, envp);
     close(_pollFds[*i].fd);
     std::cout << "Dentro do send response\n\n" << *_clients[j].getBuffer() << std::endl;
