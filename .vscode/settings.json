@@ -11,6 +11,7 @@
 		"cmath": "cpp",
 		"compare": "cpp",
 		"concepts": "cpp",
+		"condition_variable": "cpp",
 		"csignal": "cpp",
 		"cstdarg": "cpp",
 		"cstddef": "cpp",
@@ -50,22 +51,20 @@
 		"iostream": "cpp",
 		"istream": "cpp",
 		"limits": "cpp",
+		"mutex": "cpp",
 		"new": "cpp",
 		"numbers": "cpp",
 		"ostream": "cpp",
+		"semaphore": "cpp",
 		"span": "cpp",
 		"sstream": "cpp",
 		"stdexcept": "cpp",
+		"stop_token": "cpp",
 		"streambuf": "cpp",
+		"thread": "cpp",
 		"cinttypes": "cpp",
 		"typeinfo": "cpp",
-		"variant": "cpp",
-		"condition_variable": "cpp",
-		"mutex": "cpp",
-		"semaphore": "cpp",
-		"stop_token": "cpp",
-		"thread": "cpp",
-		"valarray": "cpp"
-	},
-	"C_Cpp.errorSquiggles": "disabled"
+		"valarray": "cpp",
+		"variant": "cpp"
+	}
 }

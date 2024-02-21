@@ -140,20 +140,34 @@ int Socket::sendResponse(size_t *i, char **envp)
 	
 	for (size_t v = 0; v < _vServers.size(); v++) {
 		if (requestParser.getHeaders()["Host"] == _vServers[v].getServerName()) {
+
+			std::cout << _vServers[v].getServerName() << std::endl;
+			std::cout << requestParser.getHeaders()["Host"] << std::endl;
+			
 			std::cout << "DEU BOM!!" << std::endl;
 			virtualServerPosition = v;
 		}
 	}
 
 	Response	makeResponse(requestParser, _vServers[virtualServerPosition]);
+//	makeResponse.httpMethods(); // dando erro
 
     cgi.configCgi(_pollFds[*i].fd, envp);
     close(_pollFds[*i].fd);
     std::cout << "Dentro do send response\n\n" << *_clients[j].getBuffer() << std::endl;
+
+	std::cout << "DELETE CLIENTS" << std::endl;
+
     delete _clients[j].getBuffer();
+
+	std::cout << "AFTER DELETE CLIENTS" << std::endl;
+
+
     _pollFds.erase(_pollFds.begin() + *i);
     _clients.erase(_clients.begin() + (j));
     --*i;
+
+	std::cout << "AFTER LOOP" << std::endl;
 
     return (0);
 }

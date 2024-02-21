@@ -26,14 +26,14 @@ class Response {
         void        setStatus(int status);
 		std::string	setHeader(std::string status, std::string contentType);
 		std::string	toString(int number);
-		std::string	readData(const std::string& path);
+		std::string	readData(const std::string& uri);
 
         void    send();
-        void    httpMethods(RequestParser& request);
+        void    httpMethods();
         void processFileForHTTPResponse(std::stringstream &file, std::string statusCode);
 		
-		void handleGET(RequestParser request);
-		void handlePOST(RequestParser request);
+		void handleGET();
+		void handlePOST();
 };
 
 #endif
