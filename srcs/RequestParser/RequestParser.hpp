@@ -36,6 +36,8 @@ class RequestParser {
 		RequestParser();
 		~RequestParser();
 		RequestParser(std::string request);
+		RequestParser(const RequestParser& copy);
+		RequestParser& operator=(const RequestParser& copy);
 
 	// Class Methods
 		void	parse(std::string request);

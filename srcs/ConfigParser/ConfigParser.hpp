@@ -23,6 +23,9 @@ class ConfigParser {
 		ConfigParser();
 		~ConfigParser();
 
+		ConfigParser(const ConfigParser& copy);
+		ConfigParser& operator=(const ConfigParser& copy);
+
 		int openConfig();
 		int initConfig();
 		void setVServers();

@@ -12,11 +12,20 @@
 
 #include "ConfigParser.hpp"
 
-ConfigParser::ConfigParser() {
+ConfigParser::ConfigParser() {}
+
+ConfigParser::~ConfigParser() {}
+
+ConfigParser::ConfigParser(const ConfigParser& copy) {
+	*this = copy;
 }
 
-ConfigParser::~ConfigParser() {
-
+ConfigParser& ConfigParser::operator=(const ConfigParser& copy) {
+	if (this != &copy) {
+		this->_configFilePath =  copy._configFilePath;
+		this->_vServers = copy._vServers;
+	}
+	return *this;
 }
 
 std::vector<std::string> split(const std::string& input) {

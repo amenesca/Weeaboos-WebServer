@@ -103,7 +103,8 @@ int Socket::acceptConnection() {
 int Socket::receiveRequest(size_t *i) {
     int j = *i - 1;
 
-    _clients[j].setBytesRead(recv(_pollFds[*i].fd, _buffer, sizeof(_buffer) - 1, 0));
+	_bytesRead = recv(_pollFds[*i].fd, _buffer, sizeof(_buffer) - 1, 0);
+	_clients[j].setBytesRead(_bytesRead);
     if (_clients[j].getBytesRead() <= 0) {
         if (_clients[j].getBytesRead() < 0) {
             std::cerr << "Erro ao receber dados do cliente, socket: " << _pollFds[*i].fd << std::endl;
@@ -136,7 +137,7 @@ int Socket::sendResponse(size_t *i, char **envp)
 	j = *i - 1;
 	virtualServerPosition = -1;
 
-	requestParser.parse(*_clients[j].getBuffer());
+	requestParser.parse(_clients[j].getBuffer());
 	
 	for (size_t v = 0; v < _vServers.size(); v++) {
 		if (requestParser.getHeaders()["Host"] == _vServers[v].getServerName()) {
@@ -150,15 +151,13 @@ int Socket::sendResponse(size_t *i, char **envp)
 	}
 
 	Response	makeResponse(requestParser, _vServers[virtualServerPosition]);
-//	makeResponse.httpMethods(); // dando erro
+	makeResponse.httpMethods(); // dando erro
 
     cgi.configCgi(_pollFds[*i].fd, envp);
     close(_pollFds[*i].fd);
-    std::cout << "Dentro do send response\n\n" << *_clients[j].getBuffer() << std::endl;
+    std::cout << "Dentro do send response\n\n" << _clients[j].getBuffer() << std::endl;
 
 	std::cout << "DELETE CLIENTS" << std::endl;
-
-    delete _clients[j].getBuffer();
 
 	std::cout << "AFTER DELETE CLIENTS" << std::endl;
 

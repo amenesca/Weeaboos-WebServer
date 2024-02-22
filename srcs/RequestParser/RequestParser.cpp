@@ -21,6 +21,21 @@ RequestParser::RequestParser(std::string request) {
 	this->parse(request);
 }
 
+RequestParser::RequestParser(const RequestParser& copy) {
+	*this = copy;
+}
+
+RequestParser& RequestParser::operator=(const RequestParser& copy) {
+	if (this != &copy) {
+		this->_httpVersion = copy._httpVersion;
+		this->_requestBody = copy._requestBody;
+		this->_requestHeaders = copy._requestHeaders;
+		this->_requestMethod = copy._requestMethod;
+		this->_uri = copy._uri;
+	}
+	return *this;
+}
+
 void RequestParser::parse(std::string request) {
     // Declaring variables
     std::string requestLine, headerLine;

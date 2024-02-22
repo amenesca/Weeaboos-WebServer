@@ -31,11 +31,14 @@ class VirtualServer {
 	public:
 		VirtualServer();
 		~VirtualServer();
+		VirtualServer(const VirtualServer& copy);
+		VirtualServer& operator=(const VirtualServer& copy);
 
 		void setPort(int port);
 		void setServerName(std::string serverName);
 		void setBodySize(std::string bodySize);
 		void setErrorPage(std::vector<std::string>);
+//		void PushLocation(Location location);
 
 		int getPort(void) const;
 		std::string getServerName(void) const;

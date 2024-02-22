@@ -26,23 +26,26 @@ class Client {
     public:
         Client();
         ~Client();
+		Client(const Client& copy);
+		Client& operator=(const Client& copy);
 
-        std::string* getBuffer(void);
+
+        std::string getBuffer(void);
         SA          *getClientAddrPointer(void);
         socklen_t   *getClientAddrLenPointer(void);
         int         getClientSocket(void) const;
-        ssize_t     getBytesRead(void) const;
+        int     	getBytesRead(void) const;
 
         void        setClientSocket(int clientSocket);
         void        setClientAddrLen(socklen_t _client_addr_len);
-        void        setBytesRead(ssize_t bytesRead);
+        void        setBytesRead(int bytesRead);
         void        setRequestBuffer(std::string _requestBuffer);
     private:
         int			_clientSocket;
         socklen_t   _client_addr_len;
         SA          _client_addr;
-        std::string *_requestBuffer1;
-        ssize_t     _bytesRead;
+        std::string _requestBuffer1;
+        int		    _bytesRead;
 };
 
 #endif
