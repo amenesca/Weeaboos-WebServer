@@ -16,6 +16,21 @@ VirtualServer::VirtualServer() {}
 
 VirtualServer::~VirtualServer() {}
 
+VirtualServer::VirtualServer(const VirtualServer& copy) {
+	*this = copy;
+}
+
+VirtualServer& VirtualServer::operator=(const VirtualServer& copy) {
+	if (this != &copy) {
+		this->_bodySize = copy._bodySize;
+		this->_errorPage = copy._errorPage;
+		this->_location = copy._location;
+		this->_port = copy._port;
+		this->_serverName = copy._serverName;
+	}
+	return *this;
+}
+
 void VirtualServer::setPort(int port) {
 	this->_port = port;
 }
@@ -31,6 +46,10 @@ void VirtualServer::setBodySize(std::string bodySize) {
 void VirtualServer::setErrorPage(std::vector<std::string> errorPage) {
 	this->_errorPage = errorPage;
 }
+
+// void VirtualServer::PushLocation(Location location) {
+// 	this->_location.push_back(location);
+// }
 
 int VirtualServer::getPort(void) const {
 	return(_port);

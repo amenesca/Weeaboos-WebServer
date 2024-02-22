@@ -19,7 +19,22 @@ Client::Client() {
 Client::~Client() {
 }
 
-std::string* Client::getBuffer(void) {
+Client::Client(const Client& copy) {
+	*this = copy;
+}
+
+Client& Client::operator=(const Client& copy) {
+	if (this != &copy) {
+		this->_bytesRead = copy._bytesRead;
+		this->_client_addr = copy._client_addr;
+		this->_client_addr_len = copy._client_addr_len;
+		this->_clientSocket = copy._clientSocket;
+		this->_requestBuffer1 = copy._requestBuffer1;
+	}
+	return *this;
+}
+
+std::string Client::getBuffer(void) {
     return (_requestBuffer1);
 }
 
@@ -35,13 +50,13 @@ int Client::getClientSocket(void) const {
     return _clientSocket;
 }
 
-ssize_t Client::getBytesRead(void) const {
+int Client::getBytesRead(void) const {
     return _bytesRead;
 }
 
 void Client::setRequestBuffer(std::string requestBuffer) {
     //tive que usa o new o negocio estava muito doido, dando segfault sem motivo
-    _requestBuffer1 = new std::string(requestBuffer);
+    _requestBuffer1 = requestBuffer;
 }
 
 void Client::setClientSocket(int clientSocket) {
@@ -52,6 +67,6 @@ void Client::setClientAddrLen(socklen_t client_addr_len) {
     _client_addr_len = client_addr_len;
 }
 
-void Client::setBytesRead(ssize_t bytesRead) {
+void Client::setBytesRead(int bytesRead) {
     _bytesRead = bytesRead;
 }
