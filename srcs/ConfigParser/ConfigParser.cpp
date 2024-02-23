@@ -14,7 +14,9 @@
 
 ConfigParser::ConfigParser() {}
 
-ConfigParser::~ConfigParser() {}
+ConfigParser::~ConfigParser() {
+	_configFileFstream.close();
+}
 
 ConfigParser::ConfigParser(const ConfigParser& copy) {
 	*this = copy;
@@ -149,6 +151,7 @@ void ConfigParser::setVServers()
 			this->_vServers.push_back(serverInstance);
 			configServer(&_vServers[i]);
 			std::cout << "Virtual Server Adicionado" << std::endl;
+			serverInstance.~VirtualServer();
 			i++;
 		}
 		else

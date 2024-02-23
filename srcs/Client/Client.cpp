@@ -50,7 +50,7 @@ int Client::getClientSocket(void) const {
     return _clientSocket;
 }
 
-int Client::getBytesRead(void) const {
+ssize_t Client::getBytesRead(void) const {
     return _bytesRead;
 }
 
@@ -67,6 +67,6 @@ void Client::setClientAddrLen(socklen_t client_addr_len) {
     _client_addr_len = client_addr_len;
 }
 
-void Client::setBytesRead(int bytesRead) {
+void Client::setBytesRead(ssize_t bytesRead) {
     _bytesRead = bytesRead;
 }

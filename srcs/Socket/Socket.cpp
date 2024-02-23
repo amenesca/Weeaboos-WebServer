@@ -80,7 +80,8 @@ int Socket::serverListen() {
     return (0);
 }
 
-int Socket::acceptConnection() {
+int Socket::acceptConnection() 
+{
     Client newClient;
 
     newClient.setClientSocket(accept(_serverSocket, (SA*)newClient.getClientAddrPointer(), newClient.getClientAddrLenPointer()));
@@ -94,32 +95,31 @@ int Socket::acceptConnection() {
         _pollFds.back().fd = newClient.getClientSocket();
         _pollFds.back().events = POLLIN;
         newClient.setClientSocket(newClient.getClientSocket());
-        _clients.push_back(newClient);
+        _client = newClient;
         std::cout << "Nova conexão aceita, socket: " << newClient.getClientSocket() << std::endl;
     }
     return (0);
 }
 
-int Socket::receiveRequest(size_t *i) {
-    int j = *i - 1;
-
+int Socket::receiveRequest(size_t *i)
+{
 	_bytesRead = recv(_pollFds[*i].fd, _buffer, sizeof(_buffer) - 1, 0);
-	_clients[j].setBytesRead(_bytesRead);
-    if (_clients[j].getBytesRead() <= 0) {
-        if (_clients[j].getBytesRead() < 0) {
+	_client.setBytesRead(_bytesRead);
+    if (_client.getBytesRead() <= 0) {
+        if (_client.getBytesRead() < 0) {
             std::cerr << "Erro ao receber dados do cliente, socket: " << _pollFds[*i].fd << std::endl;
         } else {
             std::cerr << "Cliente desconectado, socket: " << _pollFds[*i].fd << std::endl;
         }
         close(_pollFds[*i].fd);
         _pollFds.erase(_pollFds.begin() + *i);
-        _clients.erase(_clients.begin() + j);
+        _client = Client();
         --*i;
     } else {
-       _buffer[_clients[j].getBytesRead()] = '\0';
+       _buffer[_client.getBytesRead()] = '\0';
         std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << std::endl;
         _requestBuffer += std::string(_buffer);
-        _clients[j].setRequestBuffer(_requestBuffer);
+        _client.setRequestBuffer(_requestBuffer);
         _requestBuffer.clear();
         memset(_buffer, '\0', MAX_BUFFER_SIZE + 1);
         _pollFds[*i].events = POLLOUT;
@@ -132,13 +132,11 @@ int Socket::sendResponse(size_t *i, char **envp)
 	cgiHandler		cgi;
 	RequestParser	requestParser;
 	size_t			virtualServerPosition;
-	int				j;
     (void)envp;
 	
-	j = *i - 1;
 	virtualServerPosition = -1;
 
-	requestParser.parse(_clients[j].getBuffer());
+	requestParser.parse(_client.getBuffer());
 	
 	for (size_t v = 0; v < _vServers.size(); v++) {
 		if (requestParser.getHeaders()["Host"] == _vServers[v].getServerName()) {
@@ -160,7 +158,7 @@ int Socket::sendResponse(size_t *i, char **envp)
     close(_pollFds[*i].fd);
 
     _pollFds.erase(_pollFds.begin() + *i);
-    _clients.erase(_clients.begin() + (j));
+    _client = Client();
     --*i;
 
     return (0);

@@ -13,7 +13,6 @@
 #ifndef CLIENT_HPP
 # define CLIENT_HPP
 
-# include "../../includes/Classes.hpp"
 # include "../../includes/Includes.hpp"
 # include "../../includes/Defines.hpp"
 
@@ -34,18 +33,18 @@ class Client {
         SA          *getClientAddrPointer(void);
         socklen_t   *getClientAddrLenPointer(void);
         int         getClientSocket(void) const;
-        int     	getBytesRead(void) const;
+        ssize_t     	getBytesRead(void) const;
 
         void        setClientSocket(int clientSocket);
         void        setClientAddrLen(socklen_t _client_addr_len);
-        void        setBytesRead(int bytesRead);
+        void        setBytesRead(ssize_t bytesRead);
         void        setRequestBuffer(std::string _requestBuffer);
     private:
         int			_clientSocket;
         socklen_t   _client_addr_len;
         SA          _client_addr;
         std::string _requestBuffer1;
-        int		    _bytesRead;
+        ssize_t		    _bytesRead;
 };
 
 #endif
