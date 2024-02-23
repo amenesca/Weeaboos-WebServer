@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConfigParser.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/07 11:24:57 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/14 13:24:46 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/02/22 18:49:17 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,19 +159,16 @@ void ConfigParser::setVServers()
 }
 
 int ConfigParser::initConfig() {
-
 	openConfig();
 	setVServers();
 	return (0);
 }
 
 void ConfigParser::setConfigFilePath(std::string configFilePath) {
-	
 	this->_configFilePath = configFilePath;
 }
 
 std::string ConfigParser::getConfigFilePath() const {
-	
 	return this->_configFilePath;
 }
 
@@ -180,11 +177,9 @@ std::vector<VirtualServer> ConfigParser::getVServers() const {
 }
 
 const char *ConfigParser::OpenError::what() const throw() {
-    
 	return ("WebServer: error: can't open configuration file.");
 }
 
 const char *ConfigParser::InvalidSyntax::what() const throw() {
-    
 	return ("WebServer: error: invalid syntax.");
 }

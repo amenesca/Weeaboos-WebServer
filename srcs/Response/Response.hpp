@@ -30,7 +30,6 @@ class Response {
 
         void    send();
         void    httpMethods();
-        void processFileForHTTPResponse(std::stringstream &file, std::string statusCode);
 		
 		void handleGET();
 		void handlePOST();

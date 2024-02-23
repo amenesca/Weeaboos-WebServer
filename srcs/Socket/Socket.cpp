@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/07 11:32:57 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/22 21:00:40 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,7 @@ int Socket::sendResponse(size_t *i, char **envp)
 	RequestParser	requestParser;
 	size_t			virtualServerPosition;
 	int				j;
+    (void)envp;
 	
 	j = *i - 1;
 	virtualServerPosition = -1;
@@ -144,29 +145,23 @@ int Socket::sendResponse(size_t *i, char **envp)
 
 			std::cout << _vServers[v].getServerName() << std::endl;
 			std::cout << requestParser.getHeaders()["Host"] << std::endl;
-			
-			std::cout << "DEU BOM!!" << std::endl;
 			virtualServerPosition = v;
 		}
 	}
 
-	Response	makeResponse(requestParser, _vServers[virtualServerPosition]);
-	makeResponse.httpMethods(); // dando erro
+	Response makeResponse(requestParser, _vServers[virtualServerPosition]);
+	makeResponse.httpMethods();
 
-    cgi.configCgi(_pollFds[*i].fd, envp);
+    std::string response = makeResponse.getHttpMessage();
+
+    send(_pollFds[*i].fd, response.c_str(), response.size(), 0);
+    
+    //cgi.configCgi(_pollFds[*i].fd, envp);
     close(_pollFds[*i].fd);
-    std::cout << "Dentro do send response\n\n" << _clients[j].getBuffer() << std::endl;
-
-	std::cout << "DELETE CLIENTS" << std::endl;
-
-	std::cout << "AFTER DELETE CLIENTS" << std::endl;
-
 
     _pollFds.erase(_pollFds.begin() + *i);
     _clients.erase(_clients.begin() + (j));
     --*i;
-
-	std::cout << "AFTER LOOP" << std::endl;
 
     return (0);
 }
