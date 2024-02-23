@@ -15,7 +15,7 @@
 
 #include "../../includes/Includes.hpp"
 #include "../Utils/Utils.hpp"
-#include "../../includes/Classes.hpp"
+#include "../VirtualServer/VirtualServer.hpp"
 
 class VirtualServer;
 class ConfigParser {

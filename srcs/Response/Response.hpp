@@ -1,7 +1,9 @@
 #ifndef RESPONSE_HPP
 # define RESPONSE_HPP
 
-# include "../../includes/Classes.hpp"
+# include "../RequestParser/RequestParser.hpp"
+# include "../VirtualServer/VirtualServer.hpp"
+# include "../cgi/cgiHandler.hpp"
 # include "../../includes/Defines.hpp"
 # include "../../includes/Includes.hpp"
 
