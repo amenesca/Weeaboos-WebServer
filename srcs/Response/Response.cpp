@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:30:46 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/22 21:01:12 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/26 16:51:08 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,7 @@ void Response::handlePOST()
     setStatus(200);
     setHeader("200 OK", "text/plain");
     _body = "Received POST data:\n" + bodyData;
+    send();
 }
 
 void Response::httpMethods()

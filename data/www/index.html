@@ -1,106 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weeaboos WebServer</title>
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Protest+Revolution&family=Sixtyfour&family=Workbench&display=swap" rel="stylesheet">
-    <!-- CSS RESET STYLES -->
-    <style>
-	/* 
-		http://meyerweb.com/eric/tools/css/reset/ 
-   		sv2.0 | 20110126
-   		License: none (public domain)
-	*/
-	a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:"";content:none}table{border-collapse:collapse;border-spacing:0}</style>
-    <!-- ESTILOS DO SITE -->
-    <style>
-		body {
-			background-color: #0a0310;
-		}
-		header {
-			font-family: "Sixtyfour", sans-serif;
-			font-optical-sizing: auto;
-			font-weight: 400;
-			font-style: normal;
-			font-variation-settings:
-				"BLED" 0,
-				"SCAN" 0;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 50vh;
-			font-size: 80px;
-			color: #ff005b;
-		}
-		main {
-			position: absolute;
-			top: 40%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-		}
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Envio de Imagem</title>
+</head>
+<body>
+    <h1>Formulário de Envio de Imagem</h1>
+    <form id="meuForm" enctype="multipart/form-data" action="../../cgi-bin/index.py" method="post">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome"><br><br>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email"><br><br>
 
-		button {
-			font-family: "Workbench", sans-serif;
-  			font-optical-sizing: auto;
-  			font-weight: 400;
-  			font-style: normal;
-  			font-variation-settings:
-    			"BLED" 0,
-    			"SCAN" 0;
-			background: none;
-			border-radius: 0.6em;
-			color: #ff7d10;
-			border: 2px solid;
-			padding: 1em 2em;
-			font-size: 1em;
-			transition: all 0.25s;
-		}
+        <label for="imagem">Imagem:</label>
+        <input type="file" id="imagem" name="imagem"><br><br>
 
-		button:hover {
-			color: #ffb238;
-			color: #ffb238;
-			box-shadow: 0 0.5em 3em -0.5em #ffb238;
-			transform: translateY(-0.25em);
-			cursor: pointer;
-		}
+        <input type="submit" value="Enviar">
+    </form>
 
-		button:active {
-			transform: translateY(0.25em);
-			box-shadow: 0 0.5em 2em -0.5em #ffb238;
-		}
+    <p id="mensagem"></p>
 
-		section {
-			display:flex;
-			position: absolute;
-			top: 70%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-		}
-		section img {
-			height: 20rem;
-			width: auto;
-			border-radius: 50%;
-		}
-    </style>
-  </head>
-  <body>
-    <div>
-		<header>
-			<h1>Weeaboos WebServer</h1>
-		</header>
-    	<main>
-        	<button>Abrir Imagem</button>
-        	<button>Enviar Imagem</button>
-        	<button>Sei lá, alguma coisa</button>
-      </main>
-	  	<div class="carros-retrowaves">
-			<section>
-				<img src="images/cyberpunk-futuristic-retro-wave.png" alt="carro carro-retrowave">
-			</section>
-		</div>
-	</div>
-  </body>
+    <script>
+        document.getElementById("meuForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            var nome = document.getElementById("nome").value;
+            var email = document.getElementById("email").value;
+            var imagem = document.getElementById("imagem").files[0]; // Obter a primeira imagem selecionada pelo usuário
+
+            var formData = new FormData();
+            formData.append("nome", nome);
+            formData.append("email", email);
+            formData.append("imagem", imagem); // Adicionar a imagem ao FormData
+
+            fetch(this.action, {
+                method: "POST",
+                body: formData
+            })
+            .then(function(response) {
+                if (response.ok) {
+                    document.getElementById("mensagem").innerText = "O POST method está funcionando!";
+                } else {
+                    document.getElementById("mensagem").innerText = "O POST method não está funcionando corretamente. Verifique sua configuração do servidor.";
+                }
+            })
+            .catch(function(error) {
+                console.error("Erro ao enviar o formulário:", error);
+                document.getElementById("mensagem").innerText = "O POST method não está funcionando corretamente. Verifique sua conexão com a internet.";
+            });
+        });
+    </script>
+</body>
 </html>
+
+
