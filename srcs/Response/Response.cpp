@@ -3,28 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:30:46 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/26 16:51:08 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/28 14:25:14 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
 Response::Response()
-:   _status(0),
+:   _envp(NULL),   
+    _status(0),
     _body(""),
     _header(""),
 	_httpMessage("")
 	{}
 
-Response::Response(RequestParser request, VirtualServer virtualServerConfigs) 
-:   _status(0),
+Response::Response(RequestParser request, VirtualServer virtualServerConfigs, char **envp) 
+:   _envp(envp),
+    _status(0),
     _body(""),
     _header(""),
 	_httpMessage(""),
 	_request(request),
+    
 	_virtualServerConfigs(virtualServerConfigs)
     {}
 
@@ -117,21 +120,35 @@ void Response::handleGET()
 
 void Response::handlePOST()
 {
-    std::string uri = _request.getUri();
-    if (_request.getBody().empty())
-	{
-        setStatus(400);
-        setHeader("400 Bad Request", "text/plain");
-        _body = "400 Bad Request: No request body found";
-        return ;
-    }
-
+    std::cout << "POST\n";
     std::string bodyData = _request.getBody();
+    std::string uri = _request.getUri();
+    std::cout << "PROCURANDO URI: " << uri << "\n";
+    if (uri.substr(uri.length() - 3) == ".py") {
+        std::cout << "DENTRO DO POST\n";
+        cgiHandler post_cgi = cgiHandler();
+        post_cgi.postCgi(_envp);
+        setStatus(200);
+        setHeader("200 OK", "text/plain");
+        _body = "Received POST data:\n" + bodyData;
+        send();
+        std::cout << bodyData << "\n";
+    }
+    else {
+        std::cout << "DENTRO DO ELSE\n";
+        if (_request.getBody().empty()) {
+            setStatus(400);
+            setHeader("400 Bad Request", "text/plain");
+            _body = "400 Bad Request: No request body found";
+            return ;
+        }
 
-    setStatus(200);
-    setHeader("200 OK", "text/plain");
-    _body = "Received POST data:\n" + bodyData;
-    send();
+        setStatus(200);
+        setHeader("200 OK", "text/plain");
+        _body = "Received POST data:\n" + bodyData;
+        send();
+        std::cout << bodyData << "\n";
+    }  
 }
 
 void Response::httpMethods()

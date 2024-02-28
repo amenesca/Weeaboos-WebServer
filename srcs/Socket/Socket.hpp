@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/22 19:10:13 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/28 14:36:25 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Socket {
         int							_serverSocket;
 		int							_newClientSocket;
 		int							_opt;
-        char				        _buffer[8192+ 1];
+        char				        _buffer[1000000+ 1];
         std::string                 _requestBuffer;
         ssize_t						_bytesRead;
         socklen_t					_server_addr_len, _client_addr_len;

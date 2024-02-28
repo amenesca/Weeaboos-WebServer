@@ -22,6 +22,9 @@
 
     <p id="mensagem"></p>
 
+    <!-- Elemento para exibir a imagem -->
+    <img id="imagemEnviada" style="display: none; max-width: 100%; height: auto;" alt="Imagem enviada">
+    
     <script>
         document.getElementById("meuForm").addEventListener("submit", function(event) {
             event.preventDefault();
@@ -42,6 +45,9 @@
             .then(function(response) {
                 if (response.ok) {
                     document.getElementById("mensagem").innerText = "O POST method está funcionando!";
+                    // Se o envio for bem-sucedido, exibe a imagem
+                    document.getElementById("imagemEnviada").src = URL.createObjectURL(imagem);
+                    document.getElementById("imagemEnviada").style.display = "block";
                 } else {
                     document.getElementById("mensagem").innerText = "O POST method não está funcionando corretamente. Verifique sua configuração do servidor.";
                 }
@@ -54,5 +60,3 @@
     </script>
 </body>
 </html>
-
-

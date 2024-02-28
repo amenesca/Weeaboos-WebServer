@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/22 21:00:40 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/28 13:33:41 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ int Socket::receiveRequest(size_t *i)
         --*i;
     } else {
        _buffer[_client.getBytesRead()] = '\0';
-        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << std::endl;
+        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << _buffer << std::endl;
         _requestBuffer += std::string(_buffer);
         _client.setRequestBuffer(_requestBuffer);
         _requestBuffer.clear();
@@ -147,7 +147,7 @@ int Socket::sendResponse(size_t *i, char **envp)
 		}
 	}
 
-	Response makeResponse(requestParser, _vServers[virtualServerPosition]);
+	Response makeResponse(requestParser, _vServers[virtualServerPosition], envp);
 	makeResponse.httpMethods();
 
     std::string response = makeResponse.getHttpMessage();
