@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:37:17 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/28 13:36:23 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:26:15 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,21 @@ std::string cgiHandler::configCgi(int clientSocket, char **envp)
 		std::cerr << "Error on fork: " << strerror(errno) << std::endl;
 	}
 	else if (_pid == 0)
-	{
-		close(pipe_fd[0]);
-		dup2(pipe_fd[1], STDIN_FILENO);
-		dup2(clientSocket, STDOUT_FILENO);
-		close(pipe_fd[1]);
-		if (execve(argv[0], const_cast<char* const*>(argv.data()), envp) == -1) {
-			std::cerr << "Error on execve: " << strerror(errno) << std::endl;
-		}
-	}
+    {
+        close(pipe_fd[0]);
+        dup2(pipe_fd[1], STDIN_FILENO);
+        dup2(clientSocket, STDOUT_FILENO);
+        close(pipe_fd[1]);
+
+        // Escreva os dados de entrada no pipe
+        std::string inputData = "Aqui estão os dados de entrada que você deseja passar para o script Python.";
+        write(pipe_fd[1], inputData.c_str(), inputData.size());
+        close(pipe_fd[1]); // Feche o descritor de arquivo de escrita após escrever os dados
+
+        if (execve(argv[0], const_cast<char* const*>(argv.data()), envp) == -1) {
+            std::cerr << "Error on execve: " << strerror(errno) << std::endl;
+        }
+    }
 	else
 	{
 		close(pipe_fd[1]);

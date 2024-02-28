@@ -6,28 +6,29 @@
 /*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:30:46 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/28 14:25:14 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:45:22 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
 Response::Response()
-:   _envp(NULL),   
+:   _envp(NULL),
+    _clientSocket(-1),
     _status(0),
     _body(""),
     _header(""),
 	_httpMessage("")
 	{}
 
-Response::Response(RequestParser request, VirtualServer virtualServerConfigs, char **envp) 
+Response::Response(RequestParser request, VirtualServer virtualServerConfigs, char **envp, int clientSocket) 
 :   _envp(envp),
+    _clientSocket(clientSocket),
     _status(0),
     _body(""),
     _header(""),
 	_httpMessage(""),
 	_request(request),
-    
 	_virtualServerConfigs(virtualServerConfigs)
     {}
 
@@ -103,6 +104,7 @@ std::string Response::readData(const std::string& uri)
 void Response::handleGET()
 {
     std::string	uri = _request.getUri();
+    std::cout << "BODY: " << _request.getBody() << "\n";
     std::string	data = readData(uri);
      if (!data.empty()) {
         setStatus(200);
@@ -120,8 +122,8 @@ void Response::handleGET()
 
 void Response::handlePOST()
 {
-    std::cout << "POST\n";
     std::string bodyData = _request.getBody();
+    std::cout << "BODY: " << _request.getBody() << "\n";
     std::string uri = _request.getUri();
     std::cout << "PROCURANDO URI: " << uri << "\n";
     if (uri.substr(uri.length() - 3) == ".py") {
@@ -131,8 +133,8 @@ void Response::handlePOST()
         setStatus(200);
         setHeader("200 OK", "text/plain");
         _body = "Received POST data:\n" + bodyData;
+        std::cout << _body << "\n";
         send();
-        std::cout << bodyData << "\n";
     }
     else {
         std::cout << "DENTRO DO ELSE\n";

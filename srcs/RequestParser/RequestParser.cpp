@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RequestParser.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 13:24:07 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/14 13:24:08 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:47:07 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void RequestParser::parse(std::string request) {
         }
     }
     // Body parsing
-    std::getline(requestStream, this->_requestBody, '\0');
+    std::getline(requestStream, this->_requestBody);
 
     return;
 }

@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/28 13:33:41 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/28 16:29:15 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ int Socket::sendResponse(size_t *i, char **envp)
 		}
 	}
 
-	Response makeResponse(requestParser, _vServers[virtualServerPosition], envp);
+	Response makeResponse(requestParser, _vServers[virtualServerPosition], envp, _client.getClientSocket());
 	makeResponse.httpMethods();
 
     std::string response = makeResponse.getHttpMessage();
