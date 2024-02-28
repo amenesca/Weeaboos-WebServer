@@ -11,7 +11,7 @@ form = cgi.FieldStorage()
 
 nome = form.getvalue("nome")
 email = form.getvalue("email")
-imagem = form["imagem"]
+imagem = form.getvalue("imagem")
 
 if imagem.filename:  # Verifica se um arquivo foi selecionado
     # Define o caminho para onde a imagem será movida
