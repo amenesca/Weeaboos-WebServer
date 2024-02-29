@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgiHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:37:17 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/28 16:26:15 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/29 15:48:13 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,13 @@
 cgiHandler::cgiHandler() {}
 
 cgiHandler::~cgiHandler() {}
+
+std::string cgiHandler::getScriptFilename(const std::string& requestURI) {
+	size_t lastSlashPos = requestURI.find_last_of("/");
+	if (lastSlashPos == std::string::npos)
+		return (requestURI);
+	return (requestURI.substr(lastSlashPos + 1));
+}
 
 std::string cgiHandler::configCgi(int clientSocket, char **envp)
 {
@@ -60,8 +67,29 @@ std::string cgiHandler::configCgi(int clientSocket, char **envp)
 	return "";
 }
 
-std::string cgiHandler::postCgi(char **envp) {
+std::vector<char*> cgiHandler::createEnv(std::map<std::string, std::string> requestHeaders, RequestParser request, Client client) {
+	std::vector<char*> env;
+	// std::string clientIp;
+	// std::string clientPort;
+	
+	// clientIp = inet_ntoa(client.getClientAddr().sin_addr);
+	// clientPort = ntohs(client.getClientAddr().sin_port);
+	(void)client;
+
+	env.push_back(strdup(("CONTENT_TYPE=" + requestHeaders["Content-Type"]).c_str()));
+	env.push_back(strdup(("CONTENT_LENGTH=" + requestHeaders["Content-Length"]).c_str()));
+	env.push_back(strdup(("REQUEST_URI=" + request.getUri()).c_str()));
+	env.push_back(strdup(("SCRIPT_NAME=" + request.getUri().substr(1)).c_str()));
+	env.push_back(strdup(("SCRIPT_FILENAME=" + getScriptFilename(request.getUri())).c_str()));
+
+	return env;
+}
+
+std::string cgiHandler::postCgi(char **envp, RequestParser postRequest, Client client) {
 	std::vector<const char*> argv;
+
+	std::vector<char*> headerEnv = createEnv(postRequest.getHeaders(), postRequest, client);
+	
 	argv.push_back("/usr/bin/python3");
 	argv.push_back("./cgi-bin/index.py");
 	argv.push_back(NULL);

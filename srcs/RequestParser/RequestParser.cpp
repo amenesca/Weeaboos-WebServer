@@ -6,7 +6,7 @@
 /*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 13:24:07 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/29 11:44:36 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/02/29 14:41:11 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ RequestParser& RequestParser::operator=(const RequestParser& copy) {
 
 void RequestParser::parse(std::string request) {
     // Declaring variables
+//	std::cout << "--- PARSER DA REQUEST ---" << std::endl;
+	
     std::string requestLine, headerLine, bodyLine;
     std::istringstream requestStream(request);
 
@@ -67,10 +69,11 @@ void RequestParser::parse(std::string request) {
     // Body parsing
 	if (_requestMethod == "POST")
 	{
-		while (std::getline(requestStream, bodyLine))
+		while (std::getline(requestStream, bodyLine)) {
 			_requestBody.push_back(bodyLine);
+		}
 	}
-
+	
     return;
 }
 

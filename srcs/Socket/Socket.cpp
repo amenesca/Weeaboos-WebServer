@@ -6,7 +6,7 @@
 /*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/29 11:09:18 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/02/29 15:52:15 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,8 @@ int Socket::receiveRequest(size_t *i)
         --*i;
     } else {
        _buffer[_client.getBytesRead()] = '\0';
-        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << _buffer << std::endl;
-        _requestBuffer += std::string(_buffer);
+        _requestBuffer.append(_buffer, _bytesRead);
+        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << _requestBuffer << std::endl;
         _client.setRequestBuffer(_requestBuffer);
         _requestBuffer.clear();
         memset(_buffer, '\0', MAX_BUFFER_SIZE + 1);
@@ -144,7 +144,7 @@ int Socket::sendResponse(size_t *i, char **envp)
 		}
 	}
 
-	Response makeResponse(requestParser, _vServers[virtualServerPosition], envp, _client.getClientSocket());
+	Response makeResponse(requestParser, _vServers[virtualServerPosition], envp, _client);
 	makeResponse.httpMethods();
 
     std::string response = makeResponse.getHttpMessage();

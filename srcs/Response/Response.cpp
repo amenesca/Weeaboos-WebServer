@@ -6,7 +6,7 @@
 /*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:30:46 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/29 11:47:00 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/02/29 15:12:53 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,16 @@
 
 Response::Response()
 :   _envp(NULL),
-    _clientSocket(-1),
+    _client(Client()),
     _status(0),
     _body(""),
     _header(""),
 	_httpMessage("")
 	{}
 
-Response::Response(RequestParser request, VirtualServer virtualServerConfigs, char **envp, int clientSocket) 
+Response::Response(RequestParser request, VirtualServer virtualServerConfigs, char **envp, Client client) 
 :   _envp(envp),
-    _clientSocket(clientSocket),
+    _client(client),
     _status(0),
     _body(""),
     _header(""),
@@ -135,7 +135,7 @@ void Response::handlePOST()
     if (uri.substr(uri.length() - 3) == ".py") {
         std::cout << "DENTRO DO POST\n";
         cgiHandler post_cgi = cgiHandler();
-        post_cgi.postCgi(_envp);
+        post_cgi.postCgi(_envp, _request, _client);
         setStatus(200);
         setHeader("200 OK", "text/plain");
         send();
