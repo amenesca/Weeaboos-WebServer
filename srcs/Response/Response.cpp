@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:30:46 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/28 16:45:22 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/29 11:47:00 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ std::string Response::readData(const std::string& uri)
         for (size_t i = 0; i < _virtualServerConfigs.getLocation().size(); i++) {
             if (_virtualServerConfigs.getLocation()[i]._locationPath == uri) {
                 path = _virtualServerConfigs.getLocation()[i]._root + _virtualServerConfigs.getLocation()[i]._index[1];
-                std::cout << path << std::endl;
+//                std::cout << path << std::endl;
             }
         }
     }
@@ -104,7 +104,7 @@ std::string Response::readData(const std::string& uri)
 void Response::handleGET()
 {
     std::string	uri = _request.getUri();
-    std::cout << "BODY: " << _request.getBody() << "\n";
+//    std::cout << "BODY: " << _request.getBody() << "\n"; // Desnecessário o GET não tem body na request!
     std::string	data = readData(uri);
      if (!data.empty()) {
         setStatus(200);
@@ -122,23 +122,27 @@ void Response::handleGET()
 
 void Response::handlePOST()
 {
-    std::string bodyData = _request.getBody();
-    std::cout << "BODY: " << _request.getBody() << "\n";
+    std::vector<std::string> bodyData = _request.getBody();
+
+		std::cout << "*** TESTANDO BODYDATA ***" << std::endl;
+	for (size_t i = 0; i < bodyData.size(); i++) {
+		std::cout << bodyData[i] << std::endl;
+	}
+	
     std::string uri = _request.getUri();
     std::cout << "PROCURANDO URI: " << uri << "\n";
+	
     if (uri.substr(uri.length() - 3) == ".py") {
         std::cout << "DENTRO DO POST\n";
         cgiHandler post_cgi = cgiHandler();
         post_cgi.postCgi(_envp);
         setStatus(200);
         setHeader("200 OK", "text/plain");
-        _body = "Received POST data:\n" + bodyData;
-        std::cout << _body << "\n";
         send();
     }
     else {
         std::cout << "DENTRO DO ELSE\n";
-        if (_request.getBody().empty()) {
+        if (_request.getBody()[0].empty()) {
             setStatus(400);
             setHeader("400 Bad Request", "text/plain");
             _body = "400 Bad Request: No request body found";
@@ -147,9 +151,8 @@ void Response::handlePOST()
 
         setStatus(200);
         setHeader("200 OK", "text/plain");
-        _body = "Received POST data:\n" + bodyData;
+        _body = "Received POST data:\n" + bodyData[0];
         send();
-        std::cout << bodyData << "\n";
     }  
 }
 
@@ -159,6 +162,7 @@ void Response::httpMethods()
 		handleGET();
 	}
     else if (_request.getMethod() == "POST") {
+		std::cout << "HANDLE POST" << std::endl;
         handlePOST();
     }
     else {

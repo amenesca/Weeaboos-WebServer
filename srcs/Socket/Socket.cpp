@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/28 16:29:15 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/29 11:09:18 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ int Socket::receiveRequest(size_t *i)
 
 int Socket::sendResponse(size_t *i, char **envp)
 {
-	cgiHandler		cgi;
 	RequestParser	requestParser;
 	size_t			virtualServerPosition;
     (void)envp;
@@ -141,8 +140,6 @@ int Socket::sendResponse(size_t *i, char **envp)
 	for (size_t v = 0; v < _vServers.size(); v++) {
 		if (requestParser.getHeaders()["Host"] == _vServers[v].getServerName()) {
 
-			std::cout << _vServers[v].getServerName() << std::endl;
-			std::cout << requestParser.getHeaders()["Host"] << std::endl;
 			virtualServerPosition = v;
 		}
 	}
@@ -154,9 +151,7 @@ int Socket::sendResponse(size_t *i, char **envp)
 
     send(_pollFds[*i].fd, response.c_str(), response.size(), 0);
     
-    //cgi.configCgi(_pollFds[*i].fd, envp);
     close(_pollFds[*i].fd);
-
     _pollFds.erase(_pollFds.begin() + *i);
     _client = Client();
     --*i;
