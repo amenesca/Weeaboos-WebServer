@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RequestParser.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 13:24:07 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/28 16:47:07 by femarque         ###   ########.fr       */
+/*   Updated: 2024/02/29 14:41:11 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,9 @@ RequestParser& RequestParser::operator=(const RequestParser& copy) {
 
 void RequestParser::parse(std::string request) {
     // Declaring variables
-    std::string requestLine, headerLine;
+//	std::cout << "--- PARSER DA REQUEST ---" << std::endl;
+	
+    std::string requestLine, headerLine, bodyLine;
     std::istringstream requestStream(request);
 
     // Solicitation Line parsing
@@ -65,8 +67,13 @@ void RequestParser::parse(std::string request) {
         }
     }
     // Body parsing
-    std::getline(requestStream, this->_requestBody);
-
+	if (_requestMethod == "POST")
+	{
+		while (std::getline(requestStream, bodyLine)) {
+			_requestBody.push_back(bodyLine);
+		}
+	}
+	
     return;
 }
 
@@ -112,7 +119,7 @@ std::string RequestParser::getHttpVersion() const {
 	return _httpVersion;
 }
 
-std::string RequestParser::getBody() const {
+std::vector<std::string> RequestParser::getBody() const {
 	return _requestBody;
 }
 

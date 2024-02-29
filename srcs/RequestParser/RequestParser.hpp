@@ -6,7 +6,7 @@
 /*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 13:24:05 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/14 13:24:06 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/02/29 11:44:21 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,16 @@
 # include <map>
 # include <sstream>
 # include <exception>
-#include <cerrno>
-#include <cstring>
+# include <cerrno>
+# include <cstring>
+# include <vector>
 
 class RequestParser {
 	private:
 		std::string _requestMethod;
 		std::string _uri;
 		std::string _httpVersion;
-		std::string _requestBody;
+		std::vector<std::string> _requestBody;
 		std::map<std::string, std::string> _requestHeaders;
 
 	// Private Methods
@@ -48,7 +49,7 @@ class RequestParser {
 		std::string getMethod() const ;
 		std::string getUri() const;
 		std::string getHttpVersion() const;
-		std::string getBody() const;
+		std::vector<std::string> getBody() const;
 		std::map<std::string, std::string> getHeaders() const;
 
 	// Exceptions

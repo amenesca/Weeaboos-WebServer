@@ -4,13 +4,14 @@
 # include "../RequestParser/RequestParser.hpp"
 # include "../VirtualServer/VirtualServer.hpp"
 # include "../cgi/cgiHandler.hpp"
+# include "../Client/Client.hpp"
 # include "../../includes/Defines.hpp"
 # include "../../includes/Includes.hpp"
 
 class Response {
     private:
         char**          _envp;
-        int             _clientSocket;
+		Client			_client;
         int				_status;
         std::string		_body;
         std::string		_header;
@@ -20,7 +21,7 @@ class Response {
 		cgiHandler		cgihandler;
     public:
         Response();
-       	Response(RequestParser request, VirtualServer virtualServerConfigs, char **envp, int clientSocket);
+       	Response(RequestParser request, VirtualServer virtualServerConfigs, char **envp, Client client);
         ~Response();
 
         int         getStatus() const;

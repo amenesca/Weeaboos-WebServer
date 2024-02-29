@@ -1,50 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teste de POST Method</title>
+    <title>Formulário de Envio de Imagem</title>
 </head>
 <body>
-    <h2>Teste de POST Method</h2>
-    <form id="meuForm" action="processar_dados" method="post">
-        <label for="nome">Nome:</label><br>
-        <input type="text" id="nome" name="nome"><br>
-        <label for="email">Email:</label><br>
+    <h1>Formulário de Envio de Imagem</h1>
+    <form id="meuForm" enctype="multipart/form-data" action="../../cgi-bin/index.py" method="post">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome"><br><br>
+        
+        <label for="email">Email:</label>
         <input type="email" id="email" name="email"><br><br>
+
+        <label for="imagem">Imagem:</label>
+        <input type="file" id="imagem" name="imagem"><br><br>
+
         <input type="submit" value="Enviar">
     </form>
 
     <p id="mensagem"></p>
 
+    <!-- Elemento para exibir a imagem -->
+    <img id="imagemEnviada" style="display: none; max-width: 100%; height: auto;" alt="Imagem enviada">
+    
     <script>
         document.getElementById("meuForm").addEventListener("submit", function(event) {
             event.preventDefault();
-    
+
             var nome = document.getElementById("nome").value;
             var email = document.getElementById("email").value;
-    
-            // Criar um objeto FormData para enviar os dados do formulário
+            var imagem = document.getElementById("imagem").files[0]; // Obter a primeira imagem selecionada pelo usuário
+
             var formData = new FormData();
             formData.append("nome", nome);
             formData.append("email", email);
-    
-            // Realizar uma requisição POST ao servidor
-            fetch("../www/index.html", {
+            formData.append("imagem", imagem); // Adicionar a imagem ao FormData
+
+            fetch(this.action, {
                 method: "POST",
                 body: formData
             })
             .then(function(response) {
                 if (response.ok) {
-                    // Se a resposta do servidor for bem-sucedida, exibir a mensagem "O POST method está funcionando!"
                     document.getElementById("mensagem").innerText = "O POST method está funcionando!";
+                    // Se o envio for bem-sucedido, exibe a imagem
+                    document.getElementById("imagemEnviada").src = URL.createObjectURL(imagem);
+                    document.getElementById("imagemEnviada").style.display = "block";
                 } else {
-                    // Se a resposta do servidor indicar erro, exibir a mensagem de erro
                     document.getElementById("mensagem").innerText = "O POST method não está funcionando corretamente. Verifique sua configuração do servidor.";
                 }
             })
             .catch(function(error) {
-                // Se ocorrer um erro ao fazer a requisição, exibir a mensagem de erro
                 console.error("Erro ao enviar o formulário:", error);
                 document.getElementById("mensagem").innerText = "O POST method não está funcionando corretamente. Verifique sua conexão com a internet.";
             });
