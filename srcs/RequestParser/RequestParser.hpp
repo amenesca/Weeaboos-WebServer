@@ -27,6 +27,7 @@ class RequestParser {
 		std::string _requestMethod;
 		std::string _uri;
 		std::string _httpVersion;
+		std::string _portNumber;
 		std::vector<std::string> _requestBody;
 		std::map<std::string, std::string> _requestHeaders;
 
@@ -51,6 +52,7 @@ class RequestParser {
 		std::string getHttpVersion() const;
 		std::vector<std::string> getBody() const;
 		std::map<std::string, std::string> getHeaders() const;
+		std::string getPortNumber() const;
 
 	// Exceptions
 		class invalidMethod : public std::exception {

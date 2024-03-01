@@ -29,11 +29,11 @@ class Client {
 		Client& operator=(const Client& copy);
 
 
-        std::string getBuffer(void);
-        SA          *getClientAddrPointer(void);
-        socklen_t   *getClientAddrLenPointer(void);
-        int         getClientSocket(void) const;
-        ssize_t     	getBytesRead(void) const;
+        std::string	getBuffer(void);
+        sockaddr_in	*getClientAddrPointer(void);
+        socklen_t	*getClientAddrLenPointer(void);
+        int			getClientSocket(void) const;
+        ssize_t     getBytesRead(void) const;
 
         void        setClientSocket(int clientSocket);
         void        setClientAddrLen(socklen_t _client_addr_len);
@@ -41,10 +41,10 @@ class Client {
         void        setRequestBuffer(std::string _requestBuffer);
     private:
         int			_clientSocket;
-        socklen_t   _client_addr_len;
-        SA          _client_addr;
-        std::string _requestBuffer1;
-        ssize_t		    _bytesRead;
+        socklen_t	_client_addr_len;
+        sockaddr_in	_client_addr;
+        std::string	_requestBuffer1;
+        ssize_t		_bytesRead;
 };
 
 #endif
