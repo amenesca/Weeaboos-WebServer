@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by amenesca          #+#    #+#             */
-/*   Updated: 2024/03/01 13:10:55 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/01 15:56:35 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,13 @@ class Socket {
         int		serverListen();
         int		Connection();
         int     acceptConnection();
-        int     receiveRequest(size_t *i);
+        int     receiveRequest(size_t *i, bool firstRequestLoop);
         int     sendResponse(size_t *i);
         void	configAddress();
         void	startServer();
         int const &getClientSocket();
         std::string uint8_to_string(const uint8_t* data, size_t size);
+		void processRequest(const std::string& httpRequest, int *returnContentLenght, bool *requestComplete);
     
         class socketError : public std::exception {
         public:

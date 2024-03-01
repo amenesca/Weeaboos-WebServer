@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by amenesca          #+#    #+#             */
-/*   Updated: 2024/03/01 13:11:41 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/01 15:56:26 by amenesca         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,30 @@ void Socket::setVServers(std::vector<VirtualServer> vServers) {
 
 std::string Socket::uint8_to_string(const uint8_t* data, size_t size) {
     return std::string(reinterpret_cast<const char*>(data), size);
+}
+
+void Socket::processRequest(const std::string& httpRequest, int *returnContentLenght, bool *requestComplete) {
+    // Verifica se é uma solicitação POST
+    size_t postPos = httpRequest.find("POST");
+	size_t getPost = httpRequest.find("GET");
+	if (getPost != std::string::npos) {
+		*requestComplete = true;
+		return;
+	}
+    if (postPos != std::string::npos) {
+
+        // Recupera o valor Content-Length
+        size_t contentLengthPos = httpRequest.find("Content-Length:");
+        if (contentLengthPos != std::string::npos) {
+            size_t start = contentLengthPos + std::string("Content-Length:").length();
+            size_t end = httpRequest.find("\r\n", start);
+            std::string contentLengthStr = httpRequest.substr(start, end - start);
+            int contentLength = atoi(contentLengthStr.c_str());
+            *returnContentLenght = contentLength;
+        } else {
+            std::cout << "Cabeçalho Content-Length não encontrado" << std::endl;
+        }
+    } else {}
 }
 
 void Socket::startServer() {
@@ -105,30 +129,53 @@ int Socket::acceptConnection()
     return (0);
 }
 
-int Socket::receiveRequest(size_t *i)
+int Socket::receiveRequest(size_t *i, bool firstRequestLoop)
 {
+	std::string bufferToString = std::string();
+	static bool	requestIsComplete = false;
+	static int	AllBytesReceived = 0;
+	static int	contentLenght = 0;
+
 	_bytesRead = recv(_pollFds[*i].fd, _buffer, sizeof(_buffer) - 1, 0);
-    std::string bufferConverted = uint8_to_string(_buffer, _bytesRead);
-	_client.setBytesRead(_bytesRead);
-    if (_client.getBytesRead() <= 0) {
-        if (_client.getBytesRead() < 0) {
-            std::cerr << "Erro ao receber dados do cliente, socket: " << _pollFds[*i].fd << std::endl;
-        } else {
-            std::cerr << "Cliente desconectado, socket: " << _pollFds[*i].fd << std::endl;
-        }
-        close(_pollFds[*i].fd);
+    bufferToString = uint8_to_string(_buffer, _bytesRead);
+
+	if (_bytesRead < 0) {
+		std::cerr << "Erro ao receber dados do cliente, socket: " << _pollFds[*i].fd << std::endl;
+		close(_pollFds[*i].fd);
         _pollFds.erase(_pollFds.begin() + *i);
         _client = Client();
         --*i;
-    } else {
-       _buffer[_client.getBytesRead()] = '\0';
-        _requestBuffer.append(bufferConverted.c_str(), _bytesRead);
-        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << _requestBuffer << std::endl;
-        _client.setRequestBuffer(_requestBuffer);
-        _requestBuffer.clear();
-        memset(_buffer, '\0', MAX_BUFFER_SIZE + 1);
-        _pollFds[*i].events = POLLOUT;
-    }
+	}
+	else if (requestIsComplete == false) {
+		std::cout << "Bytes Recebidos: " << _bytesRead << std::endl;
+		std::cout << "Buffer recebido: " << bufferToString << std::endl;
+		_requestBuffer.append(bufferToString.c_str(), _bytesRead);
+        memset(_buffer, '\0', MAX_BUFFER_SIZE);
+		if (firstRequestLoop == true)
+			processRequest(bufferToString, &contentLenght, &requestIsComplete);
+		
+		if (firstRequestLoop == false)
+			AllBytesReceived = AllBytesReceived + _bytesRead;
+		
+		if (AllBytesReceived == contentLenght) {
+			requestIsComplete = true;
+		}
+
+		if (requestIsComplete == true) {
+			_requestBuffer = _requestBuffer + "\0";
+			std::cout << "Requisição Completa" << _requestBuffer << std::endl;
+			_client.setRequestBuffer(_requestBuffer);
+			_requestBuffer.clear();
+			memset(_buffer, '\0', MAX_BUFFER_SIZE);
+			
+			requestIsComplete = false;
+			AllBytesReceived = 0;
+			contentLenght = 0;
+			
+			_pollFds[*i].events = POLLOUT;
+			return 0;
+		}
+	}
     return (0);
 }
 
@@ -169,6 +216,7 @@ int Socket::Connection()
 	_pollFds[0].fd = _serverSocket;
 	_pollFds[0].events = POLLIN;
     cgiHandler cgi;
+	bool firstRequestLoop = true;
 	
     while (true)
 	{
@@ -186,10 +234,12 @@ int Socket::Connection()
 			// o pollfds usamos sempre a partir do i , o clients usamos a partir do j que é i - 1
 			if (_pollFds[i].revents & POLLIN)
 			{
-				receiveRequest(&i);
+				receiveRequest(&i, firstRequestLoop);
+				firstRequestLoop = false;
             }
 			if (_pollFds[i].revents & POLLOUT)
 			{
+				firstRequestLoop = true;
                 sendResponse(&i);
     		}
 		}
