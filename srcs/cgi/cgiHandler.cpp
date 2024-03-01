@@ -69,18 +69,33 @@ std::string cgiHandler::configCgi(int clientSocket, char **envp)
 
 std::vector<char*> cgiHandler::createEnv(std::map<std::string, std::string> requestHeaders, RequestParser request, Client client) {
 	std::vector<char*> env;
-	// std::string clientIp;
-	// std::string clientPort;
+	std::string clientIp;
+	std::string clientPort;
 	
-	// clientIp = inet_ntoa(client.getClientAddr().sin_addr);
-	// clientPort = ntohs(client.getClientAddr().sin_port);
-	(void)client;
+	clientIp = inet_ntoa(client.getClientAddrPointer()->sin_addr);
+	clientPort = ntohs(client.getClientAddrPointer()->sin_port);
 
 	env.push_back(strdup(("CONTENT_TYPE=" + requestHeaders["Content-Type"]).c_str()));
 	env.push_back(strdup(("CONTENT_LENGTH=" + requestHeaders["Content-Length"]).c_str()));
 	env.push_back(strdup(("REQUEST_URI=" + request.getUri()).c_str()));
 	env.push_back(strdup(("SCRIPT_NAME=" + request.getUri().substr(1)).c_str()));
 	env.push_back(strdup(("SCRIPT_FILENAME=" + getScriptFilename(request.getUri())).c_str()));
+
+	env.push_back(strdup(("REMOTE_ADDR=" + clientIp + ":" + clientPort).c_str()));
+	env.push_back(strdup(("SERVER_NAME=" + requestHeaders["Host"]).c_str()));
+	env.push_back(strdup(("SERVER_PORT=" + request.getPortNumber()).c_str()));
+
+	env.push_back(strdup("AUTH_TYPE=Basic"));
+	env.push_back(strdup("REQUEST_METHOD=POST"));
+	env.push_back(strdup("REDIRECT_STATUS=200"));
+	env.push_back(strdup("DOCUMENT_ROOT=./"));
+	env.push_back(strdup("GATEWAY_INTERFACE=CGI/1.1"));
+	env.push_back(strdup("PATH_INFO="));
+	env.push_back(strdup("PATH_TRANSLATED=.//"));
+	env.push_back(strdup("QUERY_STRING="));
+	env.push_back(strdup("SERVER_PROTOCOL=HTTP/1.1"));
+	env.push_back(strdup("SERVER_SOFTWARE=AMANIX"));
+	env.push_back(NULL);
 
 	return env;
 }

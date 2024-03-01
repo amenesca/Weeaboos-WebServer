@@ -32,6 +32,7 @@ RequestParser& RequestParser::operator=(const RequestParser& copy) {
 		this->_requestHeaders = copy._requestHeaders;
 		this->_requestMethod = copy._requestMethod;
 		this->_uri = copy._uri;
+		this->_portNumber = copy._portNumber;
 	}
 	return *this;
 }
@@ -59,7 +60,11 @@ void RequestParser::parse(std::string request) {
             if (key == "Host") {
                 size_t portSeparator = value.find(":");
                 if (portSeparator != std::string::npos) {
-                    value = value.substr(0, portSeparator);
+                    std::string hostWithoutPort = value.substr(0, portSeparator);
+					std::string portNumber = value.substr(portSeparator + 1);
+
+					value = hostWithoutPort;
+					_portNumber = portNumber;
                 }
             }
 
@@ -121,6 +126,10 @@ std::string RequestParser::getHttpVersion() const {
 
 std::vector<std::string> RequestParser::getBody() const {
 	return _requestBody;
+}
+
+std::string RequestParser::getPortNumber() const {
+	return _portNumber;
 }
 
 std::map<std::string, std::string> RequestParser::getHeaders() const {

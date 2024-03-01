@@ -38,7 +38,7 @@ std::string Client::getBuffer(void) {
     return (_requestBuffer1);
 }
 
-SA *Client::getClientAddrPointer(void) {
+sockaddr_in *Client::getClientAddrPointer(void) {
     return &_client_addr;
 }
 
