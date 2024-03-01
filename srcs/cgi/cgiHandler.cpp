@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgiHandler.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:37:17 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/29 15:48:13 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/03/01 13:18:38 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,8 @@ std::vector<char*> cgiHandler::createEnv(std::map<std::string, std::string> requ
 	return env;
 }
 
-std::string cgiHandler::postCgi(char **envp, RequestParser postRequest, Client client) {
+std::string cgiHandler::postCgi(RequestParser postRequest, Client client) {
+	std::cout << "ENTROU AQUI\n";
 	std::vector<const char*> argv;
 
 	std::vector<char*> headerEnv = createEnv(postRequest.getHeaders(), postRequest, client);
@@ -116,15 +117,17 @@ std::string cgiHandler::postCgi(char **envp, RequestParser postRequest, Client c
     	return "";
     }
 	_pid = fork();
+	std::cout << "PID: " << _pid << "\n";
 	if (_pid == -1)
 	{
 		std::cerr << "Error on fork: " << strerror(errno) << std::endl;
 	}
 	else if (_pid == 0)
 	{
+		std::cout << "ENTROU NO ELSE IF DO PID\n";
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
-		if (execve(argv[0], const_cast<char* const*>(argv.data()), envp) == -1) {
+		if (execve(argv[0], const_cast<char* const*>(argv.data()), const_cast<char* const*>(headerEnv.data())) == -1) {
 			std::cerr << "Error on execve: " << strerror(errno) << std::endl;
 		}
 	}

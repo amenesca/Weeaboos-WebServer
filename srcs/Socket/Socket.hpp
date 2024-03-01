@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/29 15:32:15 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/03/01 13:10:55 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class Socket {
         int							_serverSocket;
 		int							_newClientSocket;
 		int							_opt;
-        char				        _buffer[65000 + 1];
+        uint8_t                     _buffer[MAX_BUFFER_SIZE + 1];
         std::string                 _requestBuffer;
         ssize_t						_bytesRead;
         socklen_t					_server_addr_len, _client_addr_len;
@@ -47,13 +47,14 @@ class Socket {
         int		setServerOptions();
         int		bindSocket();
         int		serverListen();
-        int		Connection(char **envp);
+        int		Connection();
         int     acceptConnection();
         int     receiveRequest(size_t *i);
-        int     sendResponse(size_t *i, char **envp);
+        int     sendResponse(size_t *i);
         void	configAddress();
-        void	startServer(char **envp);
+        void	startServer();
         int const &getClientSocket();
+        std::string uint8_to_string(const uint8_t* data, size_t size);
     
         class socketError : public std::exception {
         public:
