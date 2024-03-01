@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cgiHandler.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:35:28 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/29 15:14:17 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/03/01 13:07:07 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class cgiHandler {
         ~cgiHandler();
 
         std::string configCgi(int clientSocket, char **envp);
-        std::string postCgi(char **envp, RequestParser postRequest, Client client);
+        std::string postCgi(RequestParser postRequest, Client client);
 		std::string getScriptFilename(const std::string& requestURI);
 		std::vector<char*> createEnv(std::map<std::string, std::string> requestHeaders, RequestParser request, Client client);
 };

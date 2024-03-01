@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/29 15:52:15 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/03/01 13:11:41 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,17 @@ void Socket::setVServers(std::vector<VirtualServer> vServers) {
 	_vServers = vServers;
 }
 
-void Socket::startServer(char **envp) {
+std::string Socket::uint8_to_string(const uint8_t* data, size_t size) {
+    return std::string(reinterpret_cast<const char*>(data), size);
+}
+
+void Socket::startServer() {
     createSocket();
     setServerOptions();
 	configAddress();
     bindSocket();
     serverListen();
-    Connection(envp);
+    Connection();
 }
 
 int Socket::createSocket() {
@@ -104,6 +108,7 @@ int Socket::acceptConnection()
 int Socket::receiveRequest(size_t *i)
 {
 	_bytesRead = recv(_pollFds[*i].fd, _buffer, sizeof(_buffer) - 1, 0);
+    std::string bufferConverted = uint8_to_string(_buffer, _bytesRead);
 	_client.setBytesRead(_bytesRead);
     if (_client.getBytesRead() <= 0) {
         if (_client.getBytesRead() < 0) {
@@ -117,7 +122,7 @@ int Socket::receiveRequest(size_t *i)
         --*i;
     } else {
        _buffer[_client.getBytesRead()] = '\0';
-        _requestBuffer.append(_buffer, _bytesRead);
+        _requestBuffer.append(bufferConverted.c_str(), _bytesRead);
         std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << _requestBuffer << std::endl;
         _client.setRequestBuffer(_requestBuffer);
         _requestBuffer.clear();
@@ -127,11 +132,10 @@ int Socket::receiveRequest(size_t *i)
     return (0);
 }
 
-int Socket::sendResponse(size_t *i, char **envp)
+int Socket::sendResponse(size_t *i)
 {
 	RequestParser	requestParser;
 	size_t			virtualServerPosition;
-    (void)envp;
 	
 	virtualServerPosition = -1;
 
@@ -144,7 +148,7 @@ int Socket::sendResponse(size_t *i, char **envp)
 		}
 	}
 
-	Response makeResponse(requestParser, _vServers[virtualServerPosition], envp, _client);
+	Response makeResponse(requestParser, _vServers[virtualServerPosition], _client);
 	makeResponse.httpMethods();
 
     std::string response = makeResponse.getHttpMessage();
@@ -159,7 +163,7 @@ int Socket::sendResponse(size_t *i, char **envp)
     return (0);
 }
 
-int Socket::Connection(char **envp)
+int Socket::Connection()
 {
 	_pollFds.resize(MAX_CLIENTS + 1);
 	_pollFds[0].fd = _serverSocket;
@@ -186,7 +190,7 @@ int Socket::Connection(char **envp)
             }
 			if (_pollFds[i].revents & POLLOUT)
 			{
-                sendResponse(&i, envp);
+                sendResponse(&i);
     		}
 		}
 	}

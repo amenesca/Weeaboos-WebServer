@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 13:22:06 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/14 13:22:07 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/03/01 13:12:04 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class WebServer {
         ~WebServer();
 
         int configVServers(std::string configFilePath);
-		int initConnection(char **envp);
+		int initConnection();
     private:
         ConfigParser configs;
 		std::vector<VirtualServer> _vServers;

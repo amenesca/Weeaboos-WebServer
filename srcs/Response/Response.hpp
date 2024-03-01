@@ -10,7 +10,6 @@
 
 class Response {
     private:
-        char**          _envp;
 		Client			_client;
         int				_status;
         std::string		_body;
@@ -21,7 +20,7 @@ class Response {
 		cgiHandler		cgihandler;
     public:
         Response();
-       	Response(RequestParser request, VirtualServer virtualServerConfigs, char **envp, Client client);
+       	Response(RequestParser request, VirtualServer virtualServerConfigs, Client client);
         ~Response();
 
         int         getStatus() const;

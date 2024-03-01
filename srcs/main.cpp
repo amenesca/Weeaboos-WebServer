@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:50 by femarque          #+#    #+#             */
-/*   Updated: 2024/02/14 13:22:01 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/03/01 13:12:27 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void signalHandler(int signum) {
     exit(signum);
 }
 
-int main(int argc, char **argv, char **envp)
+int main(int argc, char **argv)
 {
 	signal(SIGINT, signalHandler);
 	try {
@@ -24,10 +24,10 @@ int main(int argc, char **argv, char **envp)
 		if (argc == 2)
 		{
 			server.configVServers(argv[1]);
-			server.initConnection(envp);
+			server.initConnection();
 		} else if (argc == 1) {
 			server.configVServers("./conf/default.conf");
-			server.initConnection(envp);
+			server.initConnection();
 		} else {
 			std::cerr << "WebServer: error: Invalid arguments." << std::endl;
 		}

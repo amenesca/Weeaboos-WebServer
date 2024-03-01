@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 13:22:09 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/14 13:22:10 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/03/01 13:11:56 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ int WebServer::configVServers(std::string configFilePath) {
     return 0;
 }
 
-int WebServer::initConnection(char **envp) {
+int WebServer::initConnection() {
 	connection.setVServers(_vServers);
-	connection.startServer(envp);
+	connection.startServer();
 	return (0);
 }

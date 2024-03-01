@@ -3,15 +3,18 @@ import cgi
 import os
 
 # Cabeçalhos MIME
-print("Content-Type: text/plain")  # Indica o tipo de conteúdo como texto simples
+print("OI ALAN")  # Indica o tipo de conteúdo como texto simples
 print()  # Imprime uma linha em branco para indicar o fim dos cabeçalhos
 
 # Receber dados do formulário
 form = cgi.FieldStorage()
 
 nome = form.getvalue("nome")
+print(nome)
 email = form.getvalue("email")
-imagem = form.getvalue("imagem")
+print(email)
+imagem = form["imagem"]
+print(imagem)
 
 if imagem.filename:  # Verifica se um arquivo foi selecionado
     # Define o caminho para onde a imagem será movida
