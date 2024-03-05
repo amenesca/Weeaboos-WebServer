@@ -13,10 +13,10 @@
 #ifndef CGIHANDLER_HPP
 # define CGIHANDLER_HPP
 
-# include "../../includes/Includes.hpp"
-# include "../../includes/Defines.hpp"
-# include "../RequestParser/RequestParser.hpp"
-# include "../Client/Client.hpp"
+#include "../../includes/Includes.hpp"
+#include "../../includes/Defines.hpp"
+#include "../RequestParser/RequestParser.hpp"
+#include "../Client/Client.hpp"
 
 class cgiHandler {
     private:

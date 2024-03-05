@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef SOCKET_HPP
-# define SOCKET_HPP
+#pragma once
 
 # include "../../includes/Includes.hpp"
 # include "../../includes/Defines.hpp"
@@ -27,21 +26,18 @@ class RequestParser;
 class Socket {
     private:
 		std::vector<VirtualServer>	_vServers;
-        Client				        _client;
+        std::vector<Client>			_clients;
         int							_serverSocket;
-		int							_newClientSocket;
 		int							_opt;
         uint8_t                     _buffer[MAX_BUFFER_SIZE + 1];
-        std::string                 _requestBuffer;
-        ssize_t						_bytesRead;
-        socklen_t					_server_addr_len, _client_addr_len;
+        socklen_t					_server_addr_len;
 		std::vector<struct pollfd>	_pollFds;
-		struct sockaddr_in			_server_addr, _client_addr;
+		struct sockaddr_in			_server_addr;
     public:
         Socket();
         ~Socket();
 
-		void setVServers(std::vector<VirtualServer> vServers);
+		void setVServers(std::vector<VirtualServer>& vServers);
 
         int		createSocket();
         int		setServerOptions();
@@ -49,14 +45,9 @@ class Socket {
         int		serverListen();
         int		Connection();
         int     acceptConnection();
-        int     receiveRequest(size_t *i, bool firstRequestLoop);
-        int     sendResponse(size_t *i);
         void	configAddress();
         void	startServer();
-        int const &getClientSocket();
-        std::string uint8_to_string(const uint8_t* data, size_t size);
-		void processRequest(const std::string& httpRequest, int *returnContentLenght, bool *requestComplete);
-    
+
         class socketError : public std::exception {
         public:
             virtual const char* what() const throw();
@@ -82,5 +73,3 @@ class Socket {
             virtual const char* what() const throw();
         };
 };
-
-#endif

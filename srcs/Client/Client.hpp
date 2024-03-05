@@ -10,16 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CLIENT_HPP
-# define CLIENT_HPP
+#pragma once
 
-# include "../../includes/Includes.hpp"
-# include "../../includes/Defines.hpp"
+#include "../../includes/Includes.hpp"
+#include "../../includes/Defines.hpp"
+#include "../RequestParser/RequestParser.hpp"
+#include "../VirtualServer/VirtualServer.hpp"
 
 // Classe Client responsável por guardar informações do cliente conectado,
 // dentro do Servidor será um vector que manterá atualizado todos os clientes
-// Foi necessário fazer vários getters e setters para funcionar além de
-// destructors e constructors personalizados.
+
+class VirtualServer;
+class RequestParser;
+class Response;
 
 class Client {
     public:
@@ -29,7 +32,7 @@ class Client {
 		Client& operator=(const Client& copy);
 
 
-        std::string	getBuffer(void);
+        std::string	getRequest(void);
         sockaddr_in	*getClientAddrPointer(void);
         socklen_t	*getClientAddrLenPointer(void);
         int			getClientSocket(void) const;
@@ -38,13 +41,19 @@ class Client {
         void        setClientSocket(int clientSocket);
         void        setClientAddrLen(socklen_t _client_addr_len);
         void        setBytesRead(ssize_t bytesRead);
-        void        setRequestBuffer(std::string _requestBuffer);
+        void        setRequest(std::string _requestBuffer);
+
+		std::string uint8_to_string(const uint8_t* data, size_t size);
+		void processRequest(const std::string& httpRequest, int *returnContentLenght, bool *requestComplete);
+		int receiveRequest(bool firstRequestLoop, pollfd *clientPoll);
+		int sendResponse(pollfd *clientPoll, std::vector<VirtualServer>& Configs);
+
     private:
         int			_clientSocket;
         socklen_t	_client_addr_len;
         sockaddr_in	_client_addr;
-        std::string	_requestBuffer1;
+        std::string	_request;
+		std::string _stringBuffer;
         ssize_t		_bytesRead;
+		uint8_t     _buffer[MAX_BUFFER_SIZE + 1];
 };
-
-#endif

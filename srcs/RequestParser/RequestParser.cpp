@@ -134,6 +134,7 @@ std::string RequestParser::getPortNumber() const {
 
 std::map<std::string, std::string> RequestParser::getHeaders() const {
 	return _requestHeaders;
+	std::cout << "getHeaders concluido" << std::endl;
 }
 
 const char *RequestParser::invalidMethod::what() const throw() {

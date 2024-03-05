@@ -57,6 +57,7 @@ int VirtualServer::getPort(void) const {
 
 std::string VirtualServer::getServerName(void) const {
 	return(_serverName);
+	std::cout << "get Server Name concluido" << std::endl;
 }
 
 std::string VirtualServer::getBodySize(void) const {
