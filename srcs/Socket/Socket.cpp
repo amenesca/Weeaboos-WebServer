@@ -102,8 +102,14 @@ int Socket::acceptConnection()
         _pollFds.push_back(pollfd());
         _pollFds.back().fd = newClient.getClientSocket();
         _pollFds.back().events = POLLIN;
-        _clients[_clientsCount] = newClient;
-		_clientsCount++;
+		for (size_t i = 0; i < MAX_CLIENTS; i++) {
+			if (_clients->getOccupied() == false) {
+        		_clients[i] = newClient;
+				_clientsCount++;
+				_clients[i].setOccupied();
+				break;
+			}
+		}
         std::cout << "Nova conexão aceita, socket: " << newClient.getClientSocket() << std::endl;
 		std::cout << "Printando VServers\n" << std::endl;
 		for (size_t i = 0; i < _vServers.size(); i++) {
@@ -142,8 +148,8 @@ int Socket::Connection()
 				if (_clients[j].receiveRequest(i, &_pollFds) == -1) {
 					close(_pollFds[i].fd);
  					_pollFds.erase(_pollFds.begin() + i);
-  					_clients[j] = Client();
  					--i;
+					--_clientsCount;
 				}
 				std::cout << "Após o receive Request" << std::endl;
             }
@@ -151,12 +157,16 @@ int Socket::Connection()
 			{
 				std::cout << "Antes do send Response" << std::endl;
                 _clients[j].sendResponse(i, &_pollFds, _vServers);
-
-				close(_pollFds[i].fd);
-    			_pollFds.erase(_pollFds.begin() + i);
-    			_clients[j].~Client();
-    			--i;
 				std::cout << "Após o send Response" << std::endl;
+				std::cout << 7 << std::endl;
+				close(_pollFds[i].fd);
+				std::cout << 8 << std::endl;
+
+    			_pollFds.erase(_pollFds.begin() + i);
+				std::cout << 9 << std::endl;
+				std::cout << 10 << std::endl;
+				--i;
+				--_clientsCount;
     		}
 		}
 	}

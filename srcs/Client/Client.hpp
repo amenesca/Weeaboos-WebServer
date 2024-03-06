@@ -42,6 +42,8 @@ class Client {
         void        setClientAddrLen(socklen_t _client_addr_len);
         void        setBytesRead(ssize_t bytesRead);
         void        setRequest(std::string _requestBuffer);
+		void 		setOccupied();
+		bool		getOccupied();
 
 		std::string uint8_to_string(const uint8_t* data, size_t size);
 		void processRequest(const std::string& httpRequest, int *returnContentLenght, bool *requestComplete);
@@ -55,5 +57,6 @@ class Client {
         std::string	_request;
 		std::string _stringBuffer;
         ssize_t		_bytesRead;
-		uint8_t     _buffer[MAX_BUFFER_SIZE + 1];
+		char	    _buffer[MAX_BUFFER_SIZE + 1];
+		bool		_occupied;
 };

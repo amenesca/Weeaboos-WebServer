@@ -19,7 +19,8 @@ Client::Client()
 	_client_addr_len(sizeof(_client_addr)), // Inicializa _client_addr_len com o tamanho de _client_addr
     _request(), // Inicializa _request como uma string vazia
     _stringBuffer(), // Inicializa _stringBuffer como uma string vazia
-    _bytesRead(0) // Inicializa _bytesRead como zero
+    _bytesRead(0), // Inicializa _bytesRead como zero
+	_occupied(false)
 {
 	 memset(_buffer, 0, sizeof(_buffer));
 }
@@ -38,6 +39,7 @@ Client& Client::operator=(const Client& copy) {
 		this->_client_addr_len = copy._client_addr_len;
 		this->_clientSocket = copy._clientSocket;
 		this->_request = copy._request;
+		this->_occupied = copy._occupied;
 	}
 	return *this;
 }
@@ -60,6 +62,14 @@ int Client::getClientSocket(void) const {
 
 ssize_t Client::getBytesRead(void) const {
     return _bytesRead;
+}
+
+void Client::setOccupied() {
+	_occupied = true;
+}
+
+bool Client::getOccupied() {
+	return _occupied;
 }
 
 void Client::setRequest(std::string request) {
@@ -109,8 +119,10 @@ void Client::processRequest(const std::string& httpRequest, int *returnContentLe
 
 int Client::receiveRequest(size_t i, std::vector<pollfd> *pollFds)
 {
+	std::cout << '1' << std::endl;
 	_bytesRead = recv((*pollFds)[i].fd, _buffer, sizeof(_buffer) - 1, 0);
-    std::string bufferConverted = uint8_to_string(_buffer, _bytesRead);
+	std::cout << '2' << std::endl;
+	std::cout << '3' << std::endl;
     if (_bytesRead <= 0) {
         if (_bytesRead < 0) {
             std::cerr << "Erro ao receber dados do cliente, socket: " << (*pollFds)[i].fd << std::endl;
@@ -119,8 +131,12 @@ int Client::receiveRequest(size_t i, std::vector<pollfd> *pollFds)
         }
 		return -1;
     } else {
+		std::cout << '4' << std::endl;
        _buffer[_bytesRead] = '\0';
-        _request.append(bufferConverted.c_str(), _bytesRead);
+		std::cout << '5' << std::endl;
+
+        _request.append(_buffer, _bytesRead);
+		std::cout << '6' << std::endl;
         std::cout << "Dados recebidos do cliente, socket: " << (*pollFds)[i].fd << "\n" << _request << std::endl;
 //        memset(this->_buffer, '\0', MAX_BUFFER_SIZE + 1); ***segfaultando
         (*pollFds)[i].events = POLLOUT;
