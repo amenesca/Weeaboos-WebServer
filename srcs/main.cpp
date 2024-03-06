@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WebServer/WebServer.hpp"
+#include "Socket/Socket.hpp"
 
 void signalHandler(int signum) {
     exit(signum);
@@ -20,14 +20,14 @@ int main(int argc, char **argv)
 {
 	signal(SIGINT, signalHandler);
 	try {
-	WebServer server;
+	Socket server;
 		if (argc == 2)
 		{
 			server.configVServers(argv[1]);
-			server.initConnection();
+			server.startServer();
 		} else if (argc == 1) {
 			server.configVServers("./conf/default.conf");
-			server.initConnection();
+			server.startServer();
 		} else {
 			std::cerr << "WebServer: error: Invalid arguments." << std::endl;
 		}

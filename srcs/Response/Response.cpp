@@ -74,16 +74,16 @@ void Response::send() {
 std::string Response::readData(const std::string& uri)
 {
     std::string path;
-    if (_virtualServerConfigs.getLocation().size() > 1) {
-        for (size_t i = 0; i < _virtualServerConfigs.getLocation().size(); i++) {
-            if (_virtualServerConfigs.getLocation()[i]._locationPath == uri) {
-                path = _virtualServerConfigs.getLocation()[i]._root + _virtualServerConfigs.getLocation()[i]._index[1];
+    if (_virtualServerConfigs._location.size() > 1) {
+        for (size_t i = 0; i < _virtualServerConfigs._location.size(); i++) {
+            if (_virtualServerConfigs._location[i]._locationPath == uri) {
+                path = _virtualServerConfigs._location[i]._root + _virtualServerConfigs._location[i]._index[1];
 //                std::cout << path << std::endl;
             }
         }
     }
     else {
-        path = _virtualServerConfigs.getLocation()[0]._root + uri;
+        path = _virtualServerConfigs._location[0]._root + uri;
 	}
     std::ifstream file(path.c_str());
     if (!file.is_open()) {

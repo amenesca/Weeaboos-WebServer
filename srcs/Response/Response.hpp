@@ -4,7 +4,7 @@
 #include "../../includes/Includes.hpp"
 #include "../../includes/Defines.hpp"
 #include "../RequestParser/RequestParser.hpp"
-#include "../VirtualServer/VirtualServer.hpp"
+#include "../ConfigParser/ConfigParser.hpp"
 #include "../Client/Client.hpp"
 #include "../cgi/cgiHandler.hpp"
 

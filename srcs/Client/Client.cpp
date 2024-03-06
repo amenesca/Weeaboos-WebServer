@@ -14,8 +14,14 @@
 #include "../Response/Response.hpp"
 #include "../RequestParser/RequestParser.hpp"
 
-Client::Client() {
-    _client_addr_len = sizeof(_client_addr);
+Client::Client()
+:	_clientSocket(-1), // Inicializa _clientSocket com -1
+	_client_addr_len(sizeof(_client_addr)), // Inicializa _client_addr_len com o tamanho de _client_addr
+    _request(), // Inicializa _request como uma string vazia
+    _stringBuffer(), // Inicializa _stringBuffer como uma string vazia
+    _bytesRead(0) // Inicializa _bytesRead como zero
+{
+	 memset(_buffer, 0, sizeof(_buffer));
 }
 
 Client::~Client() {
@@ -101,80 +107,49 @@ void Client::processRequest(const std::string& httpRequest, int *returnContentLe
     } else {}
 }
 
-int Client::receiveRequest(bool firstRequestLoop, pollfd *clientPoll)
+int Client::receiveRequest(size_t i, std::vector<pollfd> *pollFds)
 {
-	static bool	requestIsComplete = false;
-	static int	AllBytesReceived = 0;
-	static int	contentLenght = 0;
-
-	_bytesRead = recv(clientPoll->fd, _buffer, sizeof(_buffer) - 1, 0);
-    _stringBuffer = uint8_to_string(_buffer, _bytesRead);
-	std::cout << "Após o recve" << std::endl;
-	if (_bytesRead < 0) {
-		std::cerr << "Erro ao receber dados do cliente, socket: " << clientPoll->fd << std::endl;
+	_bytesRead = recv((*pollFds)[i].fd, _buffer, sizeof(_buffer) - 1, 0);
+    std::string bufferConverted = uint8_to_string(_buffer, _bytesRead);
+    if (_bytesRead <= 0) {
+        if (_bytesRead < 0) {
+            std::cerr << "Erro ao receber dados do cliente, socket: " << (*pollFds)[i].fd << std::endl;
+        } else {
+            std::cerr << "Cliente desconectado, socket: " << (*pollFds)[i].fd << std::endl;
+        }
 		return -1;
-	} 
-	else if (_bytesRead == 0) {
-		std::cerr << "Erro: cliente desconectado, socket: " << clientPoll->fd << std::endl;
-		return -1;
-	}
-	else if (requestIsComplete == false) {
-		std::cout << "---Bytes Recebidos: \n" << _bytesRead << std::endl;
-		std::cout << "---Buffer recebido: \n" << _stringBuffer << std::endl;
-		_request.append(_stringBuffer.c_str(), _bytesRead);
-
-		if (firstRequestLoop == true)
-			processRequest(_stringBuffer, &contentLenght, &requestIsComplete);
-		
-		if (firstRequestLoop == false)
-			AllBytesReceived = AllBytesReceived + _bytesRead;
-		
-		if (AllBytesReceived == contentLenght) {
-			requestIsComplete = true;
-		}
-
-		if (requestIsComplete == true) {
-			_request = _request + "\0";
-			std::cout << "---Requisição Completa---\n" << _request << std::endl;
-			
-			requestIsComplete = false;
-			AllBytesReceived = 0;
-			contentLenght = 0;
-			
-			clientPoll->events = POLLOUT;
-			return 0;
-		}
-	}
+    } else {
+       _buffer[_bytesRead] = '\0';
+        _request.append(bufferConverted.c_str(), _bytesRead);
+        std::cout << "Dados recebidos do cliente, socket: " << (*pollFds)[i].fd << "\n" << _request << std::endl;
+//        memset(this->_buffer, '\0', MAX_BUFFER_SIZE + 1); ***segfaultando
+        (*pollFds)[i].events = POLLOUT;
+    }
     return (0);
 }
 
-int Client::sendResponse(pollfd *clientPoll, std::vector<VirtualServer>& Configs)
+int Client::sendResponse(size_t i, std::vector<pollfd> *pollFds, std::vector<VirtualServer>& Configs)
 {
 	RequestParser	requestParser;
 	size_t			virtualServerPosition;
 	
 	virtualServerPosition = -1;
-	std::cout << "Antes do request parser" << std::endl;
-	requestParser.parse(_request);
-	std::cout << "Após do request parser" << std::endl;
 
-	std::cout << "Antes de procurar os vservers" << std::endl;
+	requestParser.parse(_request);
+	
 	for (size_t v = 0; v < Configs.size(); v++) {
-		std::cout << "dentro do for do vServer.size()" << std::endl;
-		if (requestParser.getHeaders()["Host"] == Configs[v].getServerName()) {
+		if (requestParser.getHeaders()["Host"] == Configs[v]._serverName) {
+
 			virtualServerPosition = v;
 		}
 	}
-	std::cout << "Após procurar os vservers" << std::endl;
 
 	Response makeResponse(requestParser, Configs[virtualServerPosition], *this);
 	makeResponse.httpMethods();
 
     std::string response = makeResponse.getHttpMessage();
 
-    send(clientPoll->fd, response.c_str(), response.size(), 0);
-    
-
+    send((*pollFds)[i].fd, response.c_str(), response.size(), 0);
 
     return (0);
 }

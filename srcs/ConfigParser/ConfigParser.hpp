@@ -15,9 +15,25 @@
 
 #include "../../includes/Includes.hpp"
 #include "../Utils/Utils.hpp"
-#include "../VirtualServer/VirtualServer.hpp"
 
-class VirtualServer;
+struct Location {
+	std::string _locationPath;
+	std::string _root;
+	std::string _cgi_extension;
+	std::string _upload;
+	std::string _autoindex;
+	std::vector<std::string> _methods;
+	std::string _return;
+	std::vector<std::string> _index;
+};
+
+struct VirtualServer {
+	int _port;
+		std::string _serverName;
+		std::string _bodySize;
+		std::vector<std::string> _errorPage;
+		std::vector<Location> _location;
+};
 class ConfigParser {
     public:
 		ConfigParser();

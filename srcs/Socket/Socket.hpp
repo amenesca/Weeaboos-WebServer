@@ -14,7 +14,7 @@
 
 # include "../../includes/Includes.hpp"
 # include "../../includes/Defines.hpp"
-# include "../VirtualServer/VirtualServer.hpp"
+# include "../ConfigParser/ConfigParser.hpp"
 # include "../Client/Client.hpp"
 # include "../RequestParser/RequestParser.hpp"
 # include "../cgi/cgiHandler.hpp"
@@ -26,18 +26,26 @@ class RequestParser;
 class Socket {
     private:
 		std::vector<VirtualServer>	_vServers;
-        std::vector<Client>			_clients;
+        Client						*_clients;
+		int							_clientsCount;
         int							_serverSocket;
 		int							_opt;
         uint8_t                     _buffer[MAX_BUFFER_SIZE + 1];
         socklen_t					_server_addr_len;
 		std::vector<struct pollfd>	_pollFds;
 		struct sockaddr_in			_server_addr;
+		// ex webserver
+		ConfigParser configs;
+		// *************************
     public:
         Socket();
         ~Socket();
 
 		void setVServers(std::vector<VirtualServer>& vServers);
+
+		//  ex webserver
+		int configVServers(std::string configFilePath);
+		// ****************************
 
         int		createSocket();
         int		setServerOptions();

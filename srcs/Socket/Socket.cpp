@@ -22,6 +22,8 @@ Socket::Socket()
 {
     this->_opt = 1;
     _server_addr_len = sizeof(_server_addr);
+	_clients = new Client[92];
+	_clientsCount = 0;
 }
 
 Socket::~Socket() {
@@ -41,6 +43,13 @@ void Socket::startServer() {
     Connection();
 }
 
+int Socket::configVServers(std::string configFilePath) {
+    this->configs.setConfigFilePath(configFilePath);
+	this->configs.initConfig();
+	_vServers = this->configs.getVServers();
+    return 0;
+}
+
 int Socket::createSocket() {
 	_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if(_serverSocket== -1) {
@@ -58,7 +67,7 @@ int Socket::setServerOptions() {
 
 void Socket::configAddress() {
 	_server_addr.sin_family = AF_INET;
-	_server_addr.sin_port = htons(_vServers[0].getPort());
+	_server_addr.sin_port = htons(_vServers[0]._port);
 	_server_addr.sin_addr.s_addr = INADDR_ANY;
 }
 
@@ -93,11 +102,12 @@ int Socket::acceptConnection()
         _pollFds.push_back(pollfd());
         _pollFds.back().fd = newClient.getClientSocket();
         _pollFds.back().events = POLLIN;
-        _clients.push_back(newClient);
+        _clients[_clientsCount] = newClient;
+		_clientsCount++;
         std::cout << "Nova conexão aceita, socket: " << newClient.getClientSocket() << std::endl;
 		std::cout << "Printando VServers\n" << std::endl;
 		for (size_t i = 0; i < _vServers.size(); i++) {
-			std::cout << _vServers[i].getServerName() << std::endl; 
+			std::cout << _vServers[i]._serverName << std::endl; 
 		}
     }
     return (0);
@@ -109,12 +119,10 @@ int Socket::Connection()
 	_pollFds[0].fd = _serverSocket;
 	_pollFds[0].events = POLLIN;
     cgiHandler cgi;
-	bool firstRequestLoop = true;
 	
-	_clients.reserve(MAX_CLIENTS);
     while (true)
 	{
-        std::cout << "Waiting for connection on port " << _vServers[0].getPort() << std::endl;
+        std::cout << "Waiting for connection on port " << _vServers[0]._port << std::endl;
 	
 		int pollReturn = poll(&_pollFds[0], _pollFds.size(), -1);
 		if ( pollReturn == -1) {
@@ -131,24 +139,22 @@ int Socket::Connection()
 			if (_pollFds[i].revents & POLLIN)
 			{
 				std::cout << "Receive Request" << std::endl;
-				if (_clients[j].receiveRequest(firstRequestLoop, &_pollFds[i]) == -1) {
+				if (_clients[j].receiveRequest(i, &_pollFds) == -1) {
 					close(_pollFds[i].fd);
  					_pollFds.erase(_pollFds.begin() + i);
-  					_clients.erase(_clients.begin() + j);
+  					_clients[j] = Client();
  					--i;
 				}
-				firstRequestLoop = false;
 				std::cout << "Após o receive Request" << std::endl;
             }
 			if (_pollFds[i].revents & POLLOUT)
 			{
-				firstRequestLoop = true;
 				std::cout << "Antes do send Response" << std::endl;
-                _clients[j].sendResponse(&_pollFds[i], _vServers);
+                _clients[j].sendResponse(i, &_pollFds, _vServers);
 
 				close(_pollFds[i].fd);
     			_pollFds.erase(_pollFds.begin() + i);
-    			_clients.erase(_clients.begin() + j);
+    			_clients[j].~Client();
     			--i;
 				std::cout << "Após o send Response" << std::endl;
     		}

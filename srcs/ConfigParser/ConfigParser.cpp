@@ -93,7 +93,7 @@ void ConfigParser::treatLocation(VirtualServer* currentServer, std::string locat
 	if (rightBrace == false) {
 			throw InvalidSyntax();
 	}
-	currentServer->getLocationAddress()->push_back(location);
+	currentServer->_location.push_back(location);
 } 
 
 void ConfigParser::configServer(VirtualServer* currentServer)
@@ -107,16 +107,16 @@ void ConfigParser::configServer(VirtualServer* currentServer)
 			break ;
 		}
 		else if (buff.find("error_page", 0) != std::string::npos) {
-			currentServer->setErrorPage(split(buff));
+			currentServer->_errorPage = split(buff);
 		}
 		else if (buff.find("listen", 0) != std::string::npos || buff.find("port", 0) != std::string::npos) {
-			currentServer->setPort(strtod(split(buff)[1].c_str(), NULL));
+			currentServer->_port = strtod(split(buff)[1].c_str(), NULL);
 		}
 		else if (buff.find("server_name", 0) != std::string::npos) {
-			currentServer->setServerName(split(buff)[1]);
+			currentServer->_serverName = split(buff)[1];
 		}
 		else if (buff.find("body_size", 0) != std::string::npos) {
-			currentServer->setBodySize(split(buff)[1]);
+			currentServer->_bodySize = split(buff)[1];
 		}
 		else if (buff.find("location", 0) != std::string::npos) 
 		{

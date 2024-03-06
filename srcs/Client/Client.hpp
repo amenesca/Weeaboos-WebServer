@@ -15,7 +15,7 @@
 #include "../../includes/Includes.hpp"
 #include "../../includes/Defines.hpp"
 #include "../RequestParser/RequestParser.hpp"
-#include "../VirtualServer/VirtualServer.hpp"
+#include "../ConfigParser/ConfigParser.hpp"
 
 // Classe Client responsável por guardar informações do cliente conectado,
 // dentro do Servidor será um vector que manterá atualizado todos os clientes
@@ -45,8 +45,8 @@ class Client {
 
 		std::string uint8_to_string(const uint8_t* data, size_t size);
 		void processRequest(const std::string& httpRequest, int *returnContentLenght, bool *requestComplete);
-		int receiveRequest(bool firstRequestLoop, pollfd *clientPoll);
-		int sendResponse(pollfd *clientPoll, std::vector<VirtualServer>& Configs);
+		int receiveRequest(size_t i, std::vector<pollfd> *pollFds);
+		int sendResponse(size_t i, std::vector<pollfd> *pollFds, std::vector<VirtualServer>& Configs);
 
     private:
         int			_clientSocket;
