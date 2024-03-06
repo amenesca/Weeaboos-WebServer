@@ -2,30 +2,18 @@
 import cgi
 import os
 
-# Cabeçalhos MIME
-print("OI ALAN")  # Indica o tipo de conteúdo como texto simples
-print()  # Imprime uma linha em branco para indicar o fim dos cabeçalhos
-
-# Receber dados do formulário
 form = cgi.FieldStorage()
 
-nome = form.getvalue("nome")
-print(nome)
-email = form.getvalue("email")
-print(email)
-imagem = form["imagem"]
-print(imagem)
+fileitem = form['file']
 
-if imagem.filename:  # Verifica se um arquivo foi selecionado
-    # Define o caminho para onde a imagem será movida
-    destino = os.path.join("../enviados", imagem.filename)
-
-    # Move a imagem para o destino
-    with open(destino, "wb") as f:
-        f.write(imagem.file.read())
-
-    # Retorna o caminho da imagem enviada
-    print(destino)
+if fileitem.filename:
+   if not os.path.exists("../enviados/"):
+      os.makedirs("../enviados/")
+   
+   open("../enviados/" + fileitem.filename, "wb").write(fileitem.file.read())
+   message = 'The file "' + fileitem.filename + '" was uploaded successfully'
+ 
 else:
-    # Retorna uma mensagem de erro se nenhum arquivo foi selecionado
-    print("Nenhuma imagem selecionada para enviar.")
+   message = 'No file was uploaded'
+
+print(message)

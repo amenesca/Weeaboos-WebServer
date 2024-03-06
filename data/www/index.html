@@ -7,56 +7,14 @@
 </head>
 <body>
     <h1>Formulário de Envio de Imagem</h1>
-    <form id="meuForm" enctype="multipart/form-data" action="../../cgi-bin/index.py" method="post">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome"><br><br>
-        
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email"><br><br>
-
-        <label for="imagem">Imagem:</label>
-        <input type="file" id="imagem" name="imagem"><br><br>
-
-        <input type="submit" value="Enviar">
+    <form method="post" action="../../cgi-bin/index.py" enctype="multipart/form-data">
+        <p>
+          <label>Imagem:</label>
+          <input type="file" name="file" required />
+        </p>
+        <input type="submit" value="Submit" />
+      </form>
     </form>
 
-    <p id="mensagem"></p>
-
-    <!-- Elemento para exibir a imagem -->
-    <img id="imagemEnviada" style="display: none; max-width: 100%; height: auto;" alt="Imagem enviada">
-    
-    <script>
-        document.getElementById("meuForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-
-            var nome = document.getElementById("nome").value;
-            var email = document.getElementById("email").value;
-            var imagem = document.getElementById("imagem").files[0]; // Obter a primeira imagem selecionada pelo usuário
-
-            var formData = new FormData();
-            formData.append("nome", nome);
-            formData.append("email", email);
-            formData.append("imagem", imagem); // Adicionar a imagem ao FormData
-
-            fetch(this.action, {
-                method: "POST",
-                body: formData
-            })
-            .then(function(response) {
-                if (response.ok) {
-                    document.getElementById("mensagem").innerText = "O POST method está funcionando!";
-                    // Se o envio for bem-sucedido, exibe a imagem
-                    document.getElementById("imagemEnviada").src = URL.createObjectURL(imagem);
-                    document.getElementById("imagemEnviada").style.display = "block";
-                } else {
-                    document.getElementById("mensagem").innerText = "O POST method não está funcionando corretamente. Verifique sua configuração do servidor.";
-                }
-            })
-            .catch(function(error) {
-                console.error("Erro ao enviar o formulário:", error);
-                document.getElementById("mensagem").innerText = "O POST method não está funcionando corretamente. Verifique sua conexão com a internet.";
-            });
-        });
-    </script>
 </body>
 </html>

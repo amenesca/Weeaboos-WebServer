@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RequestParser.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amenesca <amenesca@student.42.rio>         +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 13:24:07 by amenesca          #+#    #+#             */
-/*   Updated: 2024/02/29 14:41:11 by amenesca         ###   ########.fr       */
+/*   Updated: 2024/03/05 14:34:18 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,14 @@ std::string RequestParser::getPortNumber() const {
 
 std::map<std::string, std::string> RequestParser::getHeaders() const {
 	return _requestHeaders;
+}
+
+std::string RequestParser::getQueryString() {
+    size_t pos = _uri.find('?');
+    if (pos != std::string::npos) {
+        _queryString = _uri.substr(pos + 1);
+    }
+    return _queryString;
 }
 
 const char *RequestParser::invalidMethod::what() const throw() {
