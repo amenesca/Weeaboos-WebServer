@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 13:24:07 by amenesca          #+#    #+#             */
-/*   Updated: 2024/03/05 14:34:18 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/07 16:07:05 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,13 @@ void RequestParser::parse(std::string request) {
     // Body parsing
 	if (_requestMethod == "POST")
 	{
-		while (std::getline(requestStream, bodyLine)) {
-			_requestBody.push_back(bodyLine);
-		}
+       if (_requestMethod == "POST")
+       {
+		    while (std::getline(requestStream, bodyLine)) {
+			    _requestBody.push_back(bodyLine);
+		    }
+       }
 	}
-	
     return;
 }
 

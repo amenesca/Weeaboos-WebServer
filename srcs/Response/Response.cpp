@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:30:46 by femarque          #+#    #+#             */
-/*   Updated: 2024/03/05 23:15:29 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/07 17:18:06 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,37 +121,25 @@ void Response::handleGET()
 void Response::handlePOST()
 {
     std::vector<std::string> bodyData = _request.getBody();
-
-		std::cout << "*** TESTANDO BODYDATA ***" << std::endl;
-	for (size_t i = 0; i < bodyData.size(); i++) {
-		std::cout << bodyData[i] << std::endl;
-	}
+    for (size_t i = 0; i < bodyData.size(); i++) {
+        std::cout << "BODY: " << bodyData[i] << "\n";
+    }
 	
     std::string uri = _request.getUri();
     std::cout << "PROCURANDO URI: " << uri << "\n";
 	
-    if (uri.substr(uri.length() - 3) == ".py") {
-        std::cout << "DENTRO DO POST\n";
-        cgiHandler post_cgi = cgiHandler();
-        //post_cgi.configCgi(_client, _request);
-        post_cgi.postCgi(_request, _client);
-        setStatus(200);
-        send();
+    if (_request.getBody().empty()) {
+        setStatus(400);
+        setHeader("400 Bad Request", "text/plain");
+        _body = "400 Bad Request: No request body found";
+        return ;
     }
-    else {
-        std::cout << "DENTRO DO ELSE\n";
-        if (_request.getBody()[0].empty()) {
-            setStatus(400);
-            setHeader("400 Bad Request", "text/plain");
-            _body = "400 Bad Request: No request body found";
-            return ;
-        }
-
-        setStatus(200);
-        setHeader("200 OK", "text/plain");
-        _body = "Received POST data:\n" + bodyData[0];
-        send();
-    }  
+    
+    cgiHandler post_cgi = cgiHandler(_request);
+    std::cout << "ANTES DO CGIHANDLER\n";
+    post_cgi.postCgi(_client);
+    setStatus(200);
+    send();
 }
 
 void Response::httpMethods()

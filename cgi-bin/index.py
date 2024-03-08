@@ -1,19 +1,15 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
+
 import cgi
 import os
 
+print("CHEGOU NO PYTHON")
+for key, value in os.environ.items():
+    print(f"{key}: {value}")
 form = cgi.FieldStorage()
+nome = form.getvalue("nome")
+email = form.getvalue("email")
+print(nome)
+print(form) # imprime o objeto form como um dicionário
 
-fileitem = form['file']
 
-if fileitem.filename:
-   if not os.path.exists("../enviados/"):
-      os.makedirs("../enviados/")
-   
-   open("../enviados/" + fileitem.filename, "wb").write(fileitem.file.read())
-   message = 'The file "' + fileitem.filename + '" was uploaded successfully'
- 
-else:
-   message = 'No file was uploaded'
-
-print(message)
