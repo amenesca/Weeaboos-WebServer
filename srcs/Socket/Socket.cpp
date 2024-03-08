@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Socket.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: femarque <femarque@student.42.fr>          +#+  +:+       +#+        */
+/*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by amenesca          #+#    #+#             */
-/*   Updated: 2024/03/01 13:11:41 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/08 16:01:29 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void Socket::startServer() {
 }
 
 int Socket::createSocket() {
-	_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+	_serverSocket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     if(_serverSocket== -1) {
         throw socketError();
 	}
@@ -58,10 +58,11 @@ int Socket::createSocket() {
 }
 
 int Socket::setServerOptions() {
-    if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &_opt, sizeof(_opt)) < 0) {
+    int option = 1;
+    if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option)) < 0) {
         throw setsockoptError();
-	}
-    return (0);
+    }
+    return 0;
 }
 
 void Socket::configAddress() {
@@ -71,14 +72,14 @@ void Socket::configAddress() {
 }
 
 int Socket::bindSocket () {
-	if (bind(_serverSocket, (SA*)&_server_addr, _server_addr_len) == -1) {
+	if (bind(_serverSocket, reinterpret_cast<struct sockaddr*>(&_server_addr), _server_addr_len) == -1) {
 		throw bindError();
 	}
     return (0);
 }
 
 int Socket::serverListen() {
-	if (listen(_serverSocket, 10) == -1) {
+	if (listen(_serverSocket, 1024) == -1) {
         throw listenError();
 	}
     return (0);
@@ -87,12 +88,15 @@ int Socket::serverListen() {
 int Socket::acceptConnection() 
 {
     Client newClient;
+    socklen_t addrLen = sizeof(newClient.getClientAddrPointer());
 
-    newClient.setClientSocket(accept(_serverSocket, (SA*)newClient.getClientAddrPointer(), newClient.getClientAddrLenPointer()));
+    newClient.setClientSocket(accept(_serverSocket, reinterpret_cast<struct sockaddr*>(newClient.getClientAddrPointer()), &addrLen));
     if (newClient.getClientSocket() < 0) {
         std::cerr << "Error in accept" << std::endl;
-        newClient.~Client();
-    } else {
+        close(newClient.getClientSocket());
+        return -1;
+    }
+    else {
         int flags = fcntl(newClient.getClientSocket(), F_GETFL, 0);
         fcntl(newClient.getClientSocket(), F_SETFL, flags | O_NONBLOCK);
         _pollFds.push_back(pollfd());
@@ -105,34 +109,34 @@ int Socket::acceptConnection()
     return (0);
 }
 
-int Socket::receiveRequest(size_t *i)
+int Socket::receiveRequest(int i)
 {
-	_bytesRead = recv(_pollFds[*i].fd, _buffer, sizeof(_buffer) - 1, 0);
+	_bytesRead = recv(_pollFds[i].fd, _buffer, sizeof(_buffer) - 1, 0);
     std::string bufferConverted = uint8_to_string(_buffer, _bytesRead);
 	_client.setBytesRead(_bytesRead);
     if (_client.getBytesRead() <= 0) {
         if (_client.getBytesRead() < 0) {
-            std::cerr << "Erro ao receber dados do cliente, socket: " << _pollFds[*i].fd << std::endl;
+            std::cerr << "Erro ao receber dados do cliente, socket: " << _pollFds[i].fd << std::endl;
         } else {
-            std::cerr << "Cliente desconectado, socket: " << _pollFds[*i].fd << std::endl;
+            std::cerr << "Cliente desconectado, socket: " << _pollFds[i].fd << std::endl;
         }
-        close(_pollFds[*i].fd);
-        _pollFds.erase(_pollFds.begin() + *i);
+        close(_pollFds[i].fd);
+        _pollFds.erase(_pollFds.begin() + i);
         _client = Client();
-        --*i;
+        --i;
     } else {
        _buffer[_client.getBytesRead()] = '\0';
         _requestBuffer.append(bufferConverted.c_str(), _bytesRead);
-        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[*i].fd << "\n" << _requestBuffer << std::endl;
+        std::cout << "Dados recebidos do cliente, socket: " << _pollFds[i].fd << "\n" << _requestBuffer << std::endl;
         _client.setRequestBuffer(_requestBuffer);
         _requestBuffer.clear();
-        memset(_buffer, '\0', MAX_BUFFER_SIZE + 1);
-        _pollFds[*i].events = POLLOUT;
+        memset(_buffer, '\0', sizeof(_buffer));
+        _pollFds[i].events = POLLOUT;
     }
     return (0);
 }
 
-int Socket::sendResponse(size_t *i)
+/*int Socket::sendResponse(size_t *i)
 {
 	RequestParser	requestParser;
 	size_t			virtualServerPosition;
@@ -161,6 +165,35 @@ int Socket::sendResponse(size_t *i)
     --*i;
 
     return (0);
+}*/
+
+int Socket::sendResponse(int i)
+{
+    RequestParser requestParser;
+    size_t virtualServerPosition;
+    
+    virtualServerPosition = -1;
+
+    requestParser.parse(_client.getBuffer());
+    
+    for (size_t v = 0; v < _vServers.size(); v++) {
+        if (requestParser.getHeaders()["Host"] == _vServers[v].getServerName()) {
+            virtualServerPosition = v;
+        }
+    }
+
+    Response makeResponse(requestParser, _vServers[virtualServerPosition], _client);
+    makeResponse.httpMethods();
+
+    std::string response = makeResponse.getHttpMessage();
+
+    send(_pollFds[i].fd, response.c_str(), response.size(), 0);
+    
+    close(_pollFds[i].fd);
+    _pollFds.erase(_pollFds.begin() + i);
+    _client = Client();
+
+    return (0);
 }
 
 int Socket::Connection()
@@ -186,11 +219,11 @@ int Socket::Connection()
 			// o pollfds usamos sempre a partir do i , o clients usamos a partir do j que é i - 1
 			if (_pollFds[i].revents & POLLIN)
 			{
-				receiveRequest(&i);
+				receiveRequest(i);
             }
 			if (_pollFds[i].revents & POLLOUT)
 			{
-                sendResponse(&i);
+                sendResponse(i);
     		}
 		}
 	}

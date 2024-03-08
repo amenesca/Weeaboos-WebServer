@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:37:17 by femarque          #+#    #+#             */
-/*   Updated: 2024/03/07 17:26:49 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/08 15:29:59 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,24 @@ int cgiHandler::getCgi()
 	return 0;
 }
 
+int is_descriptor_busy(int fd) {
+    int flags = fcntl(fd, F_GETFL);
+    if (flags == -1) {
+        // Erro ao obter flags do descritor de arquivo
+        perror("fcntl");
+        return -1;
+    }
+
+    // Verificar se o descritor de arquivo está definido como ocupado
+    if (flags & O_WRONLY || flags & O_RDWR) {
+        // Descritor de arquivo está definido como ocupado
+        return 1;
+    } else {
+        // Descritor de arquivo não está definido como ocupado
+        return 0;
+    }
+}
+
 int cgiHandler::postCgi(Client client)
 {
 	createEnv(_request.getHeaders(), client);
@@ -218,14 +236,20 @@ int cgiHandler::postCgi(Client client)
 			free(argv[0]);
   			exit(1);
 		}
-		std::cout << "CHEGOU ANTES DO CLOSE\n";
 		if (close(response_pipe[0]) == -1) {
   			std::cerr << "Error on close: " << strerror(errno) << std::endl;
 			free(argv[0]);
   			exit(1);
 		}
-		std::cout << "CHEGOU ANTES DO DUP2\n";
-		std::cout << response_pipe[1] << "\n" ;
+		int busy = is_descriptor_busy(response_pipe[1]);
+    	if (busy == 1) {
+        	printf("O descritor de arquivo está ocupado.\n");
+    	} else if (busy == 0) {
+        	printf("O descritor de arquivo não está ocupado.\n");
+    	} else {
+        	printf("Ocorreu um erro ao verificar o descritor de arquivo.\n");
+    	}
+
 		if (dup2(response_pipe[1], STDOUT_FILENO) == -1) {
   			std::cerr << "Error on dup2: " << strerror(errno) << std::endl;
 			free(argv[0]);
