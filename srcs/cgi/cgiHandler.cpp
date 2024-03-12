@@ -6,16 +6,13 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:37:17 by femarque          #+#    #+#             */
-/*   Updated: 2024/03/08 15:29:59 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/11 15:21:47 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cgiHandler.hpp"
 
 cgiHandler::cgiHandler() {
-	_pid = 0;
-	_request_pipe[0] = 0;
-	_request_pipe[1] = 0;
 	_env = std::vector<char*>();
 }
 
@@ -43,7 +40,6 @@ std::vector<char*> cgiHandler::createEnv(std::map<std::string, std::string> requ
 	
 	clientIp = inet_ntoa(client.getClientAddrPointer()->sin_addr);
 	clientPort = ntohs(client.getClientAddrPointer()->sin_port);
-	std::cout << "URI: " << _request.getUri().substr(1).c_str() << std::endl;
 	_env.push_back(strdup(("CONTENT_TYPE=" + requestHeaders["Content-Type"]).c_str()));
 	_env.push_back(strdup(("CONTENT_LENGTH=" + requestHeaders["Content-Length"]).c_str()));
 	_env.push_back(strdup(("REQUEST_URI=" + _request.getUri()).c_str()));
@@ -206,68 +202,45 @@ int cgiHandler::postCgi(Client client)
 	}
 	else if (_pid == 0)
 	{
-		char* argv[2];
+		std::vector<char*> argv;
 		std::string path;
 		path = _request.getUri().substr(1);
-		argv[0] = strdup(path.c_str());
-		if (argv[0] == NULL)
-		{
-			std::cerr << "Error on strdup: " << strerror(errno) << std::endl;
-			return 1;
-		}
-		argv[1] = NULL;
+		argv.push_back(strdup(path.c_str()));
+		argv.push_back(NULL);
 		if (access(path.c_str(), X_OK) == -1) {
 			std::cerr << "Error on access: " << strerror(errno) << std::endl;
-			free(argv[0]);
 			exit(1);
 		}
 		if (close(_request_pipe[1]) == -1) {
   			std::cerr << "Error on close: " << strerror(errno) << std::endl;
-			free(argv[0]);
-  			exit(1);
-		}
-		if (dup2(_request_pipe[0], STDIN_FILENO) == -1) {
-  			std::cerr << "Error on dup2: " << strerror(errno) << std::endl;
-			free(argv[0]);
-  			exit(1);
-		}
-		if (close(_request_pipe[0]) == -1) {
-  			std::cerr << "Error on close: " << strerror(errno) << std::endl;
-			free(argv[0]);
   			exit(1);
 		}
 		if (close(response_pipe[0]) == -1) {
   			std::cerr << "Error on close: " << strerror(errno) << std::endl;
-			free(argv[0]);
   			exit(1);
 		}
-		int busy = is_descriptor_busy(response_pipe[1]);
-    	if (busy == 1) {
-        	printf("O descritor de arquivo está ocupado.\n");
-    	} else if (busy == 0) {
-        	printf("O descritor de arquivo não está ocupado.\n");
-    	} else {
-        	printf("Ocorreu um erro ao verificar o descritor de arquivo.\n");
-    	}
-
+		if (dup2(_request_pipe[0], STDIN_FILENO) == -1) {
+  			std::cerr << "Error on dup2: " << strerror(errno) << std::endl;
+  			exit(1);
+		}
+		if (close(_request_pipe[0]) == -1) {
+  			std::cerr << "Error on close: " << strerror(errno) << std::endl;
+  			exit(1);
+		}
+		std::cout << "ANTES DO DUP2\n";
 		if (dup2(response_pipe[1], STDOUT_FILENO) == -1) {
   			std::cerr << "Error on dup2: " << strerror(errno) << std::endl;
-			free(argv[0]);
   			exit(1);
 		}
 		std::cout << "PASSOU DO DUP2\n";
 		if (close(response_pipe[1]) == -1) {
   			std::cerr << "Error on close: " << strerror(errno) << std::endl;
-			free(argv[0]);
   			exit(1);
 		}
-		if (execve(path.c_str(), argv, _env.data()) == -1) {
+		if (execve(path.c_str(), argv.data(), _env.data()) == -1) {
 			std::cerr << "Error on execve: " << strerror(errno) << std::endl;
-			perror("execvp");
-			free(argv[0]);
 			exit(1);
 		}
-		free(argv[0]);
 		return 0;
 	}
 	else
@@ -295,20 +268,24 @@ void cgiHandler::antiBlock(int *pipe1, int *pipe2)
 	}
 }
 
-bool        cgiHandler::writePipes(std::vector<std::string> body)
-{
-    size_t  bytesWritten;
-    int bytes;
-
-    bytesWritten = 0;
-    while (bytesWritten < body.size())
-    {
-        bytes = write(_request_pipe[1], body[bytesWritten].c_str(), body[bytesWritten].size());
-        if (bytes == -1)
-        {
-            return (false);
-        }
-        bytesWritten += bytes;
+bool cgiHandler::writePipes(std::vector<std::string> body) {
+    std::string message;
+    for (size_t i = 0; i < body.size(); ++i) {
+        message += body[i];
+        message += '\n';
     }
-    return (true);
+
+	std::cout << "MESSAGE: " << message << std::endl;
+
+    ssize_t bytesWritten = write(_request_pipe[1], message.c_str(), message.size());
+    if (bytesWritten == -1) {
+        return false;
+    }
+	std::cout << "BYTES WRITTEN: " << bytesWritten << std::endl;
+
+    if (static_cast<size_t>(bytesWritten) != message.size()) {
+        return false;
+    }
+
+    return true;
 }

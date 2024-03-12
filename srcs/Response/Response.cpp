@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 15:30:46 by femarque          #+#    #+#             */
-/*   Updated: 2024/03/07 17:18:06 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/11 13:51:51 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ Response::Response()
     _status(0),
     _body(""),
     _header(""),
-	_httpMessage("")
-	{}
+    _httpMessage("")
+{}
 
 Response::Response(RequestParser request, VirtualServer virtualServerConfigs, Client client) 
 :   _client(client),
