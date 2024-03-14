@@ -20,14 +20,13 @@ Response::Response()
 	_httpMessage("")
 	{}
 
-Response::Response(RequestParser request, VirtualServer virtualServerConfigs, Client client) 
+Response::Response(RequestParser request, Client &client) 
 :   _client(client),
     _status(0),
     _body(""),
     _header(""),
 	_httpMessage(""),
-	_request(request),
-	_virtualServerConfigs(virtualServerConfigs)
+	_request(request)
     {}
 
 Response::~Response() {}
@@ -71,19 +70,19 @@ void Response::send() {
    _httpMessage.append(_body);
 }
 
-std::string Response::readData(const std::string& uri)
+std::string Response::readData(const std::string& uri, VirtualServer &vServer)
 {
     std::string path;
-    if (_virtualServerConfigs.getLocation().size() > 1) {
-        for (size_t i = 0; i < _virtualServerConfigs.getLocation().size(); i++) {
-            if (_virtualServerConfigs.getLocation()[i]._locationPath == uri) {
-                path = _virtualServerConfigs.getLocation()[i]._root + _virtualServerConfigs.getLocation()[i]._index[1];
+    if (vServer._location.size() > 1) {
+        for (size_t i = 0; i < vServer._location.size(); i++) {
+            if (vServer._location[i]._locationPath == uri) {
+                path = vServer._location[i]._root + vServer._location[i]._index[1];
 //                std::cout << path << std::endl;
             }
         }
     }
     else {
-        path = _virtualServerConfigs.getLocation()[0]._root + uri;
+        path = vServer._location[0]._root + uri;
 	}
     std::ifstream file(path.c_str());
     if (!file.is_open()) {
@@ -99,14 +98,14 @@ std::string Response::readData(const std::string& uri)
     return (data);
 }
 
-void Response::handleGET()
+void Response::handleGET(VirtualServer &vServer)
 {
     std::string	uri = _request.getUri();
 //    std::cout << "BODY: " << _request.getBody() << "\n"; // Desnecessário o GET não tem body na request!
-    std::string	data = readData(uri);
+    std::string	data = readData(uri, vServer);
      if (!data.empty()) {
         setStatus(200);
-        _body = readData(uri);
+        _body = readData(uri, vServer);
         setHeader("200 OK", "text/html");
         send();
     }
@@ -154,10 +153,10 @@ void Response::handlePOST()
     }  
 }
 
-void Response::httpMethods()
+void Response::httpMethods(VirtualServer &vServer)
 {
     if (_request.getMethod() == "GET") {
-		handleGET();
+		handleGET(vServer);
 	}
     else if (_request.getMethod() == "POST") {
 		std::cout << "HANDLE POST" << std::endl;

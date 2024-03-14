@@ -14,7 +14,6 @@
 # define WEBSERVER_HPP
 
 # include "../ConfigParser/ConfigParser.hpp"
-# include "../VirtualServer/VirtualServer.hpp"
 # include "../Socket/Socket.hpp"
 # include "../../includes/Defines.hpp"
 # include "../../includes/Includes.hpp"

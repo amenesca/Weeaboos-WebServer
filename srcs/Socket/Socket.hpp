@@ -15,7 +15,6 @@
 
 # include "../../includes/Includes.hpp"
 # include "../../includes/Defines.hpp"
-# include "../VirtualServer/VirtualServer.hpp"
 # include "../Client/Client.hpp"
 # include "../RequestParser/RequestParser.hpp"
 # include "../cgi/cgiHandler.hpp"
@@ -27,7 +26,7 @@ class RequestParser;
 class Socket {
     private:
 		std::vector<VirtualServer>	_vServers;
-        Client				        _client;
+        std::vector<Client>			_client;
         int							_serverSocket;
 		int							_newClientSocket;
 		int							_opt;

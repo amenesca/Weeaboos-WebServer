@@ -72,8 +72,8 @@ std::vector<char*> cgiHandler::createEnv(std::map<std::string, std::string> requ
 	std::string clientIp;
 	std::string clientPort;
 	
-	clientIp = inet_ntoa(client.getClientAddrPointer()->sin_addr);
-	clientPort = ntohs(client.getClientAddrPointer()->sin_port);
+	clientIp = inet_ntoa(client._client_addr.sin_addr);
+	clientPort = ntohs(client._client_addr.sin_port);
 
 	env.push_back(strdup(("CONTENT_TYPE=" + requestHeaders["Content-Type"]).c_str()));
 	env.push_back(strdup(("CONTENT_LENGTH=" + requestHeaders["Content-Length"]).c_str()));

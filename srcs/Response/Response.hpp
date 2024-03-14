@@ -1,8 +1,8 @@
 #ifndef RESPONSE_HPP
 # define RESPONSE_HPP
 
+# include "../ConfigParser/ConfigParser.hpp"
 # include "../RequestParser/RequestParser.hpp"
-# include "../VirtualServer/VirtualServer.hpp"
 # include "../cgi/cgiHandler.hpp"
 # include "../Client/Client.hpp"
 # include "../../includes/Defines.hpp"
@@ -16,11 +16,10 @@ class Response {
         std::string		_header;
 		std::string		_httpMessage;
         RequestParser	_request;
-		VirtualServer	_virtualServerConfigs;
 		cgiHandler		cgihandler;
     public:
         Response();
-       	Response(RequestParser request, VirtualServer virtualServerConfigs, Client client);
+       	Response(RequestParser request, Client &client);
         ~Response();
 
         int         getStatus() const;
@@ -30,12 +29,12 @@ class Response {
         void        setStatus(int status);
 		std::string	setHeader(std::string status, std::string contentType);
 		std::string	toString(int number);
-		std::string	readData(const std::string& uri);
+		std::string	readData(const std::string& uri, VirtualServer &vServer);
 
         void    send();
-        void    httpMethods();
+        void    httpMethods(VirtualServer &vServer);
 		
-		void handleGET();
+		void handleGET(VirtualServer &vServer);
 		void handlePOST();
 };
 
