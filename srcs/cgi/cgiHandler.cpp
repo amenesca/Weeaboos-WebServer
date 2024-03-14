@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:37:17 by femarque          #+#    #+#             */
-/*   Updated: 2024/03/11 15:21:47 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/14 12:05:02 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ int cgiHandler::getCgi()
 }
 
 int is_descriptor_busy(int fd) {
-    int flags = fcntl(fd, F_GETFL);
+    int flags = fcntl(fd, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
     if (flags == -1) {
         // Erro ao obter flags do descritor de arquivo
         perror("fcntl");

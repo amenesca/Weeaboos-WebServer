@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:21:56 by amenesca          #+#    #+#             */
-/*   Updated: 2024/03/11 16:34:51 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/14 12:04:32 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,9 @@ int Socket::acceptConnection()
         return -1;
     }
     else {
-        //int flags = fcntl(newClient.getClientSocket(), F_GETFL, 0);
-        fcntl(newClient.getClientSocket(), F_SETFL, F_GETFL | O_NONBLOCK);
-        fcntl(_serverSocket, F_SETFL, F_GETFL | O_NONBLOCK);
+        //int flags = fcntl(newClient.getClientSocket(), F_SETFL, 0);
+        fcntl(newClient.getClientSocket(), F_SETFL, O_NONBLOCK, FD_CLOEXEC);
+        fcntl(_serverSocket, F_SETFL, O_NONBLOCK, FD_CLOEXEC);
         _pollFds.push_back(pollfd());
         _pollFds.back().fd = newClient.getClientSocket();
         _pollFds.back().events = POLLIN;
