@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:37:17 by femarque          #+#    #+#             */
-/*   Updated: 2024/03/14 12:05:02 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/14 21:31:17 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ int is_descriptor_busy(int fd) {
 
 int cgiHandler::postCgi(Client client)
 {
-	createEnv(_request.getHeaders(), client);
+	std::vector<char*> headerEnv = createEnv(_request.getHeaders(), client);
 	/*for (std::vector<char*>::iterator it = _env.begin(); it != _env.end(); ++it) {
 		std::cout << *it << std::endl;
 	}*/
@@ -237,7 +237,13 @@ int cgiHandler::postCgi(Client client)
   			std::cerr << "Error on close: " << strerror(errno) << std::endl;
   			exit(1);
 		}
-		if (execve(path.c_str(), argv.data(), _env.data()) == -1) {
+		int stdout_fd = open("stdout.log", O_CREAT | O_WRONLY, 0666);
+		int stderr_fd = open("stderr.log", O_CREAT | O_WRONLY, 0666);
+		dup2(stdout_fd, STDOUT_FILENO);
+		dup2(stderr_fd, STDERR_FILENO);
+		close(stdout_fd);
+		close(stderr_fd);
+		if (execve(path.c_str(), argv.data(), headerEnv.data()) == -1) {
 			std::cerr << "Error on execve: " << strerror(errno) << std::endl;
 			exit(1);
 		}

@@ -1,7 +1,7 @@
 NAME = webserver
 
 CPP	= g++
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98
+CPPFLAGS = -g -O0 -Wall -Wextra -Werror -std=c++98
 
 CLASSES =	srcs/cgi/cgiHandler.cpp\
 			srcs/Socket/Socket.cpp\
