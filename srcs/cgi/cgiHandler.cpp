@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:37:17 by femarque          #+#    #+#             */
-/*   Updated: 2024/03/14 21:31:17 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/14 22:56:41 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,8 +237,8 @@ int cgiHandler::postCgi(Client client)
   			std::cerr << "Error on close: " << strerror(errno) << std::endl;
   			exit(1);
 		}
-		int stdout_fd = open("stdout.log", O_CREAT | O_WRONLY, 0666);
-		int stderr_fd = open("stderr.log", O_CREAT | O_WRONLY, 0666);
+		int stdout_fd = open("stdout.log", O_CREAT | O_WRONLY | O_TRUNC, 0666);
+		int stderr_fd = open("stderr.log", O_CREAT | O_WRONLY | O_TRUNC, 0666);
 		dup2(stdout_fd, STDOUT_FILENO);
 		dup2(stderr_fd, STDERR_FILENO);
 		close(stdout_fd);
