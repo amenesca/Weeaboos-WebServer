@@ -6,7 +6,7 @@
 /*   By: femarque <femarque@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:22:02 by amenesca          #+#    #+#             */
-/*   Updated: 2024/03/08 15:52:35 by femarque         ###   ########.fr       */
+/*   Updated: 2024/03/15 14:54:38 by femarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include "../VirtualServer/VirtualServer.hpp"
 # include "../Client/Client.hpp"
 # include "../RequestParser/RequestParser.hpp"
-# include "../cgi/cgiHandler.hpp"
+# include "../Cgi/cgiHandler.hpp"
 # include "../Response/Response.hpp"
 
 class VirtualServer;

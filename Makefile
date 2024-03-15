@@ -3,7 +3,7 @@ NAME = webserver
 CPP	= g++
 CPPFLAGS = -g -O0 -Wall -Wextra -Werror -std=c++98
 
-CLASSES =	srcs/cgi/cgiHandler.cpp\
+CLASSES =	srcs/Cgi/cgiHandler.cpp\
 			srcs/Socket/Socket.cpp\
 			srcs/WebServer/WebServer.cpp\
 			srcs/ConfigParser/ConfigParser.cpp\
@@ -11,7 +11,8 @@ CLASSES =	srcs/cgi/cgiHandler.cpp\
 			srcs/VirtualServer/VirtualServer.cpp\
 			srcs/Client/Client.cpp \
 			srcs/RequestParser/RequestParser.cpp\
-			srcs/Response/Response.cpp
+			srcs/Response/Response.cpp\
+			srcs/ServerLog/ServerLog.cpp
 
 SRCS = $(CLASSES) srcs/main.cpp
 

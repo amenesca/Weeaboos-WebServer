@@ -3,7 +3,7 @@
 
 # include "../RequestParser/RequestParser.hpp"
 # include "../VirtualServer/VirtualServer.hpp"
-# include "../cgi/cgiHandler.hpp"
+# include "../Cgi/cgiHandler.hpp"
 # include "../Client/Client.hpp"
 # include "../../includes/Defines.hpp"
 # include "../../includes/Includes.hpp"
